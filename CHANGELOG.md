@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.46.0
+
+Goal 46 adds GPU-efficiency benchmarking support for dense-vs-MoP comparison
+runs.
+
+- Added nested GPU efficiency metrics for throughput, timing, CUDA memory,
+  trainable/frozen parameter counts, active-parameter estimates, routing
+  densities, and checkpoint size.
+- Added sparse MoP trainable policy modes for adapters-only, modules-only,
+  core-frozen, and router/adapters-only experiments.
+- Added Colab-safe 100M dense and MoP efficiency config templates.
+- Added `mopforge gpu compare-runs` and `scripts/compare_gpu_runs.py` for
+  readable table, JSON, and CSV comparisons across old and new run artifacts.
+- Added GPU efficiency benchmarking docs and Colab training workflow helpers.
+
 ## 0.45.0
 
 Goal 45 hardens the v0.44.0 serious GPU beta into a v1.0-beta release

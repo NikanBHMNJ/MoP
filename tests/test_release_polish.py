@@ -17,7 +17,7 @@ from mopforge.public_api import (
 
 
 def test_package_import_version_and_public_api() -> None:
-    assert mopforge.__version__ == "0.45.0"
+    assert mopforge.__version__ == "0.46.0"
     assert KnowledgeLesson.__name__ == "KnowledgeLesson"
     assert RuntimeConfig.__name__ == "RuntimeConfig"
     assert GPUTrainingConfig.__name__ == "GPUTrainingConfig"
@@ -30,7 +30,7 @@ def test_required_docs_and_release_metadata_exist() -> None:
     required = [
         "README.md",
         "CHANGELOG.md",
-        "RELEASE_NOTES_v0.45.0.md",
+        "RELEASE_NOTES_v0.46.0.md",
         "CONTRIBUTING.md",
         "SECURITY.md",
         "docs/README.md",
@@ -50,7 +50,7 @@ def test_required_docs_and_release_metadata_exist() -> None:
         assert Path(path).exists(), path
 
     readme = Path("README.md").read_text(encoding="utf-8")
-    assert "0.45.0" in readme
+    assert "0.46.0" in readme
     assert "v1.0-beta" in readme
     assert "not a production distributed LLM training framework" in readme
 

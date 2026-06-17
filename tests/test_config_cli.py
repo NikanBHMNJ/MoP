@@ -132,7 +132,7 @@ def test_dry_run_returns_resolved_summary() -> None:
 def test_cli_version_and_modes_list(capsys) -> None:
     assert cli_main(["version"]) == 0
     version_output = capsys.readouterr().out
-    assert "0.45.0" in version_output
+    assert "0.46.0" in version_output
 
     assert cli_main(["modes", "list"]) == 0
     modes_output = capsys.readouterr().out

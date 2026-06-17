@@ -1,6 +1,6 @@
 # MoP-Forge
 
-**Version:** `0.45.0`
+**Version:** `0.46.0`
 
 MoP-Forge is a local-first research framework for testing
 Mixture-of-Parameters training ideas. The current release is a v1.0-beta
@@ -64,7 +64,7 @@ data, and explicit execution.
   Colab-safe dense/MoP comparison configs, and JSON/CSV run comparison tooling.
 - Release-polish utilities: curated public API policy, `mopforge doctor`,
   smoke-example runner, release-check script, docs index, command cookbook,
-  release notes, and v0.45.0 hardening tests.
+  release notes, and v0.46.0 hardening tests.
 
 ## Command Overview
 

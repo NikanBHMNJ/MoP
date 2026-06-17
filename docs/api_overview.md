@@ -1,6 +1,6 @@
 # Public API Overview
 
-MoP-Forge v0.45.0 keeps broad top-level imports for backwards compatibility,
+MoP-Forge v0.46.0 keeps broad top-level imports for backwards compatibility,
 but new integrations should prefer `mopforge.public_api`.
 
 ## Stable API

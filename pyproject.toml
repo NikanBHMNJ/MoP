@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mopforge"
-version = "0.45.0"
+version = "0.46.0"
 description = "MoP-Forge v1.0-beta release candidate polish for local-first Mixture-of-Parameters research and serious single-GPU beta experiments"
 readme = "README.md"
 requires-python = ">=3.10"

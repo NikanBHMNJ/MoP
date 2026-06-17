@@ -1,6 +1,6 @@
 # Release Checklist
 
-Run these checks before tagging or sharing a v0.45.0 release candidate:
+Run these checks before tagging or sharing a v0.46.0 release candidate:
 
 ```bash
 python -m pytest -q

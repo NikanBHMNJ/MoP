@@ -1,6 +1,6 @@
 # MoP-Forge Docs
 
-This docs set describes MoP-Forge v0.45.0, a v1.0-beta release candidate for
+This docs set describes MoP-Forge v0.46.0, a v1.0-beta release candidate for
 local-first Mixture-of-Parameters research and serious single-GPU beta
 experiments.
 

@@ -11,7 +11,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 
 
-REQUIRED_VERSION = "0.45.0"
+REQUIRED_VERSION = "0.46.0"
 REQUIRED_DOCS = [
     "docs/README.md",
     "docs/architecture.md",

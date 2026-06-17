@@ -17,11 +17,11 @@ def run_cli(*args: str) -> subprocess.CompletedProcess[str]:
 
 def test_cli_version_and_doctor(capsys) -> None:
     assert main(["version"]) == 0
-    assert "0.45.0" in capsys.readouterr().out
+    assert "0.46.0" in capsys.readouterr().out
 
     assert main(["doctor", "--root", "outputs/doctor_test"]) == 0
     output = capsys.readouterr().out
-    assert "mopforge_version=0.45.0" in output
+    assert "mopforge_version=0.46.0" in output
     assert "torch_available=" in output
 
 
