@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+import time
 from datetime import datetime, timezone
 from itertools import cycle
 from pathlib import Path
@@ -18,7 +19,12 @@ from mopforge.gpu.checkpointing import (
 )
 from mopforge.gpu.config import GPUTrainingConfig, GPUTrainingResult, GPUTrainingState
 from mopforge.gpu.data import GPUDataConfig, build_gpu_dataloaders
-from mopforge.gpu.memory import estimate_from_config, write_memory_estimate
+from mopforge.gpu.memory import (
+    cuda_memory_metrics,
+    estimate_from_config,
+    reset_cuda_peak_memory,
+    write_memory_estimate,
+)
 from mopforge.gpu.mop_execution import estimate_active_parameters, fast_parameter_metadata
 from mopforge.gpu.registry import GPURunRecord, GPURunRegistry
 from mopforge.gpu.scaler import AmpScaler
@@ -73,6 +79,9 @@ class GPUTrainer:
         self.model_metadata: dict[str, Any] = {}
         self.checkpoint_metadata: dict[str, Any] = {}
         self.artifacts: dict[str, Any] = {}
+        self._train_started_at: float | None = None
+        self._train_finished_at: float | None = None
+        self._step_times: list[float] = []
         self._setup_done = False
 
     def setup(self) -> None:
@@ -100,6 +109,8 @@ class GPUTrainer:
         policy = TrainableParameterPolicy(
             mode=self.config.trainable_policy_mode,
             target_modules=self.config.target_modules or None,
+            train_router=bool(self.config.metadata.get("train_router", False)),
+            train_lm_head=bool(self.config.metadata.get("train_lm_head", False)),
             train_fast_adapters=self.config.use_fast_adapters,
             train_generated_params=self.config.use_generated_params,
             metadata={"training_kind": "gpu_train"},
@@ -154,8 +165,11 @@ class GPUTrainer:
         self.model.train()
         self.optimizer.zero_grad(set_to_none=True)
         status = "completed"
+        reset_cuda_peak_memory(self.runtime)
+        self._train_started_at = time.perf_counter()
         try:
             while self.state.global_step < self.config.max_steps:
+                step_started_at = time.perf_counter()
                 batch = move_batch_to_device(next(self._train_iter), self.runtime.device_info.selected)
                 loss = self._forward_loss(batch)
                 scaled_loss = loss / float(self.config.gradient_accumulation_steps)
@@ -195,12 +209,14 @@ class GPUTrainer:
                     self.save_checkpoint(self.state.global_step)
                 if self.config.empty_cache_every_steps and self.state.global_step % self.config.empty_cache_every_steps == 0:
                     self._empty_cache()
+                self._step_times.append(time.perf_counter() - step_started_at)
             if self.config.save_full_checkpoints and not self.state.latest_checkpoint_path:
                 self.save_checkpoint(self.state.global_step)
         except Exception:
             status = "failed"
             raise
         finally:
+            self._train_finished_at = time.perf_counter()
             self._write_state()
         return self._finish(status)
 
@@ -361,15 +377,14 @@ class GPUTrainer:
             "selected_device": self.runtime_meta.get("selected_device"),
             "allocated_gb": None,
             "reserved_gb": None,
+            "peak_allocated_gb": None,
+            "peak_reserved_gb": None,
         }
-        try:
-            import torch
-
-            if self.runtime.device_info.device_type == "cuda":
-                snapshot["allocated_gb"] = round(torch.cuda.memory_allocated() / (1024**3), 4)
-                snapshot["reserved_gb"] = round(torch.cuda.memory_reserved() / (1024**3), 4)
-        except Exception:
-            pass
+        memory = cuda_memory_metrics(self.runtime)
+        snapshot["allocated_gb"] = memory["final_allocated_gb"]
+        snapshot["reserved_gb"] = memory["final_reserved_gb"]
+        snapshot["peak_allocated_gb"] = memory["peak_allocated_gb"]
+        snapshot["peak_reserved_gb"] = memory["peak_reserved_gb"]
         self.state.memory_snapshots.append(snapshot)
         return snapshot
 
@@ -400,6 +415,7 @@ class GPUTrainer:
 
     def _finish(self, status: str) -> GPUTrainingResult:
         finite = self.state.latest_train_loss is None or math.isfinite(float(self.state.latest_train_loss))
+        efficiency = self._efficiency_metrics()
         metrics = {
             "status": status,
             "finite": finite,
@@ -418,6 +434,7 @@ class GPUTrainer:
             "data": dict(self.data_metadata),
             "model": dict(self.model_metadata),
             "memory_snapshots": list(self.state.memory_snapshots),
+            "efficiency": efficiency,
         }
         _write_json(self.output_dir / "metrics.json", metrics)
         self.artifacts["metrics_json"] = str(self.output_dir / "metrics.json")
@@ -464,6 +481,58 @@ class GPUTrainer:
             self.artifact_manager.register(record)
         except ValueError:
             pass
+
+    def _efficiency_metrics(self) -> dict[str, Any]:
+        params = dict(self.model_metadata.get("parameter_counts") or {})
+        total_params = int(params.get("total", 0) or 0)
+        trainable_params = int(params.get("trainable", 0) or 0)
+        frozen_params = int(params.get("frozen", max(0, total_params - trainable_params)) or 0)
+        active_param_estimate = self.model_metadata.get("active_param_estimate")
+        active_param_ratio = (
+            float(active_param_estimate) / float(total_params)
+            if active_param_estimate is not None and total_params > 0
+            else None
+        )
+        total_time = None
+        if self._train_started_at is not None and self._train_finished_at is not None:
+            total_time = max(0.0, self._train_finished_at - self._train_started_at)
+        step_time = self._step_times[-1] if self._step_times else None
+        samples_per_sec = (
+            float(self.state.samples_seen) / total_time
+            if total_time and total_time > 0
+            else None
+        )
+        tokens_per_sec = (
+            float(self.state.tokens_seen) / total_time
+            if total_time and total_time > 0
+            else None
+        )
+        memory = cuda_memory_metrics(self.runtime)
+        checkpoint_size_mb = _file_size_mb(self.state.latest_checkpoint_path)
+        return {
+            "tokens_per_sec": _round_or_none(tokens_per_sec),
+            "samples_per_sec": _round_or_none(samples_per_sec),
+            "step_time_sec": _round_or_none(step_time),
+            "total_train_time_sec": _round_or_none(total_time),
+            "peak_allocated_gb": memory["peak_allocated_gb"],
+            "peak_reserved_gb": memory["peak_reserved_gb"],
+            "final_allocated_gb": memory["final_allocated_gb"],
+            "final_reserved_gb": memory["final_reserved_gb"],
+            "total_params": total_params,
+            "trainable_params": trainable_params,
+            "frozen_params": frozen_params,
+            "trainable_param_ratio": (
+                trainable_params / max(1, total_params)
+                if total_params
+                else None
+            ),
+            "active_param_estimate": active_param_estimate,
+            "active_param_ratio": _round_or_none(active_param_ratio),
+            "active_module_density": self.model_metadata.get("active_module_density"),
+            "active_adapter_density": self.model_metadata.get("active_adapter_density"),
+            "generated_condition_density": self.model_metadata.get("generated_condition_density"),
+            "checkpoint_size_mb": checkpoint_size_mb,
+        }
 
 
 def apply_activation_checkpointing(model, enabled: bool, policy: str = "auto") -> dict[str, Any]:
@@ -564,6 +633,27 @@ def _resolve_checkpoint_reference(ref: str, output_root: str) -> str:
 def _write_json(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=2, sort_keys=True), encoding="utf-8")
+
+
+def _round_or_none(value: float | None, digits: int = 4) -> float | None:
+    if value is None:
+        return None
+    try:
+        return round(float(value), digits)
+    except Exception:
+        return None
+
+
+def _file_size_mb(path: str | None) -> float | None:
+    if not path:
+        return None
+    try:
+        candidate = Path(path)
+        if not candidate.exists():
+            return None
+        return round(float(candidate.stat().st_size) / (1024**2), 4)
+    except Exception:
+        return None
 
 
 def _make_run_id(name: str) -> str:

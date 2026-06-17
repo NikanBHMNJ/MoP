@@ -172,6 +172,12 @@ def _build_parser() -> argparse.ArgumentParser:
     gpu_benchmark = gpu_sub.add_parser("benchmark", help="write a GPU run benchmark scaffold")
     gpu_benchmark.add_argument("run_id")
     gpu_benchmark.set_defaults(func=_cmd_gpu_benchmark)
+    gpu_compare = gpu_sub.add_parser("compare-runs", help="compare GPU run efficiency metrics")
+    gpu_compare.add_argument("run_ids", nargs="+")
+    gpu_compare.add_argument("--gpu-runs-dir", default="gpu_runs")
+    gpu_compare.add_argument("--output", default="outputs/gpu_efficiency_comparison.json")
+    gpu_compare.add_argument("--output-csv")
+    gpu_compare.set_defaults(func=_cmd_gpu_compare_runs)
     gpu_launch = gpu_sub.add_parser("launch-torchrun", help="print a torchrun dry-run command; never launches")
     gpu_launch.add_argument("path")
     gpu_launch.add_argument("--dry-run", action="store_true", default=True)
@@ -890,6 +896,19 @@ def _cmd_gpu_benchmark(args) -> int:
     output.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
     print(f"run_id={record.run_id}")
     print(f"benchmark_path={output}")
+    return 0
+
+
+def _cmd_gpu_compare_runs(args) -> int:
+    from mopforge.gpu.compare import compare_runs, format_table, write_csv, write_json
+
+    rows = compare_runs(list(args.run_ids), gpu_runs_dir=args.gpu_runs_dir)
+    json_path = write_json(rows, args.output)
+    csv_output = args.output_csv or str(Path(args.output).with_suffix(".csv"))
+    csv_path = write_csv(rows, csv_output)
+    print(format_table(rows))
+    print(f"json_path={json_path}")
+    print(f"csv_path={csv_path}")
     return 0
 
 

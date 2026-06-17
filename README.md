@@ -59,6 +59,9 @@ data, and explicit execution.
   `GPUTrainer`, AMP/GradScaler behavior, gradient accumulation, GPU data
   loading, checkpoint/resume, memory estimates, A100/H100 job profiles,
   torchrun dry-run planning, and MoP/Fast-Parameter routing metadata.
+- GPU-efficiency benchmarking support: nested efficiency metrics for GPU runs,
+  CUDA peak/current memory tracking, sparse MoP trainable-policy modes,
+  Colab-safe dense/MoP comparison configs, and JSON/CSV run comparison tooling.
 - Release-polish utilities: curated public API policy, `mopforge doctor`,
   smoke-example runner, release-check script, docs index, command cookbook,
   release notes, and v0.45.0 hardening tests.
@@ -88,7 +91,9 @@ mopforge gpu show <run_id>
 - [Config templates](docs/config_templates.md)
 - [Examples guide](docs/examples_guide.md)
 - [GPU quickstart](docs/gpu_quickstart.md)
+- [Colab 100M training notebook](docs/colab_training.md)
 - [GPU job profiles](docs/gpu_job_profiles.md)
+- [GPU efficiency benchmarking](docs/gpu_efficiency_benchmarking.md)
 - [GPU/runtime limitations](docs/gpu_runtime_limitations.md)
 - [Serious jobs checklist](docs/serious_jobs_checklist.md)
 - [Command cookbook](docs/command_cookbook.md)
@@ -2271,6 +2276,23 @@ docs/serious_jobs_checklist.md
 MoP-Forge now includes a serious single-GPU research beta for tiny-to-small MoP
 experiments and validated large-job profiles. It is not yet a fully production
 distributed LLM training framework.
+
+## Goal 46: GPU Efficiency Benchmarking
+
+Implemented behavior:
+
+- GPU training writes nested `metrics.efficiency` data into `metrics.json` and
+  `gpu_training_result.json`, including throughput, step timing, CUDA memory,
+  trainable/frozen parameter counts, active-parameter estimates, routing
+  densities, and checkpoint size.
+- CUDA memory tracking uses PyTorch peak/current allocated and reserved memory
+  APIs when CUDA is selected, and records `null` safely on CPU/no-CUDA runs.
+- MoP trainable policies now include full training, adapters-only,
+  modules-only, core-frozen, and router/adapters-only modes with parameter
+  group summaries showing frozen and trainable groups.
+- Colab-safe 100M dense/MoP efficiency configs live under `configs/jobs/`.
+- `mopforge gpu compare-runs` and `scripts/compare_gpu_runs.py` compare old
+  and new GPU run artifacts and emit readable tables plus JSON/CSV outputs.
 
 ## Examples
 

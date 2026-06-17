@@ -111,6 +111,46 @@ def write_memory_estimate(estimate: ModelMemoryEstimate, path) -> str:
     return str(output)
 
 
+def reset_cuda_peak_memory(runtime=None) -> None:
+    """Reset CUDA peak memory stats when a CUDA runtime is active."""
+
+    try:
+        import torch
+
+        if _is_cuda_runtime(runtime) and torch.cuda.is_available():
+            torch.cuda.reset_peak_memory_stats()
+    except Exception:
+        return
+
+
+def cuda_memory_metrics(runtime=None) -> dict[str, float | None]:
+    """Return JSON-safe CUDA memory metrics in GiB, or nulls on non-CUDA paths."""
+
+    payload: dict[str, float | None] = {
+        "peak_allocated_gb": None,
+        "peak_reserved_gb": None,
+        "final_allocated_gb": None,
+        "final_reserved_gb": None,
+    }
+    try:
+        import torch
+
+        if not (_is_cuda_runtime(runtime) and torch.cuda.is_available()):
+            return payload
+        gb = 1024**3
+        payload.update(
+            {
+                "peak_allocated_gb": round(float(torch.cuda.max_memory_allocated()) / gb, 4),
+                "peak_reserved_gb": round(float(torch.cuda.max_memory_reserved()) / gb, 4),
+                "final_allocated_gb": round(float(torch.cuda.memory_allocated()) / gb, 4),
+                "final_reserved_gb": round(float(torch.cuda.memory_reserved()) / gb, 4),
+            }
+        )
+    except Exception:
+        pass
+    return payload
+
+
 def _bytes_per_param(precision: str) -> int:
     if precision in {"fp16", "bf16"}:
         return 2
@@ -126,3 +166,10 @@ def _rough_parameter_count(config) -> int:
         module_count = max(4, len(config.target_modules or []))
         mop_extra = module_count * 4 * config.d_model * config.d_model
     return int(dense + blocks + mop_extra)
+
+
+def _is_cuda_runtime(runtime) -> bool:
+    if runtime is None:
+        return False
+    device_info = getattr(runtime, "device_info", None)
+    return getattr(device_info, "device_type", None) == "cuda"

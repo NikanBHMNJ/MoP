@@ -14,7 +14,10 @@ SUPPORTED_POLICY_MODES = {
     "router_only",
     "head_only",
     "fast_adapters_only",
+    "adapters_only",
     "generated_params_only",
+    "core_frozen",
+    "router_adapters_only",
     "frozen",
 }
 
@@ -275,10 +278,30 @@ def _should_train_group(
                 return True
             return group.split(":", 1)[1] in target_modules
         return group == "fast_adapter"
+    if policy.mode == "adapters_only":
+        if generated_group:
+            return policy.train_generated_params
+        if group.startswith("adapter:") or group == "fast_adapter":
+            return True
+        if group == "router":
+            return True
+        if group == "lm_head":
+            return policy.train_lm_head
+        return False
     if policy.mode == "router_only":
         if generated_group:
             return policy.train_generated_params
         return group == "router"
+    if policy.mode == "router_adapters_only":
+        if generated_group:
+            return policy.train_generated_params
+        if group.startswith("adapter:") or group == "fast_adapter":
+            return True
+        if group == "router":
+            return True
+        if group == "lm_head":
+            return policy.train_lm_head
+        return False
     if policy.mode == "core_only":
         if generated_group:
             return policy.train_generated_params
@@ -304,6 +327,18 @@ def _should_train_group(
             return policy.train_lm_head
         if group == "router":
             return policy.train_router
+        return False
+    if policy.mode == "core_frozen":
+        if generated_group:
+            return policy.train_generated_params
+        if group.startswith("module:") or group == "module_bank":
+            return True
+        if group.startswith("adapter:") or group == "fast_adapter":
+            return policy.train_fast_adapters
+        if group == "router":
+            return policy.train_router
+        if group == "lm_head":
+            return policy.train_lm_head
         return False
     if policy.mode == "target_modules_only":
         if generated_group:
