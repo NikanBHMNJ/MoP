@@ -30,8 +30,9 @@ mopforge = "mopforge.cli.main:main"
 include = ["mopforge*"]
 
 [tool.pytest.ini_options]
-addopts = "--basetemp=.pytest_basetemp -p no:cacheprovider"
+addopts = "--basetemp=C:/tmp/mop_pytest_tmp -p no:cacheprovider"
 norecursedirs = [
+    ".pytest_basetemp",
     "pytest_tmp",
     "runs",
     "gpu_runs",

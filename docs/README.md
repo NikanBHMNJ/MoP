@@ -18,6 +18,7 @@ experiments.
 - [Colab 100M training notebook](colab_training.md)
 - [GPU job profiles](gpu_job_profiles.md)
 - [GPU efficiency benchmarking](gpu_efficiency_benchmarking.md)
+- [Goal 46 GPU efficiency report](../reports/goal46_gpu_efficiency/README.md)
 - [GPU runtime limitations](gpu_runtime_limitations.md)
 - [Serious jobs checklist](serious_jobs_checklist.md)
 

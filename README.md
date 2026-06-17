@@ -5,6 +5,8 @@
 
 MoP-Forge is a local-first research framework for testing **Mixture-of-Parameters (MoP)** training ideas. The current release supports CPU-safe smoke tests, local training artifacts, single-GPU research runs, GPU checkpointing, and now **GPU-efficiency comparison tooling** for dense vs MoP training modes.
 
+MoP-Forge is not a production distributed LLM training framework.
+
 This update adds the first serious evidence-oriented workflow:
 
 ```text
@@ -21,6 +23,17 @@ The goal is no longer only “does it run?” The goal is now:
 Can MoP reduce trainable parameters, memory, checkpoint size, or training cost
 while keeping loss reasonably close to a dense baseline?
 ```
+
+## Latest GPU Efficiency Evidence
+
+A first 100M Colab/L4 efficiency comparison is available under:
+
+`reports/goal46_gpu_efficiency/`
+
+It compares 100M Dense, 100M MoP Full, and 100M MoP Adapter-Only. The result
+shows that MoP Adapter-Only is significantly lighter and faster, but currently
+has worse eval loss than dense. This is evidence of GPU-efficiency measurement
+support, not proof of MoP superiority.
 
 ---
 

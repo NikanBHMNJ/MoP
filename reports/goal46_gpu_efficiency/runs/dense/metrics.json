@@ -1,0 +1,179 @@
+{
+  "best_eval_loss": 3.1705174446105957,
+  "data": {
+    "dataset_ref": null,
+    "dataset_split": null,
+    "eval_examples": 10,
+    "kind": "lessons",
+    "max_seq_len": 1024,
+    "micro_batch_size": 1,
+    "num_workers": 0,
+    "pin_memory": true,
+    "record_count": 50,
+    "source_path": "data/coding_bugfix_lessons.jsonl",
+    "streaming": false,
+    "train_examples": 40
+  },
+  "effective_batch_size": 8,
+  "efficiency": {
+    "active_adapter_density": 2.0,
+    "active_module_density": null,
+    "active_param_estimate": 86240256,
+    "active_param_ratio": 1.0,
+    "checkpoint_size_mb": 987.1423,
+    "final_allocated_gb": 0.9869,
+    "final_reserved_gb": 1.9844,
+    "frozen_params": 0,
+    "generated_condition_density": 2.0,
+    "peak_allocated_gb": 1.8706,
+    "peak_reserved_gb": 1.9844,
+    "samples_per_sec": 18.9237,
+    "step_time_sec": 1.3649,
+    "tokens_per_sec": 11286.5449,
+    "total_params": 86240256,
+    "total_train_time_sec": 10.5688,
+    "trainable_param_ratio": 1.0,
+    "trainable_params": 86240256
+  },
+  "finite": true,
+  "global_steps": 200,
+  "gradient_accumulation_steps": 8,
+  "latest_eval_loss": 3.1705174446105957,
+  "latest_train_loss": 3.0466763973236084,
+  "memory_snapshots": [
+    {
+      "allocated_gb": 1.3184,
+      "cuda_available": true,
+      "peak_allocated_gb": 1.8706,
+      "peak_reserved_gb": 1.9844,
+      "reserved_gb": 1.9844,
+      "selected_device": "cuda:0",
+      "step": 100
+    },
+    {
+      "allocated_gb": 0.9869,
+      "cuda_available": true,
+      "peak_allocated_gb": 1.8706,
+      "peak_reserved_gb": 1.9844,
+      "reserved_gb": 1.9844,
+      "selected_device": "cuda:0",
+      "step": 200
+    }
+  ],
+  "micro_batch_size": 1,
+  "model": {
+    "activation_checkpointing": {
+      "applied_block_count": 0,
+      "candidate_block_count": 12,
+      "enabled": true,
+      "policy": "auto",
+      "warnings": [
+        "Activation checkpointing is recorded as a hook in this MVP; tiny model execution is unchanged."
+      ]
+    },
+    "active_adapter_density": 2.0,
+    "active_module_density": null,
+    "active_param_estimate": 86240256,
+    "architecture": {
+      "d_model": 768,
+      "dataset_ref": null,
+      "fast_adapter_bottleneck_dim": 16,
+      "fast_adapter_names": null,
+      "generated_condition_dim": 16,
+      "generated_condition_names": null,
+      "generated_rank": 4,
+      "generated_type": "low_rank_adapter",
+      "intended_scale": "small_gpu",
+      "max_seq_len": 1024,
+      "metadata": {},
+      "model_type": "dense",
+      "module_names": [
+        "core",
+        "coding",
+        "debugging",
+        "repair"
+      ],
+      "n_heads": 12,
+      "n_layers": 12,
+      "name": "100m_dense_colab_efficiency",
+      "router_enabled": false,
+      "router_type": null,
+      "tokenizer_ref": null,
+      "use_fast_adapters": false,
+      "use_generated_params": false,
+      "vocab_size": null
+    },
+    "efficient_attention": {
+      "requested": "auto",
+      "selected": "torch_sdpa",
+      "warnings": []
+    },
+    "generated_condition_density": 2.0,
+    "parameter_counts": {
+      "frozen": 0,
+      "total": 86240256,
+      "trainable": 86240256
+    },
+    "parameter_group_summaries": [
+      {
+        "frozen_params": 0,
+        "name": "embeddings",
+        "total_params": 985344,
+        "trainable_params": 985344
+      },
+      {
+        "frozen_params": 0,
+        "name": "lm_head",
+        "total_params": 198912,
+        "trainable_params": 198912
+      },
+      {
+        "frozen_params": 0,
+        "name": "norm",
+        "total_params": 1536,
+        "trainable_params": 1536
+      },
+      {
+        "frozen_params": 0,
+        "name": "shared_core",
+        "total_params": 85054464,
+        "trainable_params": 85054464
+      }
+    ],
+    "routing_mode": "none",
+    "trainable_param_ratio": 1.0
+  },
+  "optimizer_steps": 25,
+  "runtime": {
+    "allow_tf32": true,
+    "amp_enabled": true,
+    "compile_model": false,
+    "cuda_available": true,
+    "cuda_device_count": 1,
+    "deterministic": false,
+    "device_available": true,
+    "device_type": "cuda",
+    "gpu_name": null,
+    "requested_device": "auto",
+    "requested_precision": "auto",
+    "selected_device": "cuda:0",
+    "selected_precision": "bf16",
+    "torch_available": true,
+    "torch_dtype_name": "torch.bfloat16",
+    "torch_version": "2.11.0+cu128",
+    "warnings": [
+      "Auto selected CUDA.",
+      "Enabled torch.backends.cuda.matmul.allow_tf32.",
+      "Enabled torch.backends.cudnn.allow_tf32."
+    ]
+  },
+  "samples_seen": 200,
+  "scaler": {
+    "device_type": "cuda",
+    "enabled": false,
+    "selected_precision": "bf16",
+    "state": {}
+  },
+  "status": "completed",
+  "tokens_seen": 119285
+}

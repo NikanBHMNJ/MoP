@@ -12,7 +12,10 @@ pytest_tmp/
 /gpu_runs/
 /artifacts/
 /outputs/
-/reports/
+/reports/*
+!/reports/
+!/reports/goal46_gpu_efficiency/
+!/reports/goal46_gpu_efficiency/**
 /benchmarks/
 /experiments/
 /ablations/
