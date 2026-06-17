@@ -22,11 +22,9 @@ pytest_tmp/
 /models/
 
 # Local registries and generated data
-datasets/
-models/
-data/*.jsonl
-data/*.sqlite
-data/*.db
+/data/*.jsonl
+/data/*.sqlite
+/data/*.db
 
 # Build and packaging
 build/
