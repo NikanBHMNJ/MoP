@@ -1,0 +1,1 @@
+{"kind":"manifest","version":"1","payload":{"action":"create","name":"a100_2b_plan","config_ref":"configs/examples/sft_full_cpu.json","config_payload":{},"resource_spec":{"accelerator":"a100_80gb","num_gpus":1,"gpu_memory_gb":80,"precision":"bf16","nodes":1},"output_root":"manifests","metadata":{"plan_only":true}},"metadata":{"description":"A100 plan only; no GPU execution"}}

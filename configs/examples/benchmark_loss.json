@@ -1,0 +1,19 @@
+{
+  "kind": "benchmark",
+  "metadata": {
+    "description": "Tiny CPU loss benchmark"
+  },
+  "payload": {
+    "batch_size": 2,
+    "benchmark_type": "loss",
+    "description": "Tiny CPU loss benchmark over KTS lessons.",
+    "index_path": "data/kts_index.sqlite",
+    "lesson_path": "data/indexed_lessons.jsonl",
+    "max_examples": 4,
+    "max_seq_len": 128,
+    "model_type": "dense",
+    "name": "loss_smoke_cpu",
+    "output_root": "benchmarks"
+  },
+  "version": "1"
+}

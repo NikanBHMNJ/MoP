@@ -1,0 +1,1 @@
+{"kind":"stats","version":"1","payload":{"input_path":"reports/example/normalized_results.json","group_by":"mode","metrics":["final_eval_loss"],"output_root":"outputs/stats"},"metadata":{"description":"Statistical summary config template"}}

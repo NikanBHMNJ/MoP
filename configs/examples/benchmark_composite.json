@@ -1,0 +1,28 @@
+{
+  "kind": "benchmark",
+  "metadata": {
+    "description": "Tiny CPU composite benchmark"
+  },
+  "payload": {
+    "batch_size": 1,
+    "benchmark_type": "composite",
+    "description": "Tiny CPU composite benchmark over parameter/loss/code paths.",
+    "generation_examples": 2,
+    "generation_max_new_tokens": 32,
+    "index_path": "data/kts_index.sqlite",
+    "lesson_path": "data/indexed_lessons.jsonl",
+    "max_examples": 3,
+    "max_seq_len": 128,
+    "metadata": {
+      "trainable_policy_mode": "fast_adapters_only"
+    },
+    "model_type": "mop_oracle",
+    "name": "composite_smoke_cpu",
+    "output_root": "benchmarks",
+    "target_modules": [
+      "coding"
+    ],
+    "use_fast_adapters": true
+  },
+  "version": "1"
+}

@@ -1,0 +1,32 @@
+{
+  "kind": "gpu_train",
+  "version": "1",
+  "payload": {
+    "name": "1b_mop_h100_bf16",
+    "model_type": "mop_oracle",
+    "lesson_path": "data/coding_bugfix_lessons.jsonl",
+    "max_steps": 200,
+    "micro_batch_size": 1,
+    "gradient_accumulation_steps": 16,
+    "d_model": 1536,
+    "n_layers": 28,
+    "n_heads": 16,
+    "max_seq_len": 2048,
+    "target_modules": ["coding", "debugging", "repair", "math"],
+    "device": "cuda",
+    "precision": "bf16",
+    "enable_amp": true,
+    "allow_tf32": true,
+    "require_device_available": false,
+    "activation_checkpointing": true,
+    "metadata": {
+      "parameter_count": 1000000000,
+      "target_gpu_memory_gb": 80,
+      "plan_only": true,
+      "profile": "1b_mop_h100_bf16"
+    }
+  },
+  "metadata": {
+    "description": "1B MoP H100 BF16 validation/planning profile."
+  }
+}

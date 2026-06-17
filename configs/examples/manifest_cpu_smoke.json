@@ -1,0 +1,1 @@
+{"kind":"manifest","version":"1","payload":{"action":"create","name":"cpu_smoke_plan","config_ref":"configs/examples/sft_full_cpu.json","config_payload":{},"resource_spec":{"accelerator":"cpu","num_gpus":0,"precision":"fp32","nodes":1},"output_root":"manifests","metadata":{}},"metadata":{"description":"CPU smoke run manifest plan"}}

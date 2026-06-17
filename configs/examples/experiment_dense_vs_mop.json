@@ -1,0 +1,65 @@
+{
+  "kind": "experiment",
+  "metadata": {
+    "description": "Tiny CPU dense-vs-MoP SFT experiment"
+  },
+  "payload": {
+    "description": "Tiny CPU dense full SFT vs oracle MoP module SFT.",
+    "kind": "list",
+    "max_runs": 2,
+    "name": "dense_vs_mop_sft_cpu",
+    "runs": [
+      {
+        "kind": "sft",
+        "metadata": {
+          "description": "Tiny CPU sft_full smoke run"
+        },
+        "payload": {
+          "batch_size": 2,
+          "checkpoint_every_steps": 1,
+          "eval_batches": 1,
+          "index_path": "data/kts_index.sqlite",
+          "lesson_path": "data/indexed_lessons.jsonl",
+          "learning_rate": 0.001,
+          "max_seq_len": 256,
+          "max_steps": 1,
+          "mode": "sft_full",
+          "model_type": "dense",
+          "save_checkpoints": true,
+          "save_full_checkpoints": true
+        },
+        "version": "1"
+      },
+      {
+        "kind": "sft",
+        "metadata": {
+          "description": "Tiny CPU sft_module smoke run"
+        },
+        "payload": {
+          "batch_size": 2,
+          "checkpoint_every_steps": 1,
+          "eval_batches": 1,
+          "index_path": "data/kts_index.sqlite",
+          "lesson_path": "data/indexed_lessons.jsonl",
+          "learning_rate": 0.001,
+          "max_seq_len": 256,
+          "max_steps": 1,
+          "mode": "sft_module",
+          "model_type": "mop_oracle",
+          "save_checkpoints": true,
+          "save_full_checkpoints": true,
+          "target_modules": [
+            "coding"
+          ]
+        },
+        "version": "1"
+      }
+    ],
+    "tags": [
+      "cpu",
+      "smoke",
+      "sft"
+    ]
+  },
+  "version": "1"
+}

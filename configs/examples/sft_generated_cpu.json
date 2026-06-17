@@ -1,0 +1,30 @@
+{
+  "kind": "sft",
+  "metadata": {
+    "description": "Tiny CPU generated-parameter SFT smoke run"
+  },
+  "payload": {
+    "batch_size": 2,
+    "checkpoint_every_steps": 1,
+    "eval_batches": 1,
+    "generated_condition_names": [
+      "coding",
+      "debugging",
+      "repair"
+    ],
+    "generated_rank": 4,
+    "index_path": "data/kts_index.sqlite",
+    "lesson_path": "data/indexed_lessons.jsonl",
+    "max_seq_len": 256,
+    "max_steps": 1,
+    "mode": "sft_generated",
+    "model_type": "mop_oracle",
+    "save_checkpoints": true,
+    "save_full_checkpoints": true,
+    "target_modules": [
+      "coding"
+    ],
+    "use_generated_params": true
+  },
+  "version": "1"
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "dataset",
+  "metadata": {
+    "description": "Create deterministic splits for a registered lessons dataset"
+  },
+  "payload": {
+    "action": "split",
+    "copy_files": false,
+    "dataset_id": null,
+    "dataset_ref": "coding_bugfix",
+    "kind": "lessons",
+    "metadata": {
+      "description": "Create deterministic splits for coding_bugfix."
+    },
+    "name": "coding_bugfix_split",
+    "output_root": "datasets",
+    "source_paths": [],
+    "split_eval": 0.1,
+    "split_seed": 123,
+    "split_test": 0.1,
+    "split_train": 0.8,
+    "stratify_by": null
+  },
+  "version": "1"
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "benchmark",
+  "metadata": {
+    "description": "Tiny CPU parameter-efficiency benchmark"
+  },
+  "payload": {
+    "benchmark_type": "parameter_efficiency",
+    "description": "Tiny CPU parameter-count smoke benchmark.",
+    "index_path": "data/kts_index.sqlite",
+    "lesson_path": "data/indexed_lessons.jsonl",
+    "max_examples": 4,
+    "max_seq_len": 128,
+    "metadata": {
+      "trainable_policy_mode": "fast_adapters_only"
+    },
+    "model_type": "mop_oracle",
+    "name": "parameter_efficiency_smoke_cpu",
+    "output_root": "benchmarks",
+    "target_modules": [
+      "coding"
+    ],
+    "use_fast_adapters": true
+  },
+  "version": "1"
+}

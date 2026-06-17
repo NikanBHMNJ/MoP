@@ -1,0 +1,29 @@
+{
+  "kind": "sft",
+  "metadata": {
+    "description": "Tiny CPU fast-adapter SFT smoke run"
+  },
+  "payload": {
+    "batch_size": 2,
+    "checkpoint_every_steps": 1,
+    "eval_batches": 1,
+    "fast_adapter_names": [
+      "coding",
+      "debugging",
+      "repair"
+    ],
+    "index_path": "data/kts_index.sqlite",
+    "lesson_path": "data/indexed_lessons.jsonl",
+    "max_seq_len": 256,
+    "max_steps": 1,
+    "mode": "sft_adapter",
+    "model_type": "mop_oracle",
+    "save_checkpoints": true,
+    "save_full_checkpoints": true,
+    "target_modules": [
+      "coding"
+    ],
+    "use_fast_adapters": true
+  },
+  "version": "1"
+}

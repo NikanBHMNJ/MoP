@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mopforge"
+version = "0.45.0"
+description = "MoP-Forge v1.0-beta release candidate polish for local-first Mixture-of-Parameters research and serious single-GPU beta experiments"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "MoP-Forge Contributors" }]
+dependencies = []
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+torch = ["torch"]
+gpu = ["torch"]
+hf = ["tokenizers", "transformers"]
+
+[project.scripts]
+mopforge = "mopforge.cli.main:main"
+
+[tool.setuptools.packages.find]
+include = ["mopforge*"]
+
+[tool.pytest.ini_options]
+addopts = "--basetemp=pytest_tmp -p no:cacheprovider"

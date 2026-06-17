@@ -1,0 +1,34 @@
+{
+  "kind": "analysis",
+  "metadata": {
+    "description": "Template analysis for adapter-vs-generated local outputs"
+  },
+  "payload": {
+    "baseline_filter": {
+      "mode": "sft_adapter"
+    },
+    "benchmark_ids": [],
+    "description": "Analyze adapter-vs-generated experiment summaries and benchmark metrics.",
+    "experiment_ids": [],
+    "group_by": [
+      "mode"
+    ],
+    "metadata": {
+      "allow_empty_sources": true,
+      "source_note": "Add experiment_ids and benchmark_ids from local runs before final reporting."
+    },
+    "metrics": [
+      "final_eval_loss",
+      "eval_loss_mean",
+      "trainable_ratio",
+      "trainable_params",
+      "pass_rate"
+    ],
+    "name": "adapter_vs_generated_analysis",
+    "output_root": "reports",
+    "rank_by": "final_eval_loss",
+    "rank_mode": "min",
+    "run_paths": []
+  },
+  "version": "1"
+}

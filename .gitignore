@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+pytest_tmp/
+.mypy_cache/
+.ruff_cache/
+
+# Local run outputs
+runs/
+gpu_runs/
+artifacts/
+outputs/
+reports/
+benchmarks/
+experiments/
+ablations/
+paper_reports/
+imports/
+manifests/
+
+# Local registries and generated data
+datasets/
+models/
+data/*.jsonl
+data/*.sqlite
+data/*.db
+
+# Build and packaging
+build/
+dist/
+*.egg-info/
+
+# Editors and OS files
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

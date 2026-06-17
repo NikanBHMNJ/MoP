@@ -1,0 +1,20 @@
+{
+  "kind": "benchmark",
+  "metadata": {
+    "description": "Tiny CPU generated-code correctness benchmark"
+  },
+  "payload": {
+    "benchmark_type": "code_correctness",
+    "description": "Tiny CPU generated-code correctness smoke benchmark.",
+    "generation_examples": 2,
+    "generation_max_new_tokens": 32,
+    "index_path": "data/kts_index.sqlite",
+    "lesson_path": "data/indexed_lessons.jsonl",
+    "max_examples": 2,
+    "max_seq_len": 128,
+    "model_type": "dense",
+    "name": "code_correctness_smoke_cpu",
+    "output_root": "benchmarks"
+  },
+  "version": "1"
+}

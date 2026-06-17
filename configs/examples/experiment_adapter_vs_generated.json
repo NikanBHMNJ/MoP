@@ -1,0 +1,82 @@
+{
+  "kind": "experiment",
+  "metadata": {
+    "description": "Tiny CPU adapter-vs-generated SFT experiment"
+  },
+  "payload": {
+    "description": "Tiny CPU fast-adapter SFT vs generated-parameter SFT.",
+    "kind": "list",
+    "max_runs": 2,
+    "name": "adapter_vs_generated_sft_cpu",
+    "runs": [
+      {
+        "kind": "sft",
+        "metadata": {
+          "description": "Tiny CPU sft_adapter smoke run"
+        },
+        "payload": {
+          "batch_size": 2,
+          "checkpoint_every_steps": 1,
+          "eval_batches": 1,
+          "fast_adapter_names": [
+            "coding",
+            "debugging",
+            "repair"
+          ],
+          "index_path": "data/kts_index.sqlite",
+          "lesson_path": "data/indexed_lessons.jsonl",
+          "learning_rate": 0.001,
+          "max_seq_len": 256,
+          "max_steps": 1,
+          "mode": "sft_adapter",
+          "model_type": "mop_oracle",
+          "save_checkpoints": true,
+          "save_full_checkpoints": true,
+          "target_modules": [
+            "coding"
+          ],
+          "use_fast_adapters": true
+        },
+        "version": "1"
+      },
+      {
+        "kind": "sft",
+        "metadata": {
+          "description": "Tiny CPU sft_generated smoke run"
+        },
+        "payload": {
+          "batch_size": 2,
+          "checkpoint_every_steps": 1,
+          "eval_batches": 1,
+          "generated_condition_names": [
+            "coding",
+            "debugging",
+            "repair"
+          ],
+          "generated_rank": 4,
+          "index_path": "data/kts_index.sqlite",
+          "lesson_path": "data/indexed_lessons.jsonl",
+          "learning_rate": 0.001,
+          "max_seq_len": 256,
+          "max_steps": 1,
+          "mode": "sft_generated",
+          "model_type": "mop_oracle",
+          "save_checkpoints": true,
+          "save_full_checkpoints": true,
+          "target_modules": [
+            "coding"
+          ],
+          "use_generated_params": true
+        },
+        "version": "1"
+      }
+    ],
+    "tags": [
+      "cpu",
+      "smoke",
+      "sft",
+      "adapters"
+    ]
+  },
+  "version": "1"
+}

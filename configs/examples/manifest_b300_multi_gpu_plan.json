@@ -1,0 +1,1 @@
+{"kind":"manifest","version":"1","payload":{"action":"create","name":"b300_multi_gpu_plan","config_ref":"configs/examples/experiment_dense_vs_mop.json","config_payload":{},"resource_spec":{"accelerator":"b300","num_gpus":2,"precision":"bf16","nodes":1},"output_root":"manifests","metadata":{"plan_only":true}},"metadata":{"description":"B300 multi-GPU plan only; no GPU execution"}}

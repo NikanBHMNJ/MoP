@@ -1,0 +1,34 @@
+{
+  "kind": "analysis",
+  "metadata": {
+    "description": "Template composite local analysis report"
+  },
+  "payload": {
+    "baseline_filter": {},
+    "benchmark_ids": [],
+    "description": "Build a local Markdown report from experiment and benchmark artifacts.",
+    "experiment_ids": [],
+    "group_by": [
+      "source_type",
+      "mode"
+    ],
+    "metadata": {
+      "allow_empty_sources": true,
+      "source_note": "Use analyze compare with dynamic experiment/benchmark IDs for populated reports."
+    },
+    "metrics": [
+      "final_eval_loss",
+      "eval_loss_mean",
+      "pass_rate",
+      "router_exact_match_rate",
+      "trainable_ratio",
+      "trainable_params"
+    ],
+    "name": "composite_analysis_report",
+    "output_root": "reports",
+    "rank_by": "eval_loss_mean",
+    "rank_mode": "min",
+    "run_paths": []
+  },
+  "version": "1"
+}

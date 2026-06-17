@@ -1,0 +1,1 @@
+{"kind":"model","version":"1","payload":{"action":"register","name":"tiny_mop_oracle","model_id":"tiny_mop_oracle","architecture":{"name":"tiny_mop_oracle","model_type":"mop_oracle","d_model":32,"n_layers":1,"n_heads":2,"max_seq_len":128},"checkpoint_ref":null,"output_root":"models","metadata":{}},"metadata":{"description":"Tiny oracle MoP model registry config"}}

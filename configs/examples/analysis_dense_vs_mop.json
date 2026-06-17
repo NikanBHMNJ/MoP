@@ -1,0 +1,32 @@
+{
+  "kind": "analysis",
+  "metadata": {
+    "description": "Template analysis for dense-vs-MoP local outputs"
+  },
+  "payload": {
+    "baseline_filter": {
+      "model_type": "dense"
+    },
+    "benchmark_ids": [],
+    "description": "Analyze dense-vs-oracle-MoP experiment summaries.",
+    "experiment_ids": [],
+    "group_by": [
+      "model_type"
+    ],
+    "metadata": {
+      "allow_empty_sources": true,
+      "source_note": "Add experiment_ids from local dense-vs-MoP experiments."
+    },
+    "metrics": [
+      "final_eval_loss",
+      "eval_loss_mean",
+      "trainable_ratio"
+    ],
+    "name": "dense_vs_mop_analysis",
+    "output_root": "reports",
+    "rank_by": "final_eval_loss",
+    "rank_mode": "min",
+    "run_paths": []
+  },
+  "version": "1"
+}

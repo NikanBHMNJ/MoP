@@ -1,0 +1,27 @@
+{
+  "kind": "dataset",
+  "metadata": {
+    "description": "Register local coding bugfix lessons as a versioned dataset"
+  },
+  "payload": {
+    "action": "register",
+    "copy_files": false,
+    "dataset_id": "coding_bugfix",
+    "dataset_ref": null,
+    "kind": "lessons",
+    "metadata": {
+      "description": "Register local coding bugfix lessons."
+    },
+    "name": "coding_bugfix",
+    "output_root": "datasets",
+    "source_paths": [
+      "data/coding_bugfix_lessons.jsonl"
+    ],
+    "split_eval": 0.1,
+    "split_seed": 123,
+    "split_test": 0.1,
+    "split_train": 0.8,
+    "stratify_by": null
+  },
+  "version": "1"
+}

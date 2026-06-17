@@ -1,0 +1,22 @@
+{
+  "kind": "pretrain",
+  "metadata": {
+    "description": "Tiny CPU continued-pretraining smoke run"
+  },
+  "payload": {
+    "batch_size": 1,
+    "checkpoint_every_steps": 1,
+    "corpus_path": "data/text_corpus.jsonl",
+    "d_model": 32,
+    "eval_batches": 1,
+    "lesson_path": "data/indexed_lessons.jsonl",
+    "max_seq_len": 128,
+    "max_steps": 1,
+    "model_type": "dense",
+    "n_heads": 2,
+    "n_layers": 1,
+    "run_name": "config_cpt_cpu",
+    "save_full_checkpoints": true
+  },
+  "version": "1"
+}

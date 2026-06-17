@@ -1,0 +1,19 @@
+{
+  "kind": "benchmark",
+  "metadata": {
+    "description": "Tiny CPU router benchmark"
+  },
+  "payload": {
+    "batch_size": 2,
+    "benchmark_type": "router",
+    "description": "Tiny CPU router quality smoke benchmark.",
+    "index_path": "data/kts_index.sqlite",
+    "lesson_path": "data/indexed_lessons.jsonl",
+    "max_examples": 4,
+    "max_seq_len": 128,
+    "model_type": "dense",
+    "name": "router_smoke_cpu",
+    "output_root": "benchmarks"
+  },
+  "version": "1"
+}

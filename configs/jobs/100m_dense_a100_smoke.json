@@ -1,0 +1,30 @@
+{
+  "kind": "gpu_train",
+  "version": "1",
+  "payload": {
+    "name": "100m_dense_a100_smoke",
+    "model_type": "dense",
+    "lesson_path": "data/coding_bugfix_lessons.jsonl",
+    "max_steps": 100,
+    "micro_batch_size": 1,
+    "gradient_accumulation_steps": 8,
+    "d_model": 768,
+    "n_layers": 12,
+    "n_heads": 12,
+    "max_seq_len": 1024,
+    "device": "cuda",
+    "precision": "bf16",
+    "enable_amp": true,
+    "allow_tf32": true,
+    "require_device_available": false,
+    "activation_checkpointing": true,
+    "metadata": {
+      "parameter_count": 100000000,
+      "target_gpu_memory_gb": 80,
+      "profile": "a100_100m_dense_smoke"
+    }
+  },
+  "metadata": {
+    "description": "100M dense A100 smoke profile; executable only when user-provided hardware/data are ready."
+  }
+}

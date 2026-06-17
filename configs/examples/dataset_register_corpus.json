@@ -1,0 +1,27 @@
+{
+  "kind": "dataset",
+  "metadata": {
+    "description": "Register local continued-pretraining corpus as a versioned dataset"
+  },
+  "payload": {
+    "action": "register",
+    "copy_files": false,
+    "dataset_id": "text_corpus",
+    "dataset_ref": null,
+    "kind": "corpus",
+    "metadata": {
+      "description": "Register local continued-pretraining corpus."
+    },
+    "name": "text_corpus",
+    "output_root": "datasets",
+    "source_paths": [
+      "data/text_corpus.jsonl"
+    ],
+    "split_eval": 0.1,
+    "split_seed": 123,
+    "split_test": 0.1,
+    "split_train": 0.8,
+    "stratify_by": null
+  },
+  "version": "1"
+}

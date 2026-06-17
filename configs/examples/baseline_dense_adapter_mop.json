@@ -1,0 +1,1 @@
+{"kind":"baseline","version":"1","payload":{"action":"experiment","baselines":["dense_full","adapter_only","generated_params_only","mop_module_only"],"output_root":"experiments","metadata":{}},"metadata":{"description":"Tiny baseline experiment config"}}

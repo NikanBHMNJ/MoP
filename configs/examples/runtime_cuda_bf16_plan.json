@@ -1,0 +1,1 @@
+{"kind":"runtime","version":"1","payload":{"device":"cuda","precision":"bf16","enable_amp":true,"allow_tf32":true,"deterministic":false,"compile_model":false,"require_device_available":false,"log_runtime_warnings":true,"metadata":{"plan_only":true}},"metadata":{"description":"CUDA bf16 runtime plan; falls back on CPU-only machines"}}
