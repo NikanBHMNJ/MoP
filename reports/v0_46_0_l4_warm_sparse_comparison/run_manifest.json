@@ -1,0 +1,30 @@
+{
+  "dense": {
+    "checkpoint_path": "gpu_runs/20260620T201048Z-v0-46-0-l4-warm-sparse-comparison-dense-extended-e98f5302/checkpoints/checkpoint-step-000300.pt",
+    "config_path": "configs/jobs/colab_l4_v046/dense_extended.json",
+    "label": "dense",
+    "result_path": "gpu_runs/20260620T201048Z-v0-46-0-l4-warm-sparse-comparison-dense-extended-e98f5302/gpu_training_result.json",
+    "run_id": "20260620T201048Z-v0-46-0-l4-warm-sparse-comparison-dense-extended-e98f5302"
+  },
+  "mop_full": {
+    "checkpoint_path": "gpu_runs/20260620T201127Z-v0-46-0-l4-warm-sparse-comparison-mop-full-extended-dcea2867/checkpoints/checkpoint-step-000300.pt",
+    "config_path": "configs/jobs/colab_l4_v046/mop_full_extended.json",
+    "label": "mop_full",
+    "result_path": "gpu_runs/20260620T201127Z-v0-46-0-l4-warm-sparse-comparison-mop-full-extended-dcea2867/gpu_training_result.json",
+    "run_id": "20260620T201127Z-v0-46-0-l4-warm-sparse-comparison-mop-full-extended-dcea2867"
+  },
+  "warm_adapter_norm_head_64": {
+    "checkpoint_path": "gpu_runs/20260620T201225Z-v0-46-0-l4-warm-sparse-comparison-warm-adapter-norm-head-64-79414833/checkpoints/checkpoint-step-000300.pt",
+    "config_path": "configs/jobs/colab_l4_v046/warm_adapter_norm_head_64.json",
+    "label": "warm_adapter_norm_head_64",
+    "result_path": "gpu_runs/20260620T201225Z-v0-46-0-l4-warm-sparse-comparison-warm-adapter-norm-head-64-79414833/gpu_training_result.json",
+    "run_id": "20260620T201225Z-v0-46-0-l4-warm-sparse-comparison-warm-adapter-norm-head-64-79414833"
+  },
+  "warm_lora_rank8": {
+    "checkpoint_path": "gpu_runs/20260620T201241Z-v0-46-0-l4-warm-sparse-comparison-warm-lora-rank8-f610cc63/checkpoints/checkpoint-step-000300.pt",
+    "config_path": "configs/jobs/colab_l4_v046/warm_lora_rank8.json",
+    "label": "warm_lora_rank8",
+    "result_path": "gpu_runs/20260620T201241Z-v0-46-0-l4-warm-sparse-comparison-warm-lora-rank8-f610cc63/gpu_training_result.json",
+    "run_id": "20260620T201241Z-v0-46-0-l4-warm-sparse-comparison-warm-lora-rank8-f610cc63"
+  }
+}

@@ -9,7 +9,7 @@ efficiency claim should name the axis being improved, such as trainable
 parameters, VRAM, checkpoint size, active compute, throughput, or generated-code
 quality.
 
-MoP-Forge is not a production distributed LLM trainer. It does not include
+MoP-Forge is not a production distributed LLM training framework. It does not include
 FSDP, DeepSpeed, custom CUDA kernels, model downloads, cloud launchers, or a
 hardened multi-GPU training stack.
 
@@ -72,6 +72,17 @@ Useful derived points:
 - MoP Adapter-Only used about `99.916%` fewer trainable parameters than Dense.
 - MoP Adapter-Only checkpoint size was about `63%` smaller than Dense.
 
+A newer v0.46.0 Colab/L4 TinyStories warm sparse comparison is available under:
+
+`reports/v0_46_0_l4_warm_sparse_comparison/`
+
+It compares Dense, MoP Full, Warm Adapter Norm/Head 64, and Warm LoRA Rank 8
+for 300 steps on the same 6,000-record TinyStories corpus slice. In this short
+run, the two warm sparse profiles had lower eval loss than Dense, higher
+tokens/sec, lower reserved VRAM, far fewer trainable parameters, and much
+smaller trainable-only checkpoints. Treat this as promising workflow evidence,
+not a paper-grade conclusion.
+
 ## Current Research Direction
 
 Goal 47 implemented the infrastructure needed to reduce sparse-run loss without
@@ -86,8 +97,9 @@ giving up the efficiency story:
 - Gate claims with eval loss, throughput, VRAM, checkpoint size, generated-code
   exact match, and verifier pass rate.
 
-This work is implemented and tested, but it still needs real CUDA experiment
-results before claiming a loss or VRAM improvement over the Goal 46 evidence.
+This work is implemented and tested. The first L4 warm sparse report is
+available under `reports/v0_46_0_l4_warm_sparse_comparison/`, but broader claims
+still need longer runs, repeated seeds, and task-specific quality checks.
 
 ## Quickstart
 
@@ -167,9 +179,11 @@ axis.
 
 - [Docs index](docs/README.md)
 - [GPU quickstart](docs/gpu_quickstart.md)
+- [Colab L4 TinyStories v0.46.0 efficiency comparison notebook](notebooks/colab_l4_v046_efficiency_comparison.ipynb)
 - [GPU efficiency benchmarking](docs/gpu_efficiency_benchmarking.md)
 - [Warm sparse comparison template](docs/warm_sparse_efficiency_comparison_template.md)
 - [Goal 46 GPU efficiency report](reports/goal46_gpu_efficiency/README.md)
+- [v0.46.0 L4 warm sparse comparison report](reports/v0_46_0_l4_warm_sparse_comparison/README.md)
 - [Known limitations](docs/known_limitations.md)
 
 ## Validation
@@ -205,6 +219,6 @@ release checks passed for version 0.46.0
 
 MoP-Forge is now a measurement-oriented MoP research framework. It can run
 dense and sparse experiments, preserve lightweight evidence artifacts, and make
-claims testable. The next milestone is not another implementation-only claim;
-it is a real GPU comparison showing whether warm sparse MoP can close the loss
-gap while keeping a measurable efficiency advantage.
+claims testable. The v1.0-beta path is not another implementation-only claim;
+it is a longer, repeated GPU comparison showing whether warm sparse MoP can
+close the loss gap while keeping a measurable efficiency advantage.

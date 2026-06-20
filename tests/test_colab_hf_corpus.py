@@ -8,6 +8,7 @@ from pathlib import Path
 from scripts.build_colab_hf_corpus import (
     extract_text,
     parse_args,
+    resolve_hf_split,
     rows_to_text_corpus_records,
 )
 
@@ -19,7 +20,13 @@ def test_parse_args_defaults_and_overrides() -> None:
     assert args.split == "validation"
     assert args.text_field == "text"
     assert args.max_records == 5
-    assert args.streaming is True
+    assert args.streaming is False
+
+
+def test_resolve_hf_split_bounds_non_streaming_rows() -> None:
+    assert resolve_hf_split("train", streaming=False, max_records=6000) == "train[:6000]"
+    assert resolve_hf_split("train", streaming=True, max_records=6000) == "train"
+    assert resolve_hf_split("train[:100]", streaming=False, max_records=6000) == "train[:100]"
 
 
 def test_rows_to_text_corpus_records_limits_and_metadata() -> None:

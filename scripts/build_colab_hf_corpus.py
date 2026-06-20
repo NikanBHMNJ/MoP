@@ -1,7 +1,7 @@
 """Build a MoP-Forge TextCorpusRecord JSONL file from HF or local JSONL rows.
 
-The Colab path uses ``datasets.load_dataset(..., streaming=True)`` by default.
-Tests and offline verification can use ``--input-jsonl`` to exercise the same
+The Colab path uses a bounded non-streaming Hugging Face split by default. Tests
+and offline verification can use ``--input-jsonl`` to exercise the same
 conversion code without internet access or Hugging Face dependencies.
 """
 
@@ -26,7 +26,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--text-field", default="text", help="row field containing text")
     parser.add_argument("--max-records", type=int, default=1000, help="maximum records to write")
     parser.add_argument("--output", default="data/colab_tinystories_corpus.jsonl", help="output JSONL path")
-    parser.add_argument("--streaming", action=argparse.BooleanOptionalAction, default=True, help="use HF streaming")
+    parser.add_argument("--streaming", action=argparse.BooleanOptionalAction, default=False, help="use HF streaming")
     parser.add_argument("--input-jsonl", help="optional local JSONL input for offline conversion")
     parser.add_argument("--id-prefix", help="record id prefix; defaults to a slug of dataset/split")
     parser.add_argument("--source", help="record source label; defaults to dataset name")
@@ -42,7 +42,7 @@ def main(argv: list[str] | None = None) -> int:
     rows = (
         read_jsonl_rows(args.input_jsonl)
         if args.input_jsonl
-        else load_hf_rows(args.dataset, args.split, streaming=bool(args.streaming))
+        else load_hf_rows(args.dataset, args.split, streaming=bool(args.streaming), max_records=args.max_records)
     )
     records = rows_to_text_corpus_records(
         rows,
@@ -70,7 +70,13 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def load_hf_rows(dataset_name: str, split: str, *, streaming: bool = True) -> Iterable[dict[str, Any]]:
+def load_hf_rows(
+    dataset_name: str,
+    split: str,
+    *,
+    streaming: bool = False,
+    max_records: int | None = None,
+) -> Iterable[dict[str, Any]]:
     try:
         from datasets import load_dataset
     except Exception as exc:
@@ -78,7 +84,14 @@ def load_hf_rows(dataset_name: str, split: str, *, streaming: bool = True) -> It
             "Hugging Face datasets is required for remote dataset loading. "
             "Install it in Colab with `pip install datasets`, or use --input-jsonl."
         ) from exc
-    return load_dataset(dataset_name, split=split, streaming=streaming)
+    resolved_split = resolve_hf_split(split, streaming=streaming, max_records=max_records)
+    return load_dataset(dataset_name, split=resolved_split, streaming=streaming)
+
+
+def resolve_hf_split(split: str, *, streaming: bool, max_records: int | None = None) -> str:
+    if streaming or max_records is None or max_records <= 0 or "[" in split:
+        return split
+    return f"{split}[:{max_records}]"
 
 
 def read_jsonl_rows(path: str | Path) -> Iterator[dict[str, Any]]:

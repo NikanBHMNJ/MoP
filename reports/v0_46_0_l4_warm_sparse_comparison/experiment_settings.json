@@ -1,0 +1,32 @@
+{
+  "corpus_dataset": "roneneldan/TinyStories",
+  "corpus_effective_split": "train[:6000]",
+  "corpus_max_records": 6000,
+  "corpus_path": "data/colab_tinystories_corpus.jsonl",
+  "corpus_split": "train",
+  "corpus_streaming": false,
+  "corpus_summary": {
+    "dataset": "roneneldan/TinyStories",
+    "input_jsonl": null,
+    "output": "data/colab_tinystories_corpus.jsonl",
+    "preview_ids": [
+      "roneneldan-tinystories-train-6000-00000000",
+      "roneneldan-tinystories-train-6000-00000001",
+      "roneneldan-tinystories-train-6000-00000002"
+    ],
+    "records_written": 6000,
+    "split": "train[:6000]",
+    "streaming": false,
+    "text_field": "text"
+  },
+  "corpus_text_field": "text",
+  "created_utc": "2026-06-20T20:13:46Z",
+  "eval_every_steps": 50,
+  "hardware_target": "google_colab_l4",
+  "max_steps": 300,
+  "mopforge_version": "0.46.0",
+  "report_id": "v0_46_0_l4_warm_sparse_comparison",
+  "run_generation_eval": false,
+  "save_every_steps": 150,
+  "split_seed": 42
+}

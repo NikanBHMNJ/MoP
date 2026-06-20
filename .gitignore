@@ -17,6 +17,8 @@ pytest_tmp/
 !/reports/
 !/reports/goal46_gpu_efficiency/
 !/reports/goal46_gpu_efficiency/**
+!/reports/v0_46_0_l4_warm_sparse_comparison/
+!/reports/v0_46_0_l4_warm_sparse_comparison/**
 /benchmarks/
 /experiments/
 /ablations/
@@ -25,7 +27,8 @@ pytest_tmp/
 /manifests/
 /datasets/
 /models/
-/notebooks/
+/notebooks/*
+!/notebooks/colab_l4_v046_efficiency_comparison.ipynb
 
 # Local registries and generated data
 /data/*.jsonl
