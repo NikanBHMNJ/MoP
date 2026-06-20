@@ -27,6 +27,7 @@ def evaluate_candidate_text_for_lesson(
         "lesson_id": lesson.id,
         "generated_text": generated_text,
         "candidate_code": candidate_code,
+        "exact_match": candidate_code.strip() == lesson.expected_output.strip(),
         "target_modules": list(lesson.target_modules),
     }
     if not isinstance(test_code, str) or not test_code.strip():
@@ -115,11 +116,16 @@ def summarize_generation_results(results: list[dict[str, Any]]) -> dict[str, Any
         result.get("failure_type") or "passed" for result in results
     )
     pass_count = sum(1 for result in results if result.get("passed"))
+    exact_match_count = sum(1 for result in results if result.get("exact_match"))
     total = len(results)
     return {
         "gen_eval_examples": total,
         "gen_pass_count": pass_count,
         "gen_pass_rate": pass_count / total if total else 0.0,
+        "gen_verifier_pass_count": pass_count,
+        "gen_verifier_pass_rate": pass_count / total if total else 0.0,
+        "gen_exact_match_count": exact_match_count,
+        "gen_exact_match_rate": exact_match_count / total if total else 0.0,
         "gen_failures_by_type": dict(sorted(failures.items())),
     }
 

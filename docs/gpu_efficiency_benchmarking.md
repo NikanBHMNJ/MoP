@@ -1,22 +1,27 @@
 # GPU Efficiency Benchmarking
 
-MoP-Forge can run dense and MoP smoke jobs on a CUDA GPU, but GPU-compatible
-does not automatically mean GPU-efficient. Goal 46 adds the metrics and sparse
-training modes needed to test whether a MoP run uses fewer trainable or active
-parameters than a dense baseline while keeping loss, throughput, and memory in
-view.
+MoP-Forge can run dense and MoP jobs on a single device and write comparable
+efficiency artifacts. GPU-compatible means a job runs. GPU-efficient means a
+run improves a named efficiency axis while keeping quality acceptable.
 
-## GPU-Compatible vs GPU-Efficient
+This document describes the implemented measurement workflow. It does not claim
+that MoP is already better than Dense.
 
-GPU-compatible means the trainer can execute on CUDA/BF16 and write results.
-GPU-efficient means the run demonstrates a useful tradeoff, such as lower
-trainable parameters, lower active parameter estimates, acceptable throughput,
-and comparable loss. A full MoP run with `trainable_param_ratio=1.0` is a
-compatibility baseline, not an efficiency test.
+## Evidence vs Capability
 
-## Efficiency Metrics
+The committed evidence is the Goal 46 100M Colab/L4 comparison:
 
-New GPU runs write nested metrics under:
+- Dense and MoP Full reached similar eval loss.
+- MoP Full was not more efficient.
+- MoP Adapter-Only was faster and lighter but had worse eval loss.
+
+The newer warm sparse, activation-cache, routed-FFN, and internal-LoRA features
+are implemented to support the next experiment. They need fresh CUDA results
+before they can be used as performance claims.
+
+## Metrics Written By GPU Runs
+
+GPU runs write nested metrics under:
 
 ```json
 {
@@ -25,88 +30,136 @@ New GPU runs write nested metrics under:
       "tokens_per_sec": 0.0,
       "samples_per_sec": 0.0,
       "peak_reserved_gb": null,
-      "trainable_param_ratio": 0.0
+      "trainable_param_ratio": 0.0,
+      "active_param_ratio": 0.0
     }
   }
 }
 ```
 
-Key fields:
+Important fields:
 
-- `trainable_params` and `trainable_param_ratio`: how many parameters the
-  optimizer updates.
-- `active_param_estimate` and `active_param_ratio`: approximate active MoP
-  parameters for the observed routing path.
-- `tokens_per_sec` and `samples_per_sec`: observed throughput for the run.
-- `peak_allocated_gb`, `peak_reserved_gb`, `final_allocated_gb`,
+- `trainable_params` and `trainable_param_ratio`: parameters updated by the
+  optimizer.
+- `active_param_estimate` and `active_param_ratio`: approximate parameters used
+  by the routed path.
+- `active_trainable_param_estimate` and `active_trainable_param_ratio`:
+  trainable subset of the active path.
+- `tokens_per_sec`, `samples_per_sec`, and `step_time_sec`: observed
+  throughput.
+- `peak_allocated_gb`, `peak_reserved_gb`, `final_allocated_gb`, and
   `final_reserved_gb`: CUDA memory stats when available.
-- `checkpoint_size_mb`: size of the latest local checkpoint.
-- `active_module_density`, `active_adapter_density`, and
-  `generated_condition_density`: routing/fast-parameter density metadata.
+- `checkpoint_size_mb`: size of the latest checkpoint artifact.
+- `estimated_active_flop_ratio` and `estimated_backward_flop_ratio`: planning
+  estimates for routed or frozen paths.
+- `generation_eval`: generated-code exact-match and verifier-pass metrics when
+  enabled.
 
-On CPU-only runs, CUDA memory fields are `null`.
+On CPU-only runs, CUDA memory fields are `null`; those runs validate behavior,
+not GPU performance.
 
-## Sparse MoP Training Modes
+## Sparse Training Modes
 
-Use these `trainable_policy_mode` values:
+Use `trainable_policy_mode` to define what trains:
 
-- `all`: full training; compatibility baseline.
-- `adapters_only`: train fast adapters and router if present; freeze core and
-  module blocks.
+- `all`: full training; quality or compatibility baseline.
+- `adapters_only`: train fast adapters and optional router/head/norm flags.
+- `adapters_norm_head`: train adapters plus final norm and LM head.
 - `modules_only`: train module-specific blocks; freeze shared core.
-- `core_frozen`: train module blocks and adapters; freeze shared core.
-- `router_adapters_only`: train router and adapters where present; freeze core
-  and module blocks.
+- `core_frozen`: train sparse module paths while freezing the shared core.
+- `router_only`: train routing parameters only.
+- `router_adapters_only`: train router and adapters where present.
 
-Parameter group summaries in `metrics.json` show each group’s total, trainable,
-and frozen counts.
+Parameter group summaries in `metrics.json` show total, trainable, and frozen
+counts for each group.
 
-## Colab Efficiency Configs
+## Warm Sparse Workflow
 
-Validate and estimate all profiles before running:
+The recommended next experiment starts from a learned full-MoP or Dense
+checkpoint instead of training sparse adapters from a random frozen base.
 
 ```bash
-mopforge gpu validate configs/jobs/100m_dense_colab_efficiency.json
-mopforge gpu estimate configs/jobs/100m_dense_colab_efficiency.json
-mopforge gpu validate configs/jobs/100m_mop_full_colab_efficiency.json
-mopforge gpu validate configs/jobs/100m_mop_adapters_only_colab_efficiency.json
-mopforge gpu validate configs/jobs/100m_mop_core_frozen_colab_efficiency.json
-mopforge gpu validate configs/jobs/100m_mop_router_adapters_colab_efficiency.json
+mopforge gpu prepare-efficiency-data --count-per-category 100 --split-seed 42
+mopforge gpu train configs/jobs/100m_dense_extended_efficiency.json
+mopforge gpu train configs/jobs/100m_mop_full_extended_efficiency.json
+mopforge gpu write-warm-sparse-sweep \
+  --base-checkpoint <mop_full_run_id_or_checkpoint> \
+  --dataset-ref <dataset_id@version_id> \
+  --dataset-split-id <split_id> \
+  --output-dir configs/jobs/warm_sparse_sweep
 ```
 
-Recommended first comparison:
+The sweep generator creates adapter, adapter+norm/head, core-frozen, cached
+tail, and routed low-rank profiles. Generated profiles keep the same token
+budget and fixed split metadata.
+
+## Activation Caches
+
+Activation caches are for frozen-prefix sparse-tail training. The cache writer
+stores hidden states, attention masks, labels, target modules, source IDs, and
+config/checkpoint hashes.
 
 ```bash
-mopforge gpu train configs/jobs/100m_dense_colab_efficiency.json
-mopforge gpu train configs/jobs/100m_mop_adapters_only_colab_efficiency.json
-mopforge gpu compare-runs <dense_run_id> <adapter_mop_run_id> \
-  --output outputs/gpu_efficiency_comparison.json
+mopforge gpu cache-activations \
+  configs/jobs/100m_mop_warm_adapters_norm_head_64_colab_efficiency.json \
+  --checkpoint <mop_full_run_id_or_checkpoint> \
+  --output outputs/warm_sparse_cache.pt
 ```
 
-The CLI also writes `outputs/gpu_efficiency_comparison.csv`.
+The cache path refuses unsafe runs where the encoded prefix, module bank, or
+routed expert blocks are still trainable. This prevents stale activation caches
+from being treated as equivalent training data.
 
-The standalone helper supports more explicit paths:
+## Routed Expert And Low-Rank Paths
+
+The routed-FFN path separates a shared trunk from routed expert blocks. Dense
+or post-core checkpoints can warm-start routed blocks by cloning learned dense
+FFN weights into each expert.
+
+The routed low-rank path adds zero-initialized deltas inside:
+
+- attention Q/K/V projections,
+- attention output projection,
+- FFN up projection,
+- FFN down projection.
+
+Because the deltas start at zero, enabling the path should not change the warm
+base output before training. This is a quality-recovery path, not a proven GPU
+efficiency result yet.
+
+## Comparing And Gating Runs
+
+Compare runs:
 
 ```bash
-python scripts/compare_gpu_runs.py \
-  --runs <dense_run_id> <adapter_mop_run_id> \
-  --gpu-runs-dir gpu_runs \
-  --output-json outputs/gpu_efficiency_comparison.json \
+mopforge gpu compare-runs <dense_run_id> <sparse_run_id> \
+  --output outputs/gpu_efficiency_comparison.json \
   --output-csv outputs/gpu_efficiency_comparison.csv
 ```
 
-## Interpretation
+Gate a sparse claim:
 
-Do not judge efficiency from one number. Check:
+```bash
+mopforge gpu gate-efficiency \
+  --dense-run <dense_run_id> \
+  --sparse-run <sparse_run_id> \
+  --output outputs/gpu_efficiency_gate_report.json
+```
 
-- Loss: sparse MoP must remain useful, not merely small.
-- Trainable parameters: adapter-only/core-frozen MoP should be below dense.
-- Active parameters: MoP should activate less than its full total where routing
-  is meaningful.
-- Throughput: sparse parameter updates can still be slower if routing overhead
-  dominates.
-- VRAM: CUDA reserved memory often matters more than allocated memory in Colab.
+Do not claim same-quality sparse efficiency unless:
 
-Short 100M smoke tests are debugging evidence, not research conclusions. Treat
-them as a gate before longer repeated runs with fixed seeds, equal data, equal
-token budgets, and honest reporting.
+- eval loss is close to Dense,
+- generated-code verifier pass rate is close to Dense,
+- throughput is not materially worse,
+- the run improves a named axis such as VRAM, trainable params, checkpoint
+  size, cached-tail training time, or active expert compute.
+
+## Interpretation Rules
+
+Use cautious language:
+
+- "lower trainable parameter ratio" is not the same as "lower active compute."
+- "lower checkpoint size" is not the same as "lower VRAM."
+- CPU fallback is not GPU performance evidence.
+- A single short run is debugging evidence, not a research conclusion.
+- Any `3x` to `50x` statement must name the exact axis and cite the report.

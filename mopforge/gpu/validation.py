@@ -24,6 +24,8 @@ def validate_gpu_training_config(config: GPUTrainingConfig) -> list[str]:
         messages.append(f"WARNING: lesson_path does not exist yet: {config.lesson_path}")
     if config.corpus_path and not Path(config.corpus_path).exists():
         messages.append(f"WARNING: corpus_path does not exist yet: {config.corpus_path}")
+    if config.activation_cache_path and not Path(config.activation_cache_path).exists():
+        messages.append(f"WARNING: activation_cache_path does not exist yet: {config.activation_cache_path}")
     if config.dataset_ref:
         try:
             DatasetRegistry().resolve_dataset_ref(config.dataset_ref)
@@ -79,6 +81,17 @@ def dry_run_gpu_training_config(config: GPUTrainingConfig) -> dict:
         "effective_batch_size": config.effective_batch_size,
         "activation_checkpointing": config.activation_checkpointing,
         "efficient_attention": config.efficient_attention,
+        "module_names": list(config.module_names or []),
+        "always_include_core": config.always_include_core,
+        "mop_block_type": config.mop_block_type,
+        "resume_model_only": config.resume_model_only,
+        "save_trainable_only_checkpoints": config.save_trainable_only_checkpoints,
+        "activation_cache_path": config.activation_cache_path,
+        "dataset_split_id": config.dataset_split_id,
+        "run_generation_eval": config.run_generation_eval,
+        "early_stopping_enabled": config.early_stopping_enabled,
+        "early_stopping_patience_evals": config.early_stopping_patience_evals,
+        "early_stopping_min_delta": config.early_stopping_min_delta,
         "output_root": config.output_root,
         "memory_estimate": estimate.to_dict(),
         "warnings": validate_gpu_training_config(config),

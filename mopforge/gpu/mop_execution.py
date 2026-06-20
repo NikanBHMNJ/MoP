@@ -7,7 +7,7 @@ from typing import Any
 
 from mopforge.models.fast_adapters import adapter_names_from_target_modules
 from mopforge.models.generated_params import condition_names_from_target_modules
-from mopforge.training.parameter_policy import count_parameters
+from mopforge.training.parameter_policy import count_parameters, infer_parameter_group
 from mopforge.training.routing import normalize_target_modules
 
 
@@ -24,14 +24,32 @@ class ModuleRoutingPlan:
         return asdict(self)
 
 
-def build_module_routing_plan(active_modules, known_modules) -> ModuleRoutingPlan:
+def build_module_routing_plan(
+    active_modules,
+    known_modules,
+    *,
+    always_include_core: bool = True,
+) -> ModuleRoutingPlan:
     known = list(known_modules)
     if active_modules is None:
-        per_sample = [normalize_target_modules([], known)]
+        per_sample = [normalize_target_modules([], known, always_include_core=always_include_core)]
     elif isinstance(active_modules, str) or all(isinstance(item, str) for item in list(active_modules)):
-        per_sample = [normalize_target_modules(active_modules, known)]
+        per_sample = [
+            normalize_target_modules(
+                active_modules,
+                known,
+                always_include_core=always_include_core,
+            )
+        ]
     else:
-        per_sample = [normalize_target_modules(modules, known) for modules in active_modules]
+        per_sample = [
+            normalize_target_modules(
+                modules,
+                known,
+                always_include_core=always_include_core,
+            )
+            for modules in active_modules
+        ]
     active_by_module = {name: [] for name in known}
     for index, modules in enumerate(per_sample):
         for module in modules:
@@ -67,21 +85,92 @@ def estimate_active_parameters(model, active_modules=None) -> dict[str, Any]:
     totals = count_parameters(model)
     module_names = list(getattr(model, "module_names", []))
     if not module_names:
-        return {"active_params": totals["trainable"], "total_params": totals["total"], "active_ratio": 1.0}
-    plan = build_module_routing_plan(active_modules or module_names, module_names)
-    active_module_count = len(plan.active_by_module) or 1
-    module_param_total = 0
+        return {
+            "active_params": totals["trainable"],
+            "total_params": totals["total"],
+            "active_ratio": 1.0,
+            "active_trainable_params": totals["trainable"],
+            "active_trainable_ratio": totals["trainable"] / max(1, totals["total"]),
+            "shared_frozen_params": totals["frozen"],
+            "routed_module_params": 0,
+        }
+    always_include_core = bool(getattr(model, "always_include_core", True))
+    plan = build_module_routing_plan(
+        active_modules or module_names,
+        module_names,
+        always_include_core=always_include_core,
+    )
+    active_modules_set = set(plan.active_by_module)
+    module_totals: dict[str, dict[str, int]] = {}
+    shared_total = 0
+    shared_trainable = 0
     for name, parameter in model.named_parameters():
-        if ".module_bank.blocks." in name:
-            module_param_total += int(parameter.numel())
-    shared = max(0, totals["total"] - module_param_total)
-    per_module = module_param_total / max(1, len(module_names))
-    active = int(shared + per_module * active_module_count)
+        count = int(parameter.numel())
+        group = infer_parameter_group(name)
+        if group.startswith("module:"):
+            module_name = group.split(":", 1)[1]
+            entry = module_totals.setdefault(module_name, {"total": 0, "trainable": 0})
+            entry["total"] += count
+            if parameter.requires_grad:
+                entry["trainable"] += count
+        else:
+            shared_total += count
+            if parameter.requires_grad:
+                shared_trainable += count
+    active_module_total = sum(
+        values["total"]
+        for module, values in module_totals.items()
+        if module in active_modules_set
+    )
+    active_module_trainable = sum(
+        values["trainable"]
+        for module, values in module_totals.items()
+        if module in active_modules_set
+    )
+    module_param_total = sum(values["total"] for values in module_totals.values())
+    module_trainable_total = sum(values["trainable"] for values in module_totals.values())
+    active = int(shared_total + active_module_total)
+    active_trainable = int(shared_trainable + active_module_trainable)
+    mop_block_type = getattr(model, "mop_block_type", "post_core_mlp")
+    expert_count = int(getattr(model, "expert_count", len(module_names)) or len(module_names))
+    active_experts = int(getattr(model, "active_experts", 1) or 1)
+    active_expert_count = min(expert_count, max(1, len(active_modules_set), active_experts))
+    shared_compute_ratio = float(getattr(model, "shared_depth_ratio", 1.0) or 1.0)
+    if mop_block_type == "routed_ffn":
+        expert_fraction = max(0.0, 1.0 - shared_compute_ratio)
+        expert_compute_ratio = expert_fraction * (active_expert_count / max(1, expert_count))
+        estimated_active_flop_ratio = min(1.0, shared_compute_ratio + expert_compute_ratio)
+    else:
+        expert_compute_ratio = None
+        estimated_active_flop_ratio = active / max(1, totals["total"])
+    estimated_backward_flop_ratio = (
+        active_trainable / max(1, totals["total"])
+        if totals["trainable"] < totals["total"]
+        else estimated_active_flop_ratio
+    )
     return {
         "active_params": active,
         "total_params": totals["total"],
         "active_ratio": active / max(1, totals["total"]),
+        "active_trainable_params": active_trainable,
+        "active_trainable_ratio": active_trainable / max(1, totals["total"]),
+        "shared_params": shared_total,
+        "shared_trainable_params": shared_trainable,
+        "shared_frozen_params": max(0, shared_total - shared_trainable),
+        "routed_module_params": active_module_total,
+        "routed_module_trainable_params": active_module_trainable,
+        "total_module_params": module_param_total,
+        "total_module_trainable_params": module_trainable_total,
+        "active_module_count": len(active_modules_set),
+        "known_module_count": len(module_names),
         "routing_density": plan.density,
+        "mop_block_type": mop_block_type,
+        "active_expert_count": active_expert_count if mop_block_type == "routed_ffn" else None,
+        "expert_count": expert_count if mop_block_type == "routed_ffn" else None,
+        "expert_compute_ratio": expert_compute_ratio,
+        "shared_compute_ratio": shared_compute_ratio if mop_block_type == "routed_ffn" else None,
+        "estimated_active_flop_ratio": estimated_active_flop_ratio,
+        "estimated_backward_flop_ratio": estimated_backward_flop_ratio,
     }
 
 

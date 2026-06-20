@@ -1,0 +1,46 @@
+{
+  "kind": "gpu_train",
+  "metadata": {
+    "description": "Extended same-token-budget dense quality and efficiency baseline."
+  },
+  "payload": {
+    "activation_checkpointing": true,
+    "allow_tf32": true,
+    "device": "auto",
+    "d_model": 768,
+    "early_stopping_enabled": false,
+    "enable_amp": true,
+    "eval_batches": 2,
+    "eval_every_steps": 100,
+    "generation_eval_examples": 2,
+    "generation_max_new_tokens": 32,
+    "gradient_accumulation_steps": 8,
+    "learning_rate": 0.0003,
+    "lesson_path": "data/coding_bugfix_efficiency_lessons.jsonl",
+    "log_every_steps": 25,
+    "max_eval_examples": 512,
+    "max_seq_len": 1024,
+    "max_steps": 2000,
+    "max_train_examples": 10000,
+    "metadata": {
+      "description": "Dense 100M extended baseline for the fixed Goal 47 comparison.",
+      "fixed_eval_seed": 42,
+      "parameter_count": 100000000,
+      "profile": "100m_dense_extended_efficiency",
+      "same_token_budget": true
+    },
+    "micro_batch_size": 1,
+    "model_type": "dense",
+    "n_heads": 12,
+    "n_layers": 12,
+    "name": "100m_dense_extended_efficiency",
+    "precision": "auto",
+    "require_device_available": false,
+    "run_generation_eval": true,
+    "save_every_steps": 500,
+    "scheduler": "cosine",
+    "trainable_policy_mode": "all",
+    "warmup_steps": 50
+  },
+  "version": "1"
+}

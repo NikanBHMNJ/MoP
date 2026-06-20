@@ -17,8 +17,11 @@ from mopforge.gpu.checkpointing import (
     restore_gpu_checkpoint,
     save_gpu_checkpoint,
 )
+from mopforge.gpu.activation_cache import (
+    build_cached_activation_dataloaders,
+)
 from mopforge.gpu.config import GPUTrainingConfig, GPUTrainingResult, GPUTrainingState
-from mopforge.gpu.data import GPUDataConfig, build_gpu_dataloaders
+from mopforge.gpu.data import GPUDataConfig, build_gpu_dataloaders, load_gpu_lesson_splits
 from mopforge.gpu.memory import (
     cuda_memory_metrics,
     estimate_from_config,
@@ -35,6 +38,7 @@ from mopforge.models import (
     build_tiny_model_from_architecture,
     condition_names_from_target_modules,
 )
+from mopforge.eval import evaluate_generated_code_for_lesson, summarize_generation_results
 from mopforge.runtime import (
     RuntimeConfig,
     apply_runtime_determinism,
@@ -75,10 +79,12 @@ class GPUTrainer:
         self.train_loader = None
         self.eval_loader = None
         self._train_iter = None
+        self._data_config: GPUDataConfig | None = None
         self.data_metadata: dict[str, Any] = {}
         self.model_metadata: dict[str, Any] = {}
         self.checkpoint_metadata: dict[str, Any] = {}
         self.artifacts: dict[str, Any] = {}
+        self._trainable_policy: TrainableParameterPolicy | None = None
         self._train_started_at: float | None = None
         self._train_finished_at: float | None = None
         self._step_times: list[float] = []
@@ -110,11 +116,20 @@ class GPUTrainer:
             mode=self.config.trainable_policy_mode,
             target_modules=self.config.target_modules or None,
             train_router=bool(self.config.metadata.get("train_router", False)),
-            train_lm_head=bool(self.config.metadata.get("train_lm_head", False)),
+            train_lm_head=bool(
+                self.config.metadata.get("train_lm_head", False)
+                or self.config.trainable_policy_mode == "adapters_norm_head"
+            ),
+            train_norm=bool(
+                self.config.metadata.get("train_norm", False)
+                or self.config.trainable_policy_mode == "adapters_norm_head"
+            ),
             train_fast_adapters=self.config.use_fast_adapters,
+            train_lora_deltas=self.config.use_lora_deltas,
             train_generated_params=self.config.use_generated_params,
             metadata={"training_kind": "gpu_train"},
         )
+        self._trainable_policy = policy
         group_summaries = apply_trainable_policy(self.model, policy)
         params = count_parameters(self.model)
         self.model_metadata.update(
@@ -135,6 +150,7 @@ class GPUTrainer:
         data_config = GPUDataConfig(
             dataset_ref=self.config.dataset_ref,
             dataset_split=self.config.dataset_split,
+            dataset_split_id=self.config.dataset_split_id,
             lesson_path=self.config.lesson_path,
             corpus_path=self.config.corpus_path,
             max_seq_len=self.config.max_seq_len,
@@ -145,11 +161,21 @@ class GPUTrainer:
             seed=int(self.config.metadata.get("seed", 42)),
             max_examples=_max_examples(self.config),
         )
-        self.train_loader, self.eval_loader, self.data_metadata = build_gpu_dataloaders(
-            data_config,
-            self.tokenizer,
-            self.runtime,
-        )
+        self._data_config = data_config
+        if self.config.activation_cache_path:
+            pin_memory = bool(self.config.pin_memory and self.runtime.device_info.device_type == "cuda")
+            self.train_loader, self.eval_loader, self.data_metadata = build_cached_activation_dataloaders(
+                self.config.activation_cache_path,
+                micro_batch_size=self.config.micro_batch_size,
+                num_workers=self.config.num_workers,
+                pin_memory=pin_memory,
+            )
+        else:
+            self.train_loader, self.eval_loader, self.data_metadata = build_gpu_dataloaders(
+                data_config,
+                self.tokenizer,
+                self.runtime,
+            )
         self._train_iter = cycle(self.train_loader)
 
         if self.config.resume_from_checkpoint:
@@ -198,11 +224,24 @@ class GPUTrainer:
                 if self.state.global_step % self.config.eval_every_steps == 0:
                     eval_metrics = self.evaluate()
                     self.state.latest_eval_loss = eval_metrics.get("eval_loss_mean")
-                    if self.state.best_eval_loss is None or (
+                    improved = self.state.best_eval_loss is None or (
                         self.state.latest_eval_loss is not None
-                        and self.state.latest_eval_loss < self.state.best_eval_loss
-                    ):
+                        and self.state.latest_eval_loss
+                        < self.state.best_eval_loss - self.config.early_stopping_min_delta
+                    )
+                    if improved:
                         self.state.best_eval_loss = self.state.latest_eval_loss
+                        self.state.evals_without_improvement = 0
+                    else:
+                        self.state.evals_without_improvement += 1
+                    if (
+                        self.config.early_stopping_enabled
+                        and self.state.evals_without_improvement
+                        >= self.config.early_stopping_patience_evals
+                    ):
+                        self.state.stopped_early = True
+                        self.state.stop_reason = "eval_loss_patience_exhausted"
+                        break
                 if self.state.global_step % self.config.log_every_steps == 0:
                     self._append_metrics({"event": "log"})
                 if self.config.save_full_checkpoints and self.state.global_step % self.config.save_every_steps == 0:
@@ -248,6 +287,13 @@ class GPUTrainer:
 
     def save_checkpoint(self, step: int) -> str:
         path = self.checkpoint_dir / f"checkpoint-step-{step:06d}.pt"
+        base_checkpoint_path = None
+        if self.config.resume_model_only:
+            base_checkpoint_path = self.checkpoint_metadata.get("checkpoint_path")
+        if not base_checkpoint_path:
+            base_checkpoint_path = self.config.base_checkpoint_path
+        if not base_checkpoint_path and self.config.resume_model_only:
+            base_checkpoint_path = self.config.resume_from_checkpoint
         saved = save_gpu_checkpoint(
             path,
             model=self.model,
@@ -260,9 +306,19 @@ class GPUTrainer:
             data_metadata=self.data_metadata,
             model_metadata=self.model_metadata,
             memory_metadata=self._memory_snapshot(),
+            trainable_only=self.config.save_trainable_only_checkpoints,
+            base_checkpoint_path=base_checkpoint_path,
+            trainable_policy=(
+                self._trainable_policy.to_dict()
+                if self._trainable_policy is not None
+                else None
+            ),
         )
         self.state.latest_checkpoint_path = saved
-        self.checkpoint_metadata = {"latest_checkpoint_path": saved}
+        self.checkpoint_metadata = {
+            "latest_checkpoint_path": saved,
+            "trainable_only": self.config.save_trainable_only_checkpoints,
+        }
         self._register_artifact(
             ArtifactRecord(
                 artifact_id=f"gpu-checkpoint-{self.run_id}-{step}-{uuid4().hex[:8]}",
@@ -277,6 +333,7 @@ class GPUTrainer:
                     "optimizer_step": self.state.optimizer_step,
                     "tokens_seen": self.state.tokens_seen,
                     "runtime": dict(self.runtime_meta),
+                    "trainable_only": self.config.save_trainable_only_checkpoints,
                 },
             )
         )
@@ -285,17 +342,30 @@ class GPUTrainer:
     def load_checkpoint(self, path: str) -> dict[str, Any]:
         checkpoint_path = _resolve_checkpoint_reference(path, self.config.output_root)
         payload = load_gpu_checkpoint(checkpoint_path, map_location=self.runtime.device_info.selected if self.runtime else "cpu")
+        model_only = bool(self.config.resume_model_only)
         metadata = restore_gpu_checkpoint(
             payload,
             model=self.model,
-            optimizer=self.optimizer,
-            scheduler=self.scheduler,
-            scaler=self.scaler,
-            restore_rng=self.config.save_rng_state,
+            optimizer=None if model_only else self.optimizer,
+            scheduler=None if model_only else self.scheduler,
+            scaler=None if model_only else self.scaler,
+            restore_rng=False if model_only else self.config.save_rng_state,
+            restore_optimizer=not model_only,
+            restore_scheduler=not model_only,
+            restore_scaler=not model_only,
+            strict_model=not model_only,
         )
-        self.state = GPUTrainingState.from_dict(payload.get("trainer_state", {}))
-        self.state.runtime_metadata = dict(self.runtime_meta)
+        if not model_only:
+            self.state = GPUTrainingState.from_dict(payload.get("trainer_state", {}))
+            self.state.runtime_metadata = dict(self.runtime_meta)
+        metadata.update(
+            {
+                "checkpoint_path": checkpoint_path,
+                "resume_model_only": model_only,
+            }
+        )
         self.checkpoint_metadata = metadata
+        self.model_metadata["resume"] = dict(metadata)
         return payload
 
     def _build_model(self):
@@ -310,6 +380,16 @@ class GPUTrainer:
                 n_layers=self.config.n_layers,
                 n_heads=self.config.n_heads,
                 max_seq_len=self.config.max_seq_len,
+                module_names=self.config.module_names or ["core", "coding", "debugging", "repair"],
+                always_include_core=self.config.always_include_core,
+                mop_block_type=self.config.mop_block_type,
+                expert_count=self.config.expert_count,
+                active_experts=self.config.active_experts,
+                routing_granularity=self.config.routing_granularity,
+                shared_depth_ratio=self.config.shared_depth_ratio,
+                use_lora_deltas=self.config.use_lora_deltas,
+                lora_rank=self.config.lora_rank,
+                lora_target_modules=self.config.lora_target_modules,
                 use_fast_adapters=self.config.use_fast_adapters,
                 fast_adapter_names=self.config.fast_adapter_names,
                 fast_adapter_bottleneck_dim=self.config.fast_adapter_bottleneck_dim,
@@ -325,20 +405,36 @@ class GPUTrainer:
         return model
 
     def _forward_loss(self, batch):
-        kwargs = {
-            "input_ids": batch["input_ids"],
-            "attention_mask": batch.get("attention_mask"),
-            "labels": batch.get("labels"),
-        }
         target_modules = batch.get("target_modules")
-        if self.config.model_type in {"mop_oracle", "mop_learned_router", "baseline_moe"}:
-            kwargs["active_modules"] = target_modules
+        active_adapters = None
+        active_conditions = None
         if self.config.use_fast_adapters:
-            kwargs["active_adapters"] = [adapter_names_from_target_modules(item) for item in (target_modules or [])]
+            active_adapters = [adapter_names_from_target_modules(item) for item in (target_modules or [])]
         if self.config.use_generated_params:
-            kwargs["active_conditions"] = [condition_names_from_target_modules(item) for item in (target_modules or [])]
+            active_conditions = [condition_names_from_target_modules(item) for item in (target_modules or [])]
         with autocast_context(self.runtime):
-            outputs = self.model(**kwargs)
+            if "hidden_states" in batch:
+                outputs = self.model.forward_from_hidden(
+                    batch["hidden_states"],
+                    attention_mask=batch.get("attention_mask"),
+                    labels=batch.get("labels"),
+                    active_modules=target_modules,
+                    active_adapters=active_adapters,
+                    active_conditions=active_conditions,
+                )
+            else:
+                kwargs = {
+                    "input_ids": batch["input_ids"],
+                    "attention_mask": batch.get("attention_mask"),
+                    "labels": batch.get("labels"),
+                }
+                if self.config.model_type in {"mop_oracle", "mop_learned_router", "baseline_moe"}:
+                    kwargs["active_modules"] = target_modules
+                if active_adapters is not None:
+                    kwargs["active_adapters"] = active_adapters
+                if active_conditions is not None:
+                    kwargs["active_conditions"] = active_conditions
+                outputs = self.model(**kwargs)
         loss = outputs.get("loss")
         if loss is None:
             loss = outputs["logits"].sum() * 0.0
@@ -350,6 +446,16 @@ class GPUTrainer:
                 "active_adapter_density": fast_meta.get("active_adapter_density"),
                 "generated_condition_density": fast_meta.get("generated_condition_density"),
                 "active_param_estimate": active_meta.get("active_params"),
+                "active_trainable_param_estimate": active_meta.get("active_trainable_params"),
+                "shared_frozen_params": active_meta.get("shared_frozen_params"),
+                "routed_module_params": active_meta.get("routed_module_params"),
+                "active_expert_count": active_meta.get("active_expert_count"),
+                "expert_count": active_meta.get("expert_count"),
+                "expert_compute_ratio": active_meta.get("expert_compute_ratio"),
+                "shared_compute_ratio": active_meta.get("shared_compute_ratio"),
+                "estimated_active_flop_ratio": active_meta.get("estimated_active_flop_ratio"),
+                "estimated_backward_flop_ratio": active_meta.get("estimated_backward_flop_ratio"),
+                "frozen_prefix": dict(getattr(self.model, "last_forward_metadata", {}) or {}),
                 "routing_mode": "oracle" if self.config.model_type != "dense" else "none",
             }
         )
@@ -426,6 +532,9 @@ class GPUTrainer:
             "latest_train_loss": self.state.latest_train_loss,
             "latest_eval_loss": self.state.latest_eval_loss,
             "best_eval_loss": self.state.best_eval_loss,
+            "evals_without_improvement": self.state.evals_without_improvement,
+            "stopped_early": self.state.stopped_early,
+            "stop_reason": self.state.stop_reason,
             "micro_batch_size": self.config.micro_batch_size,
             "gradient_accumulation_steps": self.config.gradient_accumulation_steps,
             "effective_batch_size": self.config.effective_batch_size,
@@ -436,6 +545,8 @@ class GPUTrainer:
             "memory_snapshots": list(self.state.memory_snapshots),
             "efficiency": efficiency,
         }
+        if self.config.run_generation_eval:
+            metrics.update(self._generation_eval_metrics())
         _write_json(self.output_dir / "metrics.json", metrics)
         self.artifacts["metrics_json"] = str(self.output_dir / "metrics.json")
         if self.state.latest_checkpoint_path:
@@ -482,6 +593,75 @@ class GPUTrainer:
         except ValueError:
             pass
 
+    def _generation_eval_metrics(self) -> dict[str, Any]:
+        if self.config.activation_cache_path:
+            return {
+                "generation_eval": {
+                    "enabled": False,
+                    "reason": "activation_cache_training_has_no_source_lessons",
+                }
+            }
+        if self._data_config is None:
+            return {
+                "generation_eval": {
+                    "enabled": False,
+                    "reason": "data_config_missing",
+                }
+            }
+        try:
+            _, eval_lessons, _ = load_gpu_lesson_splits(self._data_config)
+        except Exception as exc:
+            return {
+                "generation_eval": {
+                    "enabled": False,
+                    "error": str(exc),
+                }
+            }
+        previous_mode = self.model.training
+        self.model.eval()
+        results = []
+        try:
+            for lesson in eval_lessons[: self.config.generation_eval_examples]:
+                target_modules = list(lesson.target_modules)
+                active_modules = (
+                    target_modules
+                    if self.config.model_type in {"mop_oracle", "mop_learned_router", "baseline_moe"}
+                    else None
+                )
+                active_adapters = (
+                    adapter_names_from_target_modules(target_modules)
+                    if self.config.use_fast_adapters
+                    else None
+                )
+                active_conditions = (
+                    condition_names_from_target_modules(target_modules)
+                    if self.config.use_generated_params
+                    else None
+                )
+                results.append(
+                    evaluate_generated_code_for_lesson(
+                        self.model,
+                        self.tokenizer,
+                        lesson,
+                        max_new_tokens=self.config.generation_max_new_tokens,
+                        device=str(self.runtime.device_info.selected),
+                        active_modules=active_modules,
+                        active_adapters=active_adapters,
+                        active_conditions=active_conditions,
+                    )
+                )
+        finally:
+            if previous_mode:
+                self.model.train()
+        summary = summarize_generation_results(results)
+        return {
+            "generation_eval": {
+                "enabled": True,
+                "examples": len(results),
+                **summary,
+            }
+        }
+
     def _efficiency_metrics(self) -> dict[str, Any]:
         params = dict(self.model_metadata.get("parameter_counts") or {})
         total_params = int(params.get("total", 0) or 0)
@@ -491,6 +671,12 @@ class GPUTrainer:
         active_param_ratio = (
             float(active_param_estimate) / float(total_params)
             if active_param_estimate is not None and total_params > 0
+            else None
+        )
+        active_trainable_param_estimate = self.model_metadata.get("active_trainable_param_estimate")
+        active_trainable_param_ratio = (
+            float(active_trainable_param_estimate) / float(total_params)
+            if active_trainable_param_estimate is not None and total_params > 0
             else None
         )
         total_time = None
@@ -507,10 +693,18 @@ class GPUTrainer:
             if total_time and total_time > 0
             else None
         )
+        cached_hidden_steps_per_sec = (
+            float(self.state.global_step) / total_time
+            if self.data_metadata.get("kind") == "activation_cache" and total_time and total_time > 0
+            else None
+        )
         memory = cuda_memory_metrics(self.runtime)
         checkpoint_size_mb = _file_size_mb(self.state.latest_checkpoint_path)
         return {
             "tokens_per_sec": _round_or_none(tokens_per_sec),
+            "original_token_equivalent_tokens_per_sec": _round_or_none(tokens_per_sec),
+            "cached_hidden_steps_per_sec": _round_or_none(cached_hidden_steps_per_sec),
+            "activation_cache_enabled": self.data_metadata.get("kind") == "activation_cache",
             "samples_per_sec": _round_or_none(samples_per_sec),
             "step_time_sec": _round_or_none(step_time),
             "total_train_time_sec": _round_or_none(total_time),
@@ -528,6 +722,17 @@ class GPUTrainer:
             ),
             "active_param_estimate": active_param_estimate,
             "active_param_ratio": _round_or_none(active_param_ratio),
+            "active_trainable_param_estimate": active_trainable_param_estimate,
+            "active_trainable_param_ratio": _round_or_none(active_trainable_param_ratio),
+            "shared_frozen_params": self.model_metadata.get("shared_frozen_params"),
+            "routed_module_params": self.model_metadata.get("routed_module_params"),
+            "active_expert_count": self.model_metadata.get("active_expert_count"),
+            "expert_count": self.model_metadata.get("expert_count"),
+            "expert_compute_ratio": self.model_metadata.get("expert_compute_ratio"),
+            "shared_compute_ratio": self.model_metadata.get("shared_compute_ratio"),
+            "estimated_active_flop_ratio": self.model_metadata.get("estimated_active_flop_ratio"),
+            "estimated_backward_flop_ratio": self.model_metadata.get("estimated_backward_flop_ratio"),
+            "frozen_prefix": dict(self.model_metadata.get("frozen_prefix") or {}),
             "active_module_density": self.model_metadata.get("active_module_density"),
             "active_adapter_density": self.model_metadata.get("active_adapter_density"),
             "generated_condition_density": self.model_metadata.get("generated_condition_density"),
@@ -536,27 +741,36 @@ class GPUTrainer:
 
 
 def apply_activation_checkpointing(model, enabled: bool, policy: str = "auto") -> dict[str, Any]:
-    """Record activation-checkpointing intent without unsafe graph surgery."""
+    """Enable model-native non-reentrant activation checkpointing."""
 
     if not enabled:
+        if hasattr(model, "activation_checkpointing_enabled"):
+            model.activation_checkpointing_enabled = False
         return {"enabled": False, "applied_block_count": 0, "policy": policy, "warnings": []}
     blocks = 0
-    for name in ("blocks", "shared_blocks"):
+    for name in ("blocks", "shared_blocks", "routed_blocks"):
         module = getattr(model, name, None)
         if module is not None:
             try:
-                blocks = len(module.layers)
+                blocks += len(module.layers)
             except Exception:
                 try:
-                    blocks = len(module)
+                    blocks += len(module)
                 except Exception:
-                    blocks = 0
+                    pass
+    supported = hasattr(model, "activation_checkpointing_enabled")
+    if supported:
+        model.activation_checkpointing_enabled = True
     return {
         "enabled": True,
-        "applied_block_count": 0,
+        "applied_block_count": blocks if supported else 0,
         "candidate_block_count": blocks,
         "policy": policy,
-        "warnings": ["Activation checkpointing is recorded as a hook in this MVP; tiny model execution is unchanged."],
+        "warnings": (
+            []
+            if supported
+            else ["Model does not expose native activation checkpointing support."]
+        ),
     }
 
 
@@ -595,11 +809,17 @@ def _build_scheduler(optimizer, config: GPUTrainingConfig):
         return None
 
     def lr_lambda(step: int) -> float:
-        if config.scheduler == "linear_warmup":
+        if config.warmup_steps and step < config.warmup_steps:
             return min(1.0, float(step + 1) / float(max(1, config.warmup_steps)))
         if config.scheduler == "cosine":
-            progress = min(1.0, float(step) / float(max(1, config.max_steps)))
+            decay_steps = max(1, config.max_steps - config.warmup_steps)
+            progress = min(
+                1.0,
+                float(max(0, step - config.warmup_steps)) / float(decay_steps),
+            )
             return 0.5 * (1.0 + math.cos(math.pi * progress))
+        if config.scheduler == "linear_warmup":
+            return 1.0
         return 1.0
 
     return torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
@@ -612,6 +832,8 @@ def _max_examples(config: GPUTrainingConfig) -> int | None:
 
 def _batch_size(batch: dict[str, Any]) -> int:
     value = batch.get("input_ids")
+    if value is None:
+        value = batch.get("hidden_states")
     return int(value.shape[0]) if hasattr(value, "shape") else 0
 
 
@@ -619,6 +841,9 @@ def _token_count(batch: dict[str, Any]) -> int:
     mask = batch.get("attention_mask")
     if hasattr(mask, "sum"):
         return int(mask.sum().detach().cpu().item())
+    cached = batch.get("cached_token_count")
+    if isinstance(cached, int):
+        return cached
     value = batch.get("input_ids")
     return int(value.numel()) if hasattr(value, "numel") else 0
 

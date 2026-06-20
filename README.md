@@ -1,227 +1,97 @@
 # MoP-Forge
 
-**Version:** `0.46.0`<br>
-**Status:** v1.0-beta research framework with single-GPU efficiency benchmarking.
+**Version:** `0.46.0`
+**Status:** local-first research framework with single-GPU efficiency tooling
 
-MoP-Forge is a local-first research framework for testing **Mixture-of-Parameters (MoP)** training ideas. The current release supports CPU-safe smoke tests, local training artifacts, single-GPU research runs, GPU checkpointing, and now **GPU-efficiency comparison tooling** for dense vs MoP training modes.
+MoP-Forge is a research codebase for testing **Mixture-of-Parameters (MoP)**
+training ideas against dense baselines. It focuses on evidence: every useful
+efficiency claim should name the axis being improved, such as trainable
+parameters, VRAM, checkpoint size, active compute, throughput, or generated-code
+quality.
 
-MoP-Forge is not a production distributed LLM training framework.
+MoP-Forge is not a production distributed LLM trainer. It does not include
+FSDP, DeepSpeed, custom CUDA kernels, model downloads, cloud launchers, or a
+hardened multi-GPU training stack.
 
-This update adds the first serious evidence-oriented workflow:
+## What Is Implemented
 
-```text
-100M Dense
-vs
-100M MoP Full
-vs
-100M MoP Adapter-Only
-```
+MoP-Forge currently includes:
 
-The goal is no longer only “does it run?” The goal is now:
+- CPU-safe smoke training and test coverage for local development.
+- Single-device GPU training profiles with CUDA/BF16 support when available.
+- Dense, full-MoP, adapter-only, core-frozen, routed-FFN, and warm sparse
+  experiment profiles.
+- Trainable-parameter policies for sparse fine-tuning:
+  `all`, `adapters_only`, `adapters_norm_head`, `modules_only`,
+  `core_frozen`, `router_only`, and `router_adapters_only`.
+- Model-only checkpoint resume for warm-started sparse runs.
+- Trainable-only sparse checkpoints with base-checkpoint references.
+- Frozen-prefix execution and activation-cache training for sparse tails.
+- Native non-reentrant PyTorch activation checkpointing for dense, shared, and
+  routed transformer blocks.
+- Routed FFN expert blocks with top-k example or token routing.
+- Dense-to-routed warm starts that clone dense FFN weights into routed experts.
+- Module-routed low-rank deltas for attention Q/K/V, attention output, and FFN
+  up/down projections.
+- Fixed-split coding dataset preparation for fair dense-vs-sparse comparisons.
+- Generated-code evaluation metrics, including exact match and verifier pass
+  rate.
+- JSON/CSV GPU run comparison and sparse-efficiency acceptance gates.
 
-```text
-Can MoP reduce trainable parameters, memory, checkpoint size, or training cost
-while keeping loss reasonably close to a dense baseline?
-```
+## Latest Evidence
 
-## Latest GPU Efficiency Evidence
-
-A first 100M Colab/L4 efficiency comparison is available under:
+The first committed GPU efficiency evidence is the Goal 46 100M Colab/L4
+comparison:
 
 `reports/goal46_gpu_efficiency/`
 
-It compares 100M Dense, 100M MoP Full, and 100M MoP Adapter-Only. The result
-shows that MoP Adapter-Only is significantly lighter and faster, but currently
-has worse eval loss than dense. This is evidence of GPU-efficiency measurement
-support, not proof of MoP superiority.
+It compares:
 
----
-
-## What Goal 46 Added
-
-Goal 46 added GPU-efficiency benchmarking and sparse MoP training modes.
-
-### GPU efficiency metrics
-
-GPU training now writes nested efficiency metrics into:
-
-```text
-gpu_runs/<run_id>/metrics.json
-gpu_runs/<run_id>/gpu_training_result.json
-```
-
-Tracked metrics include:
-
-```text
-tokens_per_sec
-samples_per_sec
-step_time_sec
-total_train_time_sec
-peak_allocated_gb
-peak_reserved_gb
-final_allocated_gb
-final_reserved_gb
-total_params
-trainable_params
-frozen_params
-trainable_param_ratio
-active_param_estimate
-active_param_ratio
-active_module_density
-active_adapter_density
-generated_condition_density
-checkpoint_size_mb
-```
-
-CUDA memory tracking uses PyTorch peak/current allocated and reserved memory APIs when CUDA is available, and safely records `null` on CPU/no-CUDA runs.
-
-### Sparse / parameter-efficient MoP policies
-
-The framework now supports multiple trainable-policy modes for MoP experiments:
-
-```text
-all
-adapters_only
-modules_only
-core_frozen
-router_adapters_only
-```
-
-These policies allow comparisons between full dense training and parameter-efficient MoP variants.
-
-### Colab-safe 100M configs
-
-Goal 46 added validated Colab/L4-safe job configs:
-
-```text
-configs/jobs/100m_dense_colab_efficiency.json
-configs/jobs/100m_mop_full_colab_efficiency.json
-configs/jobs/100m_mop_adapters_only_colab_efficiency.json
-configs/jobs/100m_mop_core_frozen_colab_efficiency.json
-configs/jobs/100m_mop_router_adapters_colab_efficiency.json
-```
-
-### Comparison tooling
-
-Goal 46 added:
-
-```bash
-mopforge gpu compare-runs <RUN_ID_1> <RUN_ID_2> ...
-```
-
-and:
-
-```bash
-python scripts/compare_gpu_runs.py
-```
-
-These tools compare dense and MoP GPU runs and export JSON/CSV comparison reports.
-
----
-
-## First 100M Efficiency Result
-
-A Colab/L4 run compared:
-
-```text
-100M Dense
-100M MoP Full
-100M MoP Adapter-Only
-```
-
-### Run IDs
-
-```text
-Dense:
-20260617T094127Z-100m-dense-colab-efficiency-a4e4bd2e
-
-MoP Full:
-20260617T094141Z-100m-mop-full-colab-efficiency-539270ba
-
-MoP Adapter-Only:
-20260617T094157Z-100m-mop-adapters-only-colab-efficiency-47bab16e
-```
-
-### Result table
+- 100M Dense
+- 100M MoP Full
+- 100M MoP Adapter-Only
 
 | Model | Train loss | Eval loss | Tokens/sec | Peak reserved VRAM | Trainable ratio | Active ratio | Checkpoint size | Device |
-|---|---:|---:|---:|---:|---:|---:|---:|---|
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | Dense | 3.0467 | 3.1705 | 11,286.54 | 1.9844 GB | 1.0 | 1.0 | 987.14 MB | cuda:0 |
 | MoP Full | 3.0377 | 3.1691 | 10,402.15 | 2.1367 GB | 1.0 | 1.0 | 1078.05 MB | cuda:0 |
 | MoP Adapter-Only | 5.1322 | 5.1653 | 26,812.31 | 0.4961 GB | 0.000842 | 1.0 | 365.86 MB | cuda:0 |
 
----
+Honest interpretation:
 
-## Interpretation
+- MoP Full matched dense quality in this run, but was not more efficient.
+- MoP Adapter-Only was faster, used less VRAM, used far fewer trainable
+  parameters, and wrote a smaller checkpoint, but its eval loss was worse.
+- This proves that MoP-Forge can measure GPU efficiency and run sparse MoP
+  modes. It does not prove that MoP is better than dense.
 
-This result is meaningful, but it must be interpreted carefully.
+Useful derived points:
 
-### What worked
+- MoP Adapter-Only was about `2.38x` faster than Dense by tokens/sec.
+- MoP Adapter-Only used about `75%` less peak reserved VRAM than Dense.
+- MoP Adapter-Only used about `99.916%` fewer trainable parameters than Dense.
+- MoP Adapter-Only checkpoint size was about `63%` smaller than Dense.
 
-```text
-100M dense training works on GPU.
-100M MoP full training works on GPU.
-100M MoP adapter-only training works on GPU.
-Efficiency metrics are recorded.
-Comparison reports work.
-CUDA + BF16 path works.
-Checkpoint size, throughput, and VRAM are measurable.
-```
+## Current Research Direction
 
-### What the result shows
+Goal 47 implemented the infrastructure needed to reduce sparse-run loss without
+giving up the efficiency story:
 
-MoP Full reached almost the same eval loss as Dense:
+- Warm-start sparse runs from a learned dense or full-MoP checkpoint instead of
+  training adapters on a random frozen base.
+- Train adapters with optional norm/head updates for a small capacity increase.
+- Cache frozen-prefix activations for repeated sparse-tail sweeps.
+- Save trainable-only checkpoints so artifact size matches the sparse claim.
+- Use routed FFN experts and internal low-rank deltas as quality recovery paths.
+- Gate claims with eval loss, throughput, VRAM, checkpoint size, generated-code
+  exact match, and verifier pass rate.
 
-```text
-Dense eval loss:    3.1705
-MoP Full eval loss: 3.1691
-```
+This work is implemented and tested, but it still needs real CUDA experiment
+results before claiming a loss or VRAM improvement over the Goal 46 evidence.
 
-However, MoP Full is not more efficient yet because it trains all parameters and uses more memory/checkpoint space.
+## Quickstart
 
-MoP Adapter-Only is much more efficient:
-
-```text
-~2.38x higher tokens/sec than dense
-~75% lower peak reserved VRAM than dense
-~63% smaller checkpoint than dense
-~99.916% fewer trainable parameters than dense
-```
-
-But it has worse eval loss:
-
-```text
-Dense eval loss:            3.1705
-MoP Adapter-Only eval loss: 5.1653
-Loss gap:                  +1.9948
-```
-
-### Honest claim
-
-This update proves:
-
-```text
-MoP-Forge can now measure GPU efficiency and run sparse MoP training modes.
-```
-
-It does **not** yet prove:
-
-```text
-MoP is better than dense models.
-```
-
-The current evidence says:
-
-```text
-MoP Full matches dense quality but is not more efficient.
-MoP Adapter-Only is much more efficient but currently lower quality.
-```
-
----
-
-## How to Reproduce the 100M Efficiency Experiment
-
-### 1. Install
+Install in editable mode:
 
 ```bash
 pip install -e .[dev]
@@ -229,21 +99,23 @@ mopforge doctor
 mopforge runtime detect
 ```
 
-### 2. Prepare data
-
-Generate coding/debugging lessons:
+Run the CPU-safe GPU trainer smoke path:
 
 ```bash
-python examples/generate_coding_bugfix_lessons.py
+mopforge gpu validate configs/jobs/tiny_gpu_smoke.json
+mopforge gpu estimate configs/jobs/tiny_gpu_smoke.json
+mopforge gpu train configs/jobs/tiny_gpu_smoke.json
 ```
 
-Create or provide a corpus file expected by the configs:
+On a CUDA machine:
 
-```text
-data/colab_tinystories_corpus.jsonl
+```bash
+mopforge gpu train configs/jobs/tiny_gpu_smoke.json --device cuda --precision bf16
 ```
 
-### 3. Validate configs
+## Reproducing The Goal 46 Evidence
+
+Validate the 100M profiles:
 
 ```bash
 mopforge gpu validate configs/jobs/100m_dense_colab_efficiency.json
@@ -251,107 +123,89 @@ mopforge gpu validate configs/jobs/100m_mop_full_colab_efficiency.json
 mopforge gpu validate configs/jobs/100m_mop_adapters_only_colab_efficiency.json
 ```
 
-### 4. Train
+Train and compare:
 
 ```bash
 mopforge gpu train configs/jobs/100m_dense_colab_efficiency.json
 mopforge gpu train configs/jobs/100m_mop_full_colab_efficiency.json
 mopforge gpu train configs/jobs/100m_mop_adapters_only_colab_efficiency.json
-```
 
-### 5. Compare
-
-```bash
-mopforge gpu list
-```
-
-Then:
-
-```bash
-mopforge gpu compare-runs \
-  <DENSE_RUN_ID> \
-  <MOP_FULL_RUN_ID> \
-  <MOP_ADAPTER_RUN_ID> \
-  --gpu-runs-dir gpu_runs \
-  --output outputs/100m_efficiency_comparison.json
-```
-
-Export CSV too:
-
-```bash
-python scripts/compare_gpu_runs.py \
-  --runs <DENSE_RUN_ID> <MOP_FULL_RUN_ID> <MOP_ADAPTER_RUN_ID> \
-  --gpu-runs-dir gpu_runs \
-  --output-json outputs/100m_efficiency_comparison.json \
+mopforge gpu compare-runs <dense_run_id> <mop_full_run_id> <adapter_run_id> \
+  --output outputs/100m_efficiency_comparison.json \
   --output-csv outputs/100m_efficiency_comparison.csv
 ```
 
----
-
 ## Recommended Next Experiment
 
-The next experiment should not jump to 500M or 1B yet.
+Use the fixed-split dataset and extended 100M profiles:
 
-Run a longer 100M experiment:
-
-```text
-100M Dense — 500 steps
-100M MoP Full — 500 steps
-100M MoP Adapter-Only — 500 steps
-100M MoP Core-Frozen — 500 steps
+```bash
+mopforge gpu prepare-efficiency-data --count-per-category 100 --split-seed 42
+mopforge gpu train configs/jobs/100m_dense_extended_efficiency.json
+mopforge gpu train configs/jobs/100m_mop_full_extended_efficiency.json
+mopforge gpu write-warm-sparse-sweep \
+  --base-checkpoint <mop_full_run_id_or_checkpoint> \
+  --dataset-ref <dataset_id@version_id> \
+  --dataset-split-id <split_id> \
+  --output-dir configs/jobs/warm_sparse_sweep
 ```
 
-The key research question is:
+Then run the warm sparse profiles and gate the claim:
 
-```text
-Can adapter-only or core-frozen MoP close the loss gap while keeping
-its trainable-parameter, VRAM, and checkpoint-size advantages?
+```bash
+mopforge gpu gate-efficiency \
+  --dense-run <dense_run_id> \
+  --sparse-run <sparse_run_id> \
+  --output outputs/warm_sparse_gate_report.json
 ```
 
-A promising future result would look like:
+Do not claim same-quality sparse efficiency unless the sparse run remains close
+to Dense eval loss and generated-code quality while improving a named efficiency
+axis.
 
-| Model | Eval loss | Trainable params | VRAM | Verdict |
-|---|---:|---:|---:|---|
-| Dense | strong baseline | high | high | quality baseline |
-| MoP Full | similar | high | high | architecture check |
-| MoP Adapter-Only | slightly worse | tiny | low | efficiency candidate |
-| MoP Core-Frozen | close to dense | much lower | lower/similar | strongest candidate |
+## Documentation
 
----
+- [Docs index](docs/README.md)
+- [GPU quickstart](docs/gpu_quickstart.md)
+- [GPU efficiency benchmarking](docs/gpu_efficiency_benchmarking.md)
+- [Warm sparse comparison template](docs/warm_sparse_efficiency_comparison_template.md)
+- [Goal 46 GPU efficiency report](reports/goal46_gpu_efficiency/README.md)
+- [Known limitations](docs/known_limitations.md)
+- [Implementation plan and status](Implementation.md)
 
-## Current Limitations
+## Validation
 
-- This is a short Colab/L4 experiment, not a paper-grade result.
-- Adapter-only MoP is efficient but not yet quality-competitive.
-- Active parameter ratio is still `1.0` in the current adapter-only run, so future work should improve active routing sparsity.
-- No FSDP, DeepSpeed, tensor parallelism, custom CUDA kernels, or production distributed training.
-- MoP routing and Fast Parameters remain PyTorch-level experimental paths.
-- The result does not prove large-scale MoP superiority.
-- More steps, more seeds, and larger experiments are needed before making research claims.
-
----
-
-## Summary
-
-Goal 46 moves MoP-Forge from “GPU-compatible” to “GPU-efficiency measurable.”
-
-The framework can now run dense vs MoP efficiency experiments and produce concrete metrics for:
+The current implementation was validated with:
 
 ```text
-loss
-throughput
-VRAM
-trainable parameters
-active parameters
-checkpoint size
-routing/adapters/generated density
+python -m pytest -q
+python scripts/release_check.py --quick-examples
 ```
 
-The first result is encouraging for framework maturity:
+Latest local result before this README update:
 
 ```text
-MoP Adapter-Only is much faster and lighter,
-but needs more work to close the quality gap.
+414 passed, 1 skipped
+release checks passed for version 0.46.0
 ```
 
-This is a successful research-framework milestone and a clear starting point for the next round of MoP efficiency experiments.
+## Limitations
+
+- The latest warm sparse and routed-expert features are implemented, but their
+  claimed GPU benefit must be established by new CUDA runs.
+- The Goal 46 report is a short 100M Colab/L4 experiment, not a paper-grade
+  result.
+- Adapter-only MoP is efficient in the current evidence, but not yet
+  quality-competitive.
+- Active parameter and FLOP estimates are model-level approximations, not custom
+  kernel measurements.
+- CPU fallback validates functionality, not GPU performance.
+- Generated-code verification is local and intentionally lightweight.
+
+## Project Position
+
+MoP-Forge is now a measurement-oriented MoP research framework. It can run
+dense and sparse experiments, preserve lightweight evidence artifacts, and make
+claims testable. The next milestone is not another implementation-only claim;
+it is a real GPU comparison showing whether warm sparse MoP can close the loss
+gap while keeping a measurable efficiency advantage.

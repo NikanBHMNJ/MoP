@@ -8,6 +8,7 @@ from mopforge.builders import generate_coding_bugfix_lessons
 from mopforge.eval import (
     evaluate_candidate_text_for_lesson,
     evaluate_generated_code_for_lesson,
+    summarize_generation_results,
     write_generation_eval_results,
 )
 from mopforge.formatting import format_lesson_prompt
@@ -131,6 +132,7 @@ def test_verifier_integration_passes_when_candidate_matches_expected_output() ->
     result = evaluate_candidate_text_for_lesson(lesson.expected_output, lesson)
 
     assert result["passed"] is True
+    assert result["exact_match"] is True
     assert result["failure_type"] is None
     assert result["exit_code"] == 0
 
@@ -144,3 +146,16 @@ def test_generation_eval_writer_outputs_valid_json(tmp_path) -> None:
     loaded = json.loads(output_path.read_text(encoding="utf-8"))
     assert loaded[0]["lesson_id"] == lesson.id
     assert loaded[0]["passed"] is True
+
+
+def test_generation_summary_separates_exact_and_verifier_pass_rates() -> None:
+    summary = summarize_generation_results(
+        [
+            {"passed": True, "exact_match": True, "failure_type": None},
+            {"passed": True, "exact_match": False, "failure_type": None},
+            {"passed": False, "exact_match": False, "failure_type": "tests_failed"},
+        ]
+    )
+
+    assert summary["gen_verifier_pass_rate"] == 2 / 3
+    assert summary["gen_exact_match_rate"] == 1 / 3

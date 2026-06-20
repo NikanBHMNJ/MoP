@@ -15,6 +15,7 @@ from mopforge.models.generated_params import GeneratedAdapter, GeneratedParamete
 try:
     import torch
     from torch import nn
+    from torch.utils.checkpoint import checkpoint as activation_checkpoint
 except Exception:
     torch = None
     nn = None
@@ -53,6 +54,7 @@ else:
             self.token_embedding = nn.Embedding(vocab_size, d_model)
             self.position_embedding = nn.Embedding(max_seq_len, d_model)
             self.dropout = nn.Dropout(dropout)
+            self.activation_checkpointing_enabled = False
             encoder_layer = nn.TransformerEncoderLayer(
                 d_model=d_model,
                 nhead=n_heads,
@@ -120,12 +122,29 @@ else:
             if attention_mask is not None:
                 padding_mask = attention_mask == 0
 
-            x = self.blocks(
-                x,
-                mask=causal_mask,
-                src_key_padding_mask=padding_mask,
-                is_causal=True,
-            )
+            if (
+                self.activation_checkpointing_enabled
+                and self.training
+                and torch.is_grad_enabled()
+            ):
+                for layer in self.blocks.layers:
+                    x = activation_checkpoint(
+                        lambda hidden, current_layer=layer: current_layer(
+                            hidden,
+                            src_mask=causal_mask,
+                            src_key_padding_mask=padding_mask,
+                            is_causal=True,
+                        ),
+                        x,
+                        use_reentrant=False,
+                    )
+            else:
+                x = self.blocks(
+                    x,
+                    mask=causal_mask,
+                    src_key_padding_mask=padding_mask,
+                    is_causal=True,
+                )
             per_example_adapters = self._expand_active_adapters(
                 active_adapters,
                 batch_size,

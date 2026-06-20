@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.pytest_goal*/
 pytest_tmp/
 .pytest_basetemp/
 .mypy_cache/

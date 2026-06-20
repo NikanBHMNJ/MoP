@@ -10,6 +10,7 @@ from typing import Any, Iterator
 
 from mopforge.data import CausalLMCollator, LessonCausalLMDataset
 from mopforge.datasets import DatasetRegistry, load_dataset_split, load_records_for_split
+from mopforge.datasets.splits import DatasetSplit
 from mopforge.kts import KnowledgeLesson, LessonStore
 from mopforge.pretrain import CorpusCausalLMCollator, CorpusCausalLMDataset, TextCorpusRecord, TextCorpusStore
 from mopforge.runtime import RuntimeContext
@@ -20,6 +21,7 @@ from mopforge.tokenization import TokenizerProtocol
 class GPUDataConfig:
     dataset_ref: str | None = None
     dataset_split: str | None = None
+    dataset_split_id: str | None = None
     lesson_path: str | None = None
     corpus_path: str | None = None
     max_seq_len: int = 1024
@@ -93,8 +95,7 @@ def build_gpu_dataloaders(
         collator = CorpusCausalLMCollator(tokenizer)
         kind = "corpus"
     else:
-        lessons, source_metadata = _load_lesson_records(config)
-        train_lessons, eval_lessons = _split(lessons, config.seed)
+        train_lessons, eval_lessons, lesson_metadata = load_gpu_lesson_splits(config)
         train_ds = LessonCausalLMDataset(train_lessons, tokenizer, max_length=config.max_seq_len)
         eval_ds = LessonCausalLMDataset(eval_lessons, tokenizer, max_length=config.max_seq_len)
         collator = CausalLMCollator(tokenizer)
@@ -114,7 +115,7 @@ def build_gpu_dataloaders(
         "kind": kind,
         "train_examples": len(train_ds),
         "eval_examples": len(eval_ds),
-        "record_count": len(records) if config.corpus_path else len(lessons),
+        "record_count": len(records) if config.corpus_path else lesson_metadata["record_count"],
         "max_seq_len": config.max_seq_len,
         "micro_batch_size": config.micro_batch_size,
         "num_workers": config.num_workers,
@@ -122,9 +123,23 @@ def build_gpu_dataloaders(
         "streaming": config.streaming,
         "dataset_ref": config.dataset_ref,
         "dataset_split": config.dataset_split,
-        **({} if config.corpus_path else source_metadata),
+        "dataset_split_id": config.dataset_split_id,
+        **({} if config.corpus_path else lesson_metadata),
     }
     return train_loader, eval_loader, metadata
+
+
+def load_gpu_lesson_splits(
+    config: GPUDataConfig,
+) -> tuple[list[KnowledgeLesson], list[KnowledgeLesson], dict[str, Any]]:
+    if config.dataset_ref and config.dataset_split_id:
+        return _load_lessons_from_fixed_split(config)
+    lessons, source_metadata = _load_lesson_records(config)
+    train_lessons, eval_lessons = _split(lessons, config.seed)
+    return train_lessons, eval_lessons, {
+        "record_count": len(lessons),
+        **source_metadata,
+    }
 
 
 def _load_lesson_records(config: GPUDataConfig) -> tuple[list[KnowledgeLesson], dict[str, Any]]:
@@ -154,7 +169,7 @@ def _load_lessons_from_dataset_ref(config: GPUDataConfig) -> tuple[list[Knowledg
                 split_id = split_files[0].stem
         if split_id is None:
             raise FileNotFoundError("dataset_split requested but no split JSON was found.")
-        split = load_dataset_split(manifest.dataset_id, split_id, version_id=manifest.version_id)
+        split = _load_split_for_manifest(manifest, split_id)
         records = load_records_for_split(manifest, split, bucket)
     else:
         records = []
@@ -166,6 +181,51 @@ def _load_lessons_from_dataset_ref(config: GPUDataConfig) -> tuple[list[Knowledg
         "version_id": manifest.version_id,
         "dataset_kind": manifest.kind,
     }
+
+
+def _load_lessons_from_fixed_split(
+    config: GPUDataConfig,
+) -> tuple[list[KnowledgeLesson], list[KnowledgeLesson], dict[str, Any]]:
+    registry = DatasetRegistry()
+    manifest = registry.resolve_dataset_ref(config.dataset_ref or "")
+    split = _load_split_for_manifest(manifest, config.dataset_split_id or "")
+    train_records = load_records_for_split(manifest, split, "train")
+    eval_records = load_records_for_split(manifest, split, "eval")
+    train_lessons = _limit(
+        [KnowledgeLesson.from_dict(record) for record in train_records],
+        config.max_examples,
+        config.seed,
+    )
+    eval_lessons = _limit(
+        [KnowledgeLesson.from_dict(record) for record in eval_records],
+        config.max_examples,
+        config.seed,
+    )
+    if not train_lessons or not eval_lessons:
+        raise ValueError("Fixed GPU dataset split must contain non-empty train and eval buckets.")
+    return train_lessons, eval_lessons, {
+        "record_count": sum(split.counts.values()),
+        "dataset_id": manifest.dataset_id,
+        "version_id": manifest.version_id,
+        "dataset_kind": manifest.kind,
+        "dataset_split_id": split.split_id,
+        "dataset_split_seed": split.seed,
+        "dataset_split_counts": dict(split.counts),
+        "fixed_held_out_eval": True,
+    }
+
+
+def _load_split_for_manifest(manifest, split_id: str) -> DatasetSplit:
+    version_dir = manifest.metadata.get("version_dir")
+    if version_dir:
+        path = Path(version_dir) / "splits" / f"{split_id}.json"
+        if path.exists():
+            return DatasetSplit.load(path)
+    return load_dataset_split(
+        manifest.dataset_id,
+        split_id,
+        version_id=manifest.version_id,
+    )
 
 
 def _load_corpus_records(config: GPUDataConfig) -> list[TextCorpusRecord]:

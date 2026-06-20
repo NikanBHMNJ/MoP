@@ -15,6 +15,7 @@ SUPPORTED_POLICY_MODES = {
     "head_only",
     "fast_adapters_only",
     "adapters_only",
+    "adapters_norm_head",
     "generated_params_only",
     "core_frozen",
     "router_adapters_only",
@@ -51,8 +52,10 @@ class TrainableParameterPolicy:
     train_router: bool = False
     train_embeddings: bool = False
     train_lm_head: bool = False
+    train_norm: bool = False
     train_shared_core: bool = True
     train_fast_adapters: bool = False
+    train_lora_deltas: bool = False
     train_generated_params: bool = False
     metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -82,8 +85,10 @@ class TrainableParameterPolicy:
             "train_router": self.train_router,
             "train_embeddings": self.train_embeddings,
             "train_lm_head": self.train_lm_head,
+            "train_norm": self.train_norm,
             "train_shared_core": self.train_shared_core,
             "train_fast_adapters": self.train_fast_adapters,
+            "train_lora_deltas": self.train_lora_deltas,
             "train_generated_params": self.train_generated_params,
             "metadata": dict(self.metadata),
         }
@@ -99,6 +104,20 @@ def infer_parameter_group(name: str) -> str:
         if "generator" in parts:
             return "hypernetwork"
         return "generated_params"
+    if any("lora" in part and "bank" in part for part in parts):
+        for index, part in enumerate(parts):
+            if part == "deltas" and index + 1 < len(parts):
+                return f"lora_delta:{parts[index + 1]}"
+        return "lora_delta"
+    if "routed_blocks" in parts:
+        if "experts" in parts:
+            for index, part in enumerate(parts):
+                if part == "experts" and index + 1 < len(parts):
+                    return f"module:{parts[index + 1]}"
+            return "module_bank"
+        if "router" in parts:
+            return "router"
+        return "shared_core"
     if "fast_adapter_bank" in parts or "adapters" in parts:
         for index, part in enumerate(parts):
             if part == "adapters" and index + 1 < len(parts):
@@ -258,6 +277,8 @@ def _should_train_group(
     target_modules: set[str],
 ) -> bool:
     generated_group = _is_generated_group(group)
+    adapter_group = group.startswith("adapter:") or group == "fast_adapter"
+    lora_group = group.startswith("lora_delta:") or group == "lora_delta"
     if policy.mode == "all":
         if generated_group:
             return policy.train_generated_params
@@ -267,6 +288,8 @@ def _should_train_group(
     if policy.mode == "head_only":
         if generated_group:
             return policy.train_generated_params
+        if group == "norm":
+            return policy.train_norm
         return group == "lm_head"
     if policy.mode == "generated_params_only":
         return generated_group
@@ -281,12 +304,28 @@ def _should_train_group(
     if policy.mode == "adapters_only":
         if generated_group:
             return policy.train_generated_params
-        if group.startswith("adapter:") or group == "fast_adapter":
+        if adapter_group:
             return True
         if group == "router":
             return True
         if group == "lm_head":
             return policy.train_lm_head
+        if group == "norm":
+            return policy.train_norm
+        if lora_group:
+            return policy.train_lora_deltas
+        return False
+    if policy.mode == "adapters_norm_head":
+        if generated_group:
+            return policy.train_generated_params
+        if adapter_group:
+            return True
+        if group == "router":
+            return policy.train_router
+        if group in {"lm_head", "norm"}:
+            return True
+        if lora_group:
+            return policy.train_lora_deltas
         return False
     if policy.mode == "router_only":
         if generated_group:
@@ -295,36 +334,48 @@ def _should_train_group(
     if policy.mode == "router_adapters_only":
         if generated_group:
             return policy.train_generated_params
-        if group.startswith("adapter:") or group == "fast_adapter":
+        if adapter_group:
             return True
         if group == "router":
             return True
         if group == "lm_head":
             return policy.train_lm_head
+        if group == "norm":
+            return policy.train_norm
+        if lora_group:
+            return policy.train_lora_deltas
         return False
     if policy.mode == "core_only":
         if generated_group:
             return policy.train_generated_params
-        if group.startswith("adapter:") or group == "fast_adapter":
+        if adapter_group:
             return policy.train_fast_adapters
+        if lora_group:
+            return policy.train_lora_deltas
         if group.startswith("module:") or group in {"module_bank", "router"}:
             return policy.train_router and group == "router"
         if group == "embeddings":
             return policy.train_embeddings
         if group == "lm_head":
             return policy.train_lm_head
+        if group == "norm":
+            return policy.train_norm
         return policy.train_shared_core
     if policy.mode == "modules_only":
         if generated_group:
             return policy.train_generated_params
         if group.startswith("module:") or group == "module_bank":
             return True
-        if group.startswith("adapter:") or group == "fast_adapter":
+        if adapter_group:
             return policy.train_fast_adapters
+        if lora_group:
+            return policy.train_lora_deltas
         if group == "embeddings":
             return policy.train_embeddings
         if group == "lm_head":
             return policy.train_lm_head
+        if group == "norm":
+            return policy.train_norm
         if group == "router":
             return policy.train_router
         return False
@@ -333,12 +384,16 @@ def _should_train_group(
             return policy.train_generated_params
         if group.startswith("module:") or group == "module_bank":
             return True
-        if group.startswith("adapter:") or group == "fast_adapter":
+        if adapter_group:
             return policy.train_fast_adapters
+        if lora_group:
+            return policy.train_lora_deltas
         if group == "router":
             return policy.train_router
         if group == "lm_head":
             return policy.train_lm_head
+        if group == "norm":
+            return policy.train_norm
         return False
     if policy.mode == "target_modules_only":
         if generated_group:
@@ -352,10 +407,19 @@ def _should_train_group(
             )
         if group == "fast_adapter":
             return policy.train_fast_adapters
+        if group.startswith("lora_delta:"):
+            return (
+                policy.train_lora_deltas
+                and group.split(":", 1)[1] in target_modules
+            )
+        if group == "lora_delta":
+            return policy.train_lora_deltas
         if group == "embeddings":
             return policy.train_embeddings
         if group == "lm_head":
             return policy.train_lm_head
+        if group == "norm":
+            return policy.train_norm
         if group == "router":
             return policy.train_router
         return False

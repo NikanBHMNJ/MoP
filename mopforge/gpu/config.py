@@ -15,6 +15,9 @@ MODEL_TYPES = {"dense", "mop_oracle", "mop_learned_router", "baseline_moe"}
 OPTIMIZERS = {"adamw"}
 SCHEDULERS = {"none", "cosine", "linear_warmup"}
 EFFICIENT_ATTENTION = {"auto", "torch_sdpa", "eager"}
+MOP_BLOCK_TYPES = {"post_core_mlp", "routed_ffn"}
+ROUTING_GRANULARITIES = {"example", "token"}
+ACTIVATION_CACHE_DTYPES = {"fp32", "fp16", "bf16"}
 
 
 @dataclass(slots=True)
@@ -26,6 +29,7 @@ class GPUTrainingConfig:
     model_ref: str | None = None
     dataset_ref: str | None = None
     dataset_split: str | None = None
+    dataset_split_id: str | None = None
     lesson_path: str = "data/coding_bugfix_lessons.jsonl"
     index_path: str | None = None
     corpus_path: str | None = None
@@ -48,11 +52,24 @@ class GPUTrainingConfig:
     optimizer: str = "adamw"
     scheduler: str = "none"
     warmup_steps: int = 0
+    early_stopping_enabled: bool = False
+    early_stopping_patience_evals: int = 5
+    early_stopping_min_delta: float = 0.0
 
     d_model: int = 256
     n_layers: int = 4
     n_heads: int = 4
     max_seq_len: int = 1024
+    module_names: list[str] | None = None
+    always_include_core: bool = True
+    mop_block_type: str = "post_core_mlp"
+    expert_count: int | None = None
+    active_experts: int = 1
+    routing_granularity: str = "example"
+    shared_depth_ratio: float = 1.0
+    use_lora_deltas: bool = False
+    lora_rank: int = 0
+    lora_target_modules: list[str] | None = None
 
     trainable_policy_mode: str = "all"
     target_modules: list[str] = field(default_factory=list)
@@ -81,14 +98,22 @@ class GPUTrainingConfig:
 
     save_full_checkpoints: bool = True
     resume_from_checkpoint: str | None = None
+    resume_model_only: bool = False
+    save_trainable_only_checkpoints: bool = False
+    base_checkpoint_path: str | None = None
     save_optimizer_state: bool = True
     save_rng_state: bool = True
 
+    activation_cache_path: str | None = None
+    activation_cache_dtype: str = "bf16"
     max_train_examples: int | None = None
     max_eval_examples: int | None = None
     num_workers: int = 0
     pin_memory: bool = True
     prefetch_factor: int | None = None
+    run_generation_eval: bool = False
+    generation_eval_examples: int = 2
+    generation_max_new_tokens: int = 32
 
     metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -108,6 +133,10 @@ class GPUTrainingConfig:
             "n_layers",
             "n_heads",
             "max_seq_len",
+            "active_experts",
+            "generation_eval_examples",
+            "generation_max_new_tokens",
+            "early_stopping_patience_evals",
         ):
             _positive_int(getattr(self, field_name), field_name)
         if self.d_model % self.n_heads != 0:
@@ -116,6 +145,9 @@ class GPUTrainingConfig:
             raise ValueError("learning_rate must be positive.")
         if self.weight_decay < 0:
             raise ValueError("weight_decay must be non-negative.")
+        if not isinstance(self.early_stopping_min_delta, (int, float)) or self.early_stopping_min_delta < 0:
+            raise ValueError("early_stopping_min_delta must be a non-negative number.")
+        self.early_stopping_min_delta = float(self.early_stopping_min_delta)
         if self.max_grad_norm is not None and self.max_grad_norm <= 0:
             raise ValueError("max_grad_norm must be positive or None.")
         if self.optimizer not in OPTIMIZERS:
@@ -128,10 +160,27 @@ class GPUTrainingConfig:
             raise ValueError("trainable_policy_mode is not supported.")
         if self.efficient_attention not in EFFICIENT_ATTENTION:
             raise ValueError("efficient_attention must be auto, torch_sdpa, or eager.")
+        if self.mop_block_type not in MOP_BLOCK_TYPES:
+            raise ValueError("mop_block_type must be post_core_mlp or routed_ffn.")
+        if self.routing_granularity not in ROUTING_GRANULARITIES:
+            raise ValueError("routing_granularity must be example or token.")
+        if self.activation_cache_dtype not in ACTIVATION_CACHE_DTYPES:
+            raise ValueError("activation_cache_dtype must be fp32, fp16, or bf16.")
+        if self.expert_count is not None and (type(self.expert_count) is not int or self.expert_count <= 0):
+            raise ValueError("expert_count must be a positive integer or None.")
+        if type(self.shared_depth_ratio) not in {float, int} or not 0.0 < float(self.shared_depth_ratio) <= 1.0:
+            raise ValueError("shared_depth_ratio must be in (0.0, 1.0].")
+        self.shared_depth_ratio = float(self.shared_depth_ratio)
+        if type(self.lora_rank) is not int or self.lora_rank < 0:
+            raise ValueError("lora_rank must be a non-negative integer.")
+        if self.use_lora_deltas and self.lora_rank <= 0:
+            raise ValueError("lora_rank must be positive when use_lora_deltas is true.")
         for field_name in (
+            "module_names",
             "target_modules",
             "fast_adapter_names",
             "generated_condition_names",
+            "lora_target_modules",
         ):
             setattr(self, field_name, _optional_strings(getattr(self, field_name), field_name))
         if type(self.fast_adapter_bottleneck_dim) is not int or self.fast_adapter_bottleneck_dim <= 0:
@@ -157,10 +206,16 @@ class GPUTrainingConfig:
             "compile_model",
             "require_device_available",
             "activation_checkpointing",
+            "always_include_core",
             "save_full_checkpoints",
+            "resume_model_only",
+            "save_trainable_only_checkpoints",
             "save_optimizer_state",
             "save_rng_state",
+            "use_lora_deltas",
             "pin_memory",
+            "run_generation_eval",
+            "early_stopping_enabled",
         ):
             if not isinstance(getattr(self, field_name), bool):
                 raise ValueError(f"{field_name} must be a boolean.")
@@ -168,6 +223,7 @@ class GPUTrainingConfig:
             "model_ref",
             "dataset_ref",
             "dataset_split",
+            "dataset_split_id",
             "lesson_path",
             "index_path",
             "corpus_path",
@@ -175,6 +231,8 @@ class GPUTrainingConfig:
             "artifact_root",
             "run_id",
             "resume_from_checkpoint",
+            "base_checkpoint_path",
+            "activation_cache_path",
         ):
             value = getattr(self, field_name)
             if value is not None:
@@ -225,6 +283,9 @@ class GPUTrainingState:
     latest_train_loss: float | None = None
     latest_eval_loss: float | None = None
     best_eval_loss: float | None = None
+    evals_without_improvement: int = 0
+    stopped_early: bool = False
+    stop_reason: str | None = None
     latest_checkpoint_path: str | None = None
     scaler_state: dict[str, Any] = field(default_factory=dict)
     runtime_metadata: dict[str, Any] = field(default_factory=dict)
@@ -244,6 +305,9 @@ class GPUTrainingState:
             latest_train_loss=data.get("latest_train_loss"),
             latest_eval_loss=data.get("latest_eval_loss"),
             best_eval_loss=data.get("best_eval_loss"),
+            evals_without_improvement=int(data.get("evals_without_improvement", 0)),
+            stopped_early=bool(data.get("stopped_early", False)),
+            stop_reason=data.get("stop_reason"),
             latest_checkpoint_path=data.get("latest_checkpoint_path"),
             scaler_state=dict(data.get("scaler_state", {})),
             runtime_metadata=dict(data.get("runtime_metadata", {})),

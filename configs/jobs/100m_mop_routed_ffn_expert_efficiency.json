@@ -1,0 +1,66 @@
+{
+  "kind": "gpu_train",
+  "metadata": {
+    "description": "Experimental routed-FFN MoP profile for true active-compute efficiency work."
+  },
+  "payload": {
+    "activation_checkpointing": true,
+    "active_experts": 1,
+    "allow_tf32": true,
+    "always_include_core": false,
+    "base_checkpoint_path": "REPLACE_WITH_COMPATIBLE_DENSE_OR_MOP_CHECKPOINT_OR_RUN_ID",
+    "device": "auto",
+    "d_model": 768,
+    "enable_amp": true,
+    "eval_batches": 2,
+    "eval_every_steps": 100,
+    "expert_count": 8,
+    "gradient_accumulation_steps": 8,
+    "learning_rate": 0.0003,
+    "log_every_steps": 25,
+    "max_eval_examples": 512,
+    "max_seq_len": 1024,
+    "max_steps": 2000,
+    "max_train_examples": 10000,
+    "metadata": {
+      "description": "Small shared trunk with dense-warm-started routed FFN experts; top-1 token routing.",
+      "expected_efficiency_axis": "active_expert_compute",
+      "profile": "100m_mop_routed_ffn_expert_efficiency",
+      "train_router": true
+    },
+    "micro_batch_size": 1,
+    "model_type": "mop_oracle",
+    "module_names": [
+      "coding",
+      "debugging",
+      "repair",
+      "expert_3",
+      "expert_4",
+      "expert_5",
+      "expert_6",
+      "expert_7"
+    ],
+    "mop_block_type": "routed_ffn",
+    "name": "100m_mop_routed_ffn_expert_efficiency",
+    "n_heads": 12,
+    "n_layers": 12,
+    "precision": "auto",
+    "require_device_available": false,
+    "resume_from_checkpoint": "REPLACE_WITH_COMPATIBLE_DENSE_OR_MOP_CHECKPOINT_OR_RUN_ID",
+    "resume_model_only": true,
+    "routing_granularity": "token",
+    "run_generation_eval": true,
+    "save_every_steps": 500,
+    "save_trainable_only_checkpoints": true,
+    "scheduler": "cosine",
+    "shared_depth_ratio": 0.25,
+    "target_modules": [
+      "coding",
+      "debugging",
+      "repair"
+    ],
+    "trainable_policy_mode": "core_frozen",
+    "warmup_steps": 50
+  },
+  "version": "1"
+}

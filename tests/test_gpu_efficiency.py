@@ -26,10 +26,20 @@ pytest.importorskip("torch")
 
 EFFICIENCY_CONFIGS = [
     "configs/jobs/100m_dense_colab_efficiency.json",
+    "configs/jobs/100m_dense_extended_efficiency.json",
     "configs/jobs/100m_mop_full_colab_efficiency.json",
+    "configs/jobs/100m_mop_full_extended_efficiency.json",
     "configs/jobs/100m_mop_adapters_only_colab_efficiency.json",
     "configs/jobs/100m_mop_core_frozen_colab_efficiency.json",
     "configs/jobs/100m_mop_router_adapters_colab_efficiency.json",
+    "configs/jobs/100m_mop_warm_adapters_efficiency.json",
+    "configs/jobs/100m_mop_warm_adapters_norm_head_efficiency.json",
+    "configs/jobs/100m_mop_core_frozen_quality_efficiency.json",
+    "configs/jobs/100m_mop_warm_adapters_64_colab_efficiency.json",
+    "configs/jobs/100m_mop_warm_adapters_norm_head_64_colab_efficiency.json",
+    "configs/jobs/100m_mop_core_frozen_quality_colab_efficiency.json",
+    "configs/jobs/100m_mop_routed_ffn_expert_efficiency.json",
+    "configs/jobs/100m_mop_warm_lora_deltas_efficiency.json",
 ]
 
 
@@ -52,6 +62,10 @@ def test_gpu_trainer_records_efficiency_metrics(tmp_path) -> None:
         "trainable_param_ratio",
         "active_param_estimate",
         "active_param_ratio",
+        "active_trainable_param_estimate",
+        "active_trainable_param_ratio",
+        "shared_frozen_params",
+        "routed_module_params",
         "active_module_density",
         "active_adapter_density",
         "generated_condition_density",

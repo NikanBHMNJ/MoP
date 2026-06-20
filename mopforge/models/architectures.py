@@ -11,6 +11,8 @@ from typing import Any
 MODEL_TYPES = {"dense", "mop_oracle", "mop_learned_router", "baseline_moe", "future_large"}
 GENERATED_TYPES = {"low_rank_adapter", "scale_shift"}
 INTENDED_SCALES = {"tiny_cpu", "small_gpu", "medium_gpu", "large_gpu"}
+MOP_BLOCK_TYPES = {"post_core_mlp", "routed_ffn"}
+ROUTING_GRANULARITIES = {"example", "token"}
 
 
 @dataclass(slots=True)
@@ -25,6 +27,15 @@ class ModelArchitectureConfig:
     max_seq_len: int = 512
     vocab_size: int | None = None
     module_names: list[str] = field(default_factory=lambda: ["core", "coding", "debugging", "repair"])
+    always_include_core: bool = True
+    mop_block_type: str = "post_core_mlp"
+    expert_count: int | None = None
+    active_experts: int = 1
+    routing_granularity: str = "example"
+    shared_depth_ratio: float = 1.0
+    use_lora_deltas: bool = False
+    lora_rank: int = 0
+    lora_target_modules: list[str] | None = None
     use_fast_adapters: bool = False
     fast_adapter_names: list[str] | None = None
     fast_adapter_bottleneck_dim: int = 16
@@ -53,6 +64,26 @@ class ModelArchitectureConfig:
         if self.vocab_size is not None and (type(self.vocab_size) is not int or self.vocab_size <= 0):
             raise ValueError("vocab_size must be a positive integer or None.")
         self.module_names = _strings(self.module_names, "module_names")
+        if not isinstance(self.always_include_core, bool):
+            raise ValueError("always_include_core must be a boolean.")
+        if self.mop_block_type not in MOP_BLOCK_TYPES:
+            raise ValueError("mop_block_type must be post_core_mlp or routed_ffn.")
+        if self.expert_count is not None and (type(self.expert_count) is not int or self.expert_count <= 0):
+            raise ValueError("expert_count must be a positive integer or None.")
+        if type(self.active_experts) is not int or self.active_experts <= 0:
+            raise ValueError("active_experts must be a positive integer.")
+        if self.routing_granularity not in ROUTING_GRANULARITIES:
+            raise ValueError("routing_granularity must be example or token.")
+        if type(self.shared_depth_ratio) not in {float, int} or not 0.0 < float(self.shared_depth_ratio) <= 1.0:
+            raise ValueError("shared_depth_ratio must be in (0.0, 1.0].")
+        self.shared_depth_ratio = float(self.shared_depth_ratio)
+        if not isinstance(self.use_lora_deltas, bool):
+            raise ValueError("use_lora_deltas must be a boolean.")
+        if type(self.lora_rank) is not int or self.lora_rank < 0:
+            raise ValueError("lora_rank must be a non-negative integer.")
+        if self.use_lora_deltas and self.lora_rank <= 0:
+            raise ValueError("lora_rank must be positive when use_lora_deltas is true.")
+        self.lora_target_modules = _optional_strings(self.lora_target_modules, "lora_target_modules")
         self.fast_adapter_names = _optional_strings(self.fast_adapter_names, "fast_adapter_names")
         self.generated_condition_names = _optional_strings(
             self.generated_condition_names,
@@ -140,7 +171,19 @@ def build_tiny_model_from_architecture(config: ModelArchitectureConfig, tokenize
 
     if TinyMoPCausalTransformer is None:
         raise RuntimeError("PyTorch is required for TinyMoPCausalTransformer.")
-    return TinyMoPCausalTransformer(module_names=config.module_names, **kwargs)
+    return TinyMoPCausalTransformer(
+        module_names=config.module_names,
+        always_include_core=config.always_include_core,
+        mop_block_type=config.mop_block_type,
+        expert_count=config.expert_count,
+        active_experts=config.active_experts,
+        routing_granularity=config.routing_granularity,
+        shared_depth_ratio=config.shared_depth_ratio,
+        use_lora_deltas=config.use_lora_deltas,
+        lora_rank=config.lora_rank,
+        lora_target_modules=config.lora_target_modules,
+        **kwargs,
+    )
 
 
 def parameter_summary_for_architecture(config: ModelArchitectureConfig) -> dict[str, Any]:

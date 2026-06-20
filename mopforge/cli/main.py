@@ -47,9 +47,16 @@ from mopforge.gpu import (
     GPUTrainer,
     GPURunRegistry,
     build_torchrun_command,
+    config_hash,
     dry_run_gpu_training_config,
     estimate_from_config,
+    evaluate_efficiency_gates,
+    file_sha256,
+    prepare_efficiency_dataset,
     validate_gpu_training_config,
+    write_activation_cache,
+    write_gate_report,
+    write_warm_sparse_sweep_configs,
 )
 from mopforge.datasets import (
     DatasetRegistry,
@@ -178,6 +185,60 @@ def _build_parser() -> argparse.ArgumentParser:
     gpu_compare.add_argument("--output", default="outputs/gpu_efficiency_comparison.json")
     gpu_compare.add_argument("--output-csv")
     gpu_compare.set_defaults(func=_cmd_gpu_compare_runs)
+    gpu_gate = gpu_sub.add_parser(
+        "gate-efficiency",
+        help="evaluate acceptance gates for a sparse GPU efficiency claim",
+    )
+    gpu_gate.add_argument("--dense-run", required=True)
+    gpu_gate.add_argument("--sparse-run", required=True)
+    gpu_gate.add_argument("--gpu-runs-dir", default="gpu_runs")
+    gpu_gate.add_argument("--output", default="outputs/gpu_efficiency_gate_report.json")
+    gpu_gate.add_argument("--adapter-baseline-eval-loss", type=float, default=5.165306329727173)
+    gpu_gate.add_argument("--same-quality-eval-delta", type=float, default=0.25)
+    gpu_gate.add_argument("--generation-pass-delta", type=float, default=0.05)
+    gpu_gate.add_argument("--vram-target-gb", type=float)
+    gpu_gate.set_defaults(func=_cmd_gpu_gate_efficiency)
+    gpu_cache = gpu_sub.add_parser(
+        "cache-activations",
+        help="write frozen-prefix activation cache for sparse tail training",
+    )
+    gpu_cache.add_argument("path")
+    gpu_cache.add_argument("--checkpoint", required=True)
+    gpu_cache.add_argument("--output", required=True)
+    gpu_cache.add_argument("--max-batches", type=int)
+    gpu_cache.add_argument("--dtype", choices=["fp32", "fp16", "bf16"], default="bf16")
+    gpu_cache.set_defaults(func=_cmd_gpu_cache_activations)
+    gpu_sweep = gpu_sub.add_parser(
+        "write-warm-sparse-sweep",
+        help="write warm sparse 64/128/256 bottleneck and LR sweep configs",
+    )
+    gpu_sweep.add_argument("--base-checkpoint", required=True)
+    gpu_sweep.add_argument("--output-dir", default="configs/jobs/warm_sparse_sweep")
+    gpu_sweep.add_argument("--activation-cache-path")
+    gpu_sweep.add_argument("--dataset-ref")
+    gpu_sweep.add_argument("--dataset-split-id")
+    gpu_sweep.add_argument("--bottlenecks", type=int, nargs="+", default=[64, 128, 256])
+    gpu_sweep.add_argument("--learning-rates", type=float, nargs="+", default=[3e-4, 1e-3, 2e-3])
+    gpu_sweep.add_argument("--lora-ranks", type=int, nargs="+", default=[4, 8, 16])
+    gpu_sweep.add_argument("--max-steps", type=int, default=2000)
+    gpu_sweep.add_argument("--seed", type=int, default=42)
+    gpu_sweep.set_defaults(func=_cmd_gpu_write_warm_sparse_sweep)
+    gpu_data = gpu_sub.add_parser(
+        "prepare-efficiency-data",
+        help="generate and register a larger fixed-split coding bugfix dataset",
+    )
+    gpu_data.add_argument("--source-path", default="data/coding_bugfix_efficiency_lessons.jsonl")
+    gpu_data.add_argument("--dataset-root", default="datasets")
+    gpu_data.add_argument("--dataset-id", default="coding_bugfix_efficiency")
+    gpu_data.add_argument("--count-per-category", type=int, default=100)
+    gpu_data.add_argument("--verify", action=argparse.BooleanOptionalAction, default=True)
+    gpu_data.add_argument("--timeout-seconds", type=int, default=5)
+    gpu_data.add_argument("--split-seed", type=int, default=42)
+    gpu_data.add_argument("--train-ratio", type=float, default=0.8)
+    gpu_data.add_argument("--eval-ratio", type=float, default=0.1)
+    gpu_data.add_argument("--test-ratio", type=float, default=0.1)
+    gpu_data.add_argument("--overwrite", action="store_true")
+    gpu_data.set_defaults(func=_cmd_gpu_prepare_efficiency_data)
     gpu_launch = gpu_sub.add_parser("launch-torchrun", help="print a torchrun dry-run command; never launches")
     gpu_launch.add_argument("path")
     gpu_launch.add_argument("--dry-run", action="store_true", default=True)
@@ -834,6 +895,94 @@ def _cmd_gpu_train(args) -> int:
     return 0 if result.status == "completed" else 1
 
 
+def _cmd_gpu_cache_activations(args) -> int:
+    envelope = MoPForgeConfig.load(args.path)
+    if envelope.kind != "gpu_train":
+        raise ValueError(
+            f"gpu cache-activations requires kind='gpu_train', got {envelope.kind!r}. "
+            "Use a GPU sparse training profile as the cache source."
+        )
+    _ensure_no_validation_errors(envelope)
+    config = gpu_training_config_from_envelope(envelope)
+    checkpoint_path = _resolve_gpu_checkpoint_arg(args.checkpoint, config.output_root)
+    payload = config.to_dict()
+    payload.update(
+        {
+            "resume_from_checkpoint": checkpoint_path,
+            "resume_model_only": True,
+            "activation_cache_path": None,
+            "save_full_checkpoints": False,
+        }
+    )
+    cache_config = type(config).from_dict(payload)
+    trainer = GPUTrainer(cache_config)
+    trainer.setup()
+    result = write_activation_cache(
+        model=trainer.model,
+        train_loader=trainer.train_loader,
+        eval_loader=trainer.eval_loader,
+        output_path=args.output,
+        runtime=trainer.runtime,
+        dtype=args.dtype,
+        max_batches=args.max_batches,
+        metadata={
+            "source_config": str(args.path),
+            "source_checkpoint": checkpoint_path,
+            "source_checkpoint_sha256": file_sha256(checkpoint_path),
+            "config_sha256": config_hash(cache_config),
+            "run_id": trainer.run_id,
+        },
+    )
+    print(f"cache_path={result['path']}")
+    print(f"cache_format={result['cache_format']}")
+    print(f"train_records={result['train_records']}")
+    print(f"eval_records={result['eval_records']}")
+    print(f"source_checkpoint={checkpoint_path}")
+    return 0
+
+
+def _cmd_gpu_write_warm_sparse_sweep(args) -> int:
+    written = write_warm_sparse_sweep_configs(
+        output_dir=args.output_dir,
+        base_checkpoint=args.base_checkpoint,
+        activation_cache_path=args.activation_cache_path,
+        dataset_ref=args.dataset_ref,
+        dataset_split_id=args.dataset_split_id,
+        bottlenecks=list(args.bottlenecks),
+        learning_rates=list(args.learning_rates),
+        lora_ranks=list(args.lora_ranks),
+        max_steps=int(args.max_steps),
+        seed=int(args.seed),
+    )
+    print(f"config_count={len(written)}")
+    for path in written:
+        print(f"config={path}")
+    return 0
+
+
+def _cmd_gpu_prepare_efficiency_data(args) -> int:
+    result = prepare_efficiency_dataset(
+        source_path=args.source_path,
+        dataset_root=args.dataset_root,
+        dataset_id=args.dataset_id,
+        count_per_category=args.count_per_category,
+        verify=args.verify,
+        timeout_seconds=args.timeout_seconds,
+        split_seed=args.split_seed,
+        train_ratio=args.train_ratio,
+        eval_ratio=args.eval_ratio,
+        test_ratio=args.test_ratio,
+        overwrite=args.overwrite,
+    )
+    print(f"dataset_ref={result['dataset_ref']}")
+    print(f"record_count={result['record_count']}")
+    print(f"verified_count={result['verified_count']}")
+    print(f"split_id={result['split_id']}")
+    print(f"split_counts={json.dumps(result['split_counts'], sort_keys=True)}")
+    print(f"summary_path={result['summary_path']}")
+    return 0
+
+
 def _cmd_gpu_resume(args) -> int:
     ref = args.checkpoint_or_run_id
     registry = GPURunRegistry()
@@ -910,6 +1059,26 @@ def _cmd_gpu_compare_runs(args) -> int:
     print(f"json_path={json_path}")
     print(f"csv_path={csv_path}")
     return 0
+
+
+def _cmd_gpu_gate_efficiency(args) -> int:
+    report = evaluate_efficiency_gates(
+        dense_run=args.dense_run,
+        sparse_run=args.sparse_run,
+        gpu_runs_dir=args.gpu_runs_dir,
+        adapter_baseline_eval_loss=args.adapter_baseline_eval_loss,
+        same_quality_eval_delta=args.same_quality_eval_delta,
+        generation_pass_delta=args.generation_pass_delta,
+        vram_target_gb=args.vram_target_gb,
+    )
+    output = write_gate_report(report, args.output)
+    print(f"overall_passed={report['overall_passed']}")
+    if report["failed_required_gates"]:
+        print("failed_required_gates=" + ",".join(report["failed_required_gates"]))
+    if report["unknown_required_gates"]:
+        print("unknown_required_gates=" + ",".join(report["unknown_required_gates"]))
+    print(f"gate_report_path={output}")
+    return 0 if report["overall_passed"] else 1
 
 
 def _cmd_gpu_launch_torchrun(args) -> int:
@@ -1730,6 +1899,13 @@ def _print_resume_summary(
     print(f"run_id={run_id}")
     print(f"final_step={final_step}")
     print(f"result_path={result_path}")
+
+
+def _resolve_gpu_checkpoint_arg(reference: str, output_root: str) -> str:
+    candidate = Path(reference)
+    if candidate.exists():
+        return str(candidate)
+    return GPURunRegistry(output_root).latest_checkpoint(reference)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,73 @@
+{
+  "kind": "gpu_train",
+  "metadata": {
+    "description": "Warm-started low-rank MoP delta profile for sparse quality recovery."
+  },
+  "payload": {
+    "activation_checkpointing": true,
+    "allow_tf32": true,
+    "always_include_core": false,
+    "base_checkpoint_path": "REPLACE_WITH_100M_MOP_FULL_CHECKPOINT_OR_RUN_ID",
+    "device": "auto",
+    "d_model": 768,
+    "enable_amp": true,
+    "eval_batches": 2,
+    "eval_every_steps": 100,
+    "fast_adapter_bottleneck_dim": 64,
+    "fast_adapter_names": [
+      "coding",
+      "debugging",
+      "repair"
+    ],
+    "generation_eval_examples": 2,
+    "generation_max_new_tokens": 32,
+    "gradient_accumulation_steps": 8,
+    "learning_rate": 0.0005,
+    "log_every_steps": 25,
+    "lora_rank": 8,
+    "lora_target_modules": [
+      "coding",
+      "debugging",
+      "repair"
+    ],
+    "max_eval_examples": 512,
+    "max_seq_len": 1024,
+    "max_steps": 2000,
+    "max_train_examples": 10000,
+    "metadata": {
+      "description": "Load a learned base and train adapters, norm/head, and routed low-rank deltas.",
+      "expected_efficiency_axis": "quality_safety_valve_low_rank_delta",
+      "profile": "100m_mop_warm_lora_deltas_efficiency",
+      "train_lm_head": true,
+      "train_norm": true
+    },
+    "micro_batch_size": 1,
+    "model_type": "mop_oracle",
+    "module_names": [
+      "coding",
+      "debugging",
+      "repair"
+    ],
+    "name": "100m_mop_warm_lora_deltas_efficiency",
+    "n_heads": 12,
+    "n_layers": 12,
+    "precision": "auto",
+    "require_device_available": false,
+    "resume_from_checkpoint": "REPLACE_WITH_100M_MOP_FULL_CHECKPOINT_OR_RUN_ID",
+    "resume_model_only": true,
+    "run_generation_eval": true,
+    "save_every_steps": 500,
+    "save_trainable_only_checkpoints": true,
+    "scheduler": "cosine",
+    "target_modules": [
+      "coding",
+      "debugging",
+      "repair"
+    ],
+    "trainable_policy_mode": "adapters_norm_head",
+    "use_fast_adapters": true,
+    "use_lora_deltas": true,
+    "warmup_steps": 50
+  },
+  "version": "1"
+}

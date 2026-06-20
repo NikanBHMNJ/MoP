@@ -1,0 +1,66 @@
+{
+  "kind": "gpu_train",
+  "metadata": {
+    "description": "Warm-started 100M MoP core-frozen sparse quality profile."
+  },
+  "payload": {
+    "activation_checkpointing": true,
+    "allow_tf32": true,
+    "always_include_core": false,
+    "base_checkpoint_path": "REPLACE_WITH_100M_MOP_FULL_CHECKPOINT_OR_RUN_ID",
+    "device": "auto",
+    "d_model": 768,
+    "enable_amp": true,
+    "eval_batches": 2,
+    "eval_every_steps": 100,
+    "fast_adapter_bottleneck_dim": 64,
+    "fast_adapter_names": [
+      "coding",
+      "debugging",
+      "repair"
+    ],
+    "generation_eval_examples": 2,
+    "generation_max_new_tokens": 32,
+    "gradient_accumulation_steps": 8,
+    "learning_rate": 0.0003,
+    "log_every_steps": 25,
+    "max_eval_examples": 512,
+    "max_seq_len": 1024,
+    "max_steps": 2000,
+    "max_train_examples": 10000,
+    "metadata": {
+      "description": "Load a learned MoP-full base, freeze embeddings/shared core, and train routed module blocks plus adapters.",
+      "expected_efficiency_axis": "lower_vram_with_module_capacity",
+      "profile": "100m_mop_core_frozen_quality_colab_efficiency",
+      "target_gpu_memory_gb": 24,
+      "train_norm": true
+    },
+    "micro_batch_size": 1,
+    "model_type": "mop_oracle",
+    "module_names": [
+      "coding",
+      "debugging",
+      "repair"
+    ],
+    "name": "100m_mop_core_frozen_quality_colab_efficiency",
+    "n_heads": 12,
+    "n_layers": 12,
+    "precision": "auto",
+    "require_device_available": false,
+    "resume_from_checkpoint": "REPLACE_WITH_100M_MOP_FULL_CHECKPOINT_OR_RUN_ID",
+    "resume_model_only": true,
+    "run_generation_eval": true,
+    "save_every_steps": 500,
+    "save_trainable_only_checkpoints": true,
+    "scheduler": "cosine",
+    "target_modules": [
+      "coding",
+      "debugging",
+      "repair"
+    ],
+    "trainable_policy_mode": "core_frozen",
+    "use_fast_adapters": true,
+    "warmup_steps": 50
+  },
+  "version": "1"
+}
