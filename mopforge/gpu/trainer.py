@@ -88,6 +88,7 @@ class GPUTrainer:
         self._train_started_at: float | None = None
         self._train_finished_at: float | None = None
         self._step_times: list[float] = []
+        self._last_loss_metadata: dict[str, Any] = {}
         self._setup_done = False
 
     def setup(self) -> None:
@@ -169,6 +170,9 @@ class GPUTrainer:
                 micro_batch_size=self.config.micro_batch_size,
                 num_workers=self.config.num_workers,
                 pin_memory=pin_memory,
+                hard_example_replay_enabled=self.config.hard_example_replay_enabled,
+                hard_example_replay_loss_threshold=self.config.hard_example_replay_loss_threshold,
+                hard_example_replay_multiplier=self.config.hard_example_replay_multiplier,
             )
         else:
             self.train_loader, self.eval_loader, self.data_metadata = build_gpu_dataloaders(
@@ -180,6 +184,12 @@ class GPUTrainer:
 
         if self.config.resume_from_checkpoint:
             self.load_checkpoint(self.config.resume_from_checkpoint)
+
+        if self.config.activation_cache_path and self.config.offload_frozen_backbone_for_cache:
+            self.model_metadata["cached_training_backbone_offload"] = offload_cached_frozen_backbone(
+                self.model,
+                runtime=self.runtime,
+            )
 
         self._write_setup_artifacts()
         self._setup_done = True
@@ -197,7 +207,7 @@ class GPUTrainer:
             while self.state.global_step < self.config.max_steps:
                 step_started_at = time.perf_counter()
                 batch = move_batch_to_device(next(self._train_iter), self.runtime.device_info.selected)
-                loss = self._forward_loss(batch)
+                loss = self._forward_loss(batch, include_distillation=True)
                 scaled_loss = loss / float(self.config.gradient_accumulation_steps)
                 self.scaler.scale(scaled_loss).backward()
                 self.state.global_step += 1
@@ -232,8 +242,17 @@ class GPUTrainer:
                     if improved:
                         self.state.best_eval_loss = self.state.latest_eval_loss
                         self.state.evals_without_improvement = 0
+                        self._maybe_record_target_eval_loss(self.state.latest_eval_loss)
+                        if self.config.save_full_checkpoints and self.config.save_best_eval_checkpoint:
+                            self.save_checkpoint(
+                                self.state.global_step,
+                                tag="best-eval",
+                                record_latest=False,
+                                record_best=True,
+                        )
                     else:
                         self.state.evals_without_improvement += 1
+                        self._maybe_record_target_eval_loss(self.state.latest_eval_loss)
                     if (
                         self.config.early_stopping_enabled
                         and self.state.evals_without_improvement
@@ -243,7 +262,7 @@ class GPUTrainer:
                         self.state.stop_reason = "eval_loss_patience_exhausted"
                         break
                 if self.state.global_step % self.config.log_every_steps == 0:
-                    self._append_metrics({"event": "log"})
+                    self._append_metrics({"event": "log", **dict(self._last_loss_metadata)})
                 if self.config.save_full_checkpoints and self.state.global_step % self.config.save_every_steps == 0:
                     self.save_checkpoint(self.state.global_step)
                 if self.config.empty_cache_every_steps and self.state.global_step % self.config.empty_cache_every_steps == 0:
@@ -256,6 +275,7 @@ class GPUTrainer:
             raise
         finally:
             self._train_finished_at = time.perf_counter()
+            self._empty_cache()
             self._write_state()
         return self._finish(status)
 
@@ -272,7 +292,7 @@ class GPUTrainer:
                     if index >= self.config.eval_batches:
                         break
                     batch = move_batch_to_device(batch, self.runtime.device_info.selected)
-                    loss = self._forward_loss(batch)
+                    loss = self._forward_loss(batch, include_distillation=False)
                     losses.append(float(loss.detach().float().cpu().item()))
         finally:
             self.model.train()
@@ -285,8 +305,18 @@ class GPUTrainer:
         self._append_metrics(metrics)
         return metrics
 
-    def save_checkpoint(self, step: int) -> str:
-        path = self.checkpoint_dir / f"checkpoint-step-{step:06d}.pt"
+    def save_checkpoint(
+        self,
+        step: int,
+        *,
+        tag: str | None = None,
+        record_latest: bool = True,
+        record_best: bool = False,
+    ) -> str:
+        filename = f"checkpoint-{tag}.pt" if tag else f"checkpoint-step-{step:06d}.pt"
+        path = self.checkpoint_dir / filename
+        if record_best:
+            self.state.best_checkpoint_path = str(path)
         base_checkpoint_path = None
         if self.config.resume_model_only:
             base_checkpoint_path = self.checkpoint_metadata.get("checkpoint_path")
@@ -314,9 +344,13 @@ class GPUTrainer:
                 else None
             ),
         )
-        self.state.latest_checkpoint_path = saved
+        if record_latest:
+            self.state.latest_checkpoint_path = saved
+        if record_best:
+            self.state.best_checkpoint_path = saved
         self.checkpoint_metadata = {
-            "latest_checkpoint_path": saved,
+            "latest_checkpoint_path": self.state.latest_checkpoint_path,
+            "best_checkpoint_path": self.state.best_checkpoint_path,
             "trainable_only": self.config.save_trainable_only_checkpoints,
         }
         self._register_artifact(
@@ -334,6 +368,9 @@ class GPUTrainer:
                     "tokens_seen": self.state.tokens_seen,
                     "runtime": dict(self.runtime_meta),
                     "trainable_only": self.config.save_trainable_only_checkpoints,
+                    "checkpoint_tag": tag,
+                    "record_latest": record_latest,
+                    "record_best": record_best,
                 },
             )
         )
@@ -404,7 +441,7 @@ class GPUTrainer:
         self.model_metadata["architecture"] = arch.to_dict()
         return model
 
-    def _forward_loss(self, batch):
+    def _forward_loss(self, batch, *, include_distillation: bool = True):
         target_modules = batch.get("target_modules")
         active_adapters = None
         active_conditions = None
@@ -438,6 +475,21 @@ class GPUTrainer:
         loss = outputs.get("loss")
         if loss is None:
             loss = outputs["logits"].sum() * 0.0
+        ce_loss = loss
+        distillation_loss = None
+        if include_distillation:
+            distillation_loss = self._distillation_loss(batch, outputs)
+            if distillation_loss is not None:
+                loss = loss + float(self.config.distillation_weight) * distillation_loss
+        self._last_loss_metadata = {
+            "ce_loss": _float_or_none(ce_loss),
+            "distillation_loss": _float_or_none(distillation_loss),
+            "distillation_enabled": bool(
+                self.config.distillation_enabled
+                and self.config.distillation_weight > 0
+                and distillation_loss is not None
+            ),
+        }
         fast_meta = fast_parameter_metadata(batch, self.model)
         active_meta = estimate_active_parameters(self.model, target_modules)
         self.model_metadata.update(
@@ -457,9 +509,63 @@ class GPUTrainer:
                 "estimated_backward_flop_ratio": active_meta.get("estimated_backward_flop_ratio"),
                 "frozen_prefix": dict(getattr(self.model, "last_forward_metadata", {}) or {}),
                 "routing_mode": "oracle" if self.config.model_type != "dense" else "none",
+                "distillation": self._distillation_metadata(batch),
+                "hard_example_replay": self._hard_example_replay_metadata(),
             }
         )
         return loss
+
+    def _distillation_loss(self, batch, outputs):
+        if not self.config.distillation_enabled or self.config.distillation_weight <= 0:
+            return None
+        if "teacher_topk_logits" not in batch or "teacher_topk_indices" not in batch:
+            return None
+        torch = _require_torch()
+        teacher_logits = batch["teacher_topk_logits"].to(outputs["logits"].device).float()
+        teacher_indices = batch["teacher_topk_indices"].to(outputs["logits"].device).long()
+        student_logits = outputs["logits"].float().gather(-1, teacher_indices)
+        temperature = float(self.config.distillation_temperature)
+        teacher_probs = torch.softmax(teacher_logits / temperature, dim=-1)
+        student_log_probs = torch.log_softmax(student_logits / temperature, dim=-1)
+        token_kl = torch.nn.functional.kl_div(
+            student_log_probs,
+            teacher_probs,
+            reduction="none",
+        ).sum(dim=-1) * (temperature**2)
+        mask = batch.get("labels")
+        if mask is not None:
+            mask = (mask != -100).to(device=token_kl.device, dtype=token_kl.dtype)
+        else:
+            attention_mask = batch.get("attention_mask")
+            mask = (
+                attention_mask.to(device=token_kl.device, dtype=token_kl.dtype)
+                if attention_mask is not None
+                else torch.ones_like(token_kl)
+            )
+        denominator = mask.sum().clamp_min(1.0)
+        return (token_kl * mask).sum() / denominator
+
+    def _distillation_metadata(self, batch) -> dict[str, Any]:
+        cache_metadata = dict(self.data_metadata.get("cache_metadata") or {})
+        return {
+            "enabled": bool(self.config.distillation_enabled),
+            "weight": float(self.config.distillation_weight),
+            "temperature": float(self.config.distillation_temperature),
+            "configured_top_k": int(self.config.distillation_top_k),
+            "batch_has_teacher_topk": bool(
+                "teacher_topk_logits" in batch and "teacher_topk_indices" in batch
+            ),
+            "cache_teacher_top_k": cache_metadata.get("teacher_top_k"),
+            "cache_distillation_ready": bool(cache_metadata.get("distillation_ready")),
+        }
+
+    def _hard_example_replay_metadata(self) -> dict[str, Any]:
+        return {
+            "enabled": bool(self.config.hard_example_replay_enabled),
+            "loss_threshold": self.config.hard_example_replay_loss_threshold,
+            "multiplier": int(self.config.hard_example_replay_multiplier),
+            **dict(self.data_metadata.get("hard_example_replay") or {}),
+        }
 
     def _append_metrics(self, extra: dict[str, Any]) -> None:
         snapshot = {
@@ -475,6 +581,36 @@ class GPUTrainer:
             **extra,
         }
         self.state.metric_history.append(snapshot)
+
+    def _maybe_record_target_eval_loss(self, eval_loss: float | None) -> None:
+        target = self.config.target_eval_loss
+        if target is None or self.state.target_eval_loss_reached or eval_loss is None:
+            return
+        if float(eval_loss) > float(target):
+            return
+        elapsed = None
+        if self._train_started_at is not None:
+            elapsed = max(0.0, time.perf_counter() - self._train_started_at)
+        memory = self._memory_snapshot()
+        self.state.target_eval_loss_reached = True
+        self.state.target_eval_loss_value = float(eval_loss)
+        self.state.target_eval_loss_step = int(self.state.global_step)
+        self.state.target_eval_loss_samples_seen = int(self.state.samples_seen)
+        self.state.target_eval_loss_tokens_seen = int(self.state.tokens_seen)
+        self.state.target_eval_loss_time_sec = _round_or_none(elapsed)
+        self.state.target_eval_loss_memory_snapshot = dict(memory)
+        self._append_metrics(
+            {
+                "event": "target_eval_loss_reached",
+                "target_eval_loss": float(target),
+                "target_eval_loss_value": float(eval_loss),
+                "time_to_target_loss_sec": self.state.target_eval_loss_time_sec,
+                "tokens_to_target_loss": self.state.target_eval_loss_tokens_seen,
+                "samples_to_target_loss": self.state.target_eval_loss_samples_seen,
+                "target_peak_allocated_gb": memory.get("peak_allocated_gb"),
+                "target_peak_reserved_gb": memory.get("peak_reserved_gb"),
+            }
+        )
 
     def _memory_snapshot(self) -> dict[str, Any]:
         snapshot = {
@@ -533,6 +669,13 @@ class GPUTrainer:
             "latest_eval_loss": self.state.latest_eval_loss,
             "best_eval_loss": self.state.best_eval_loss,
             "evals_without_improvement": self.state.evals_without_improvement,
+            "target_eval_loss": self.config.target_eval_loss,
+            "target_eval_loss_reached": self.state.target_eval_loss_reached,
+            "target_eval_loss_value": self.state.target_eval_loss_value,
+            "target_eval_loss_step": self.state.target_eval_loss_step,
+            "target_eval_loss_samples_seen": self.state.target_eval_loss_samples_seen,
+            "target_eval_loss_tokens_seen": self.state.target_eval_loss_tokens_seen,
+            "target_eval_loss_time_sec": self.state.target_eval_loss_time_sec,
             "stopped_early": self.state.stopped_early,
             "stop_reason": self.state.stop_reason,
             "micro_batch_size": self.config.micro_batch_size,
@@ -551,6 +694,8 @@ class GPUTrainer:
         self.artifacts["metrics_json"] = str(self.output_dir / "metrics.json")
         if self.state.latest_checkpoint_path:
             self.artifacts["latest_checkpoint_path"] = self.state.latest_checkpoint_path
+        if self.state.best_checkpoint_path:
+            self.artifacts["best_checkpoint_path"] = self.state.best_checkpoint_path
         result = GPUTrainingResult(
             run_id=self.run_id,
             status=status,
@@ -582,6 +727,7 @@ class GPUTrainer:
                     "model_type": self.config.model_type,
                     "selected_device": self.runtime_meta.get("selected_device"),
                     "selected_precision": self.runtime_meta.get("selected_precision"),
+                    "best_checkpoint_path": self.state.best_checkpoint_path,
                 },
             )
         )
@@ -699,6 +845,7 @@ class GPUTrainer:
             else None
         )
         memory = cuda_memory_metrics(self.runtime)
+        target_memory = dict(self.state.target_eval_loss_memory_snapshot or {})
         checkpoint_size_mb = _file_size_mb(self.state.latest_checkpoint_path)
         return {
             "tokens_per_sec": _round_or_none(tokens_per_sec),
@@ -708,6 +855,16 @@ class GPUTrainer:
             "samples_per_sec": _round_or_none(samples_per_sec),
             "step_time_sec": _round_or_none(step_time),
             "total_train_time_sec": _round_or_none(total_time),
+            "target_eval_loss": self.config.target_eval_loss,
+            "target_eval_loss_reached": self.state.target_eval_loss_reached,
+            "target_eval_loss_value": self.state.target_eval_loss_value,
+            "time_to_target_loss_sec": self.state.target_eval_loss_time_sec,
+            "tokens_to_target_loss": self.state.target_eval_loss_tokens_seen,
+            "samples_to_target_loss": self.state.target_eval_loss_samples_seen,
+            "target_peak_allocated_gb": target_memory.get("peak_allocated_gb"),
+            "target_peak_reserved_gb": target_memory.get("peak_reserved_gb"),
+            "target_final_allocated_gb": target_memory.get("allocated_gb"),
+            "target_final_reserved_gb": target_memory.get("reserved_gb"),
             "peak_allocated_gb": memory["peak_allocated_gb"],
             "peak_reserved_gb": memory["peak_reserved_gb"],
             "final_allocated_gb": memory["final_allocated_gb"],
@@ -737,6 +894,18 @@ class GPUTrainer:
             "active_adapter_density": self.model_metadata.get("active_adapter_density"),
             "generated_condition_density": self.model_metadata.get("generated_condition_density"),
             "checkpoint_size_mb": checkpoint_size_mb,
+            "distillation_enabled": self.model_metadata.get("distillation", {}).get("enabled"),
+            "distillation_weight": self.model_metadata.get("distillation", {}).get("weight"),
+            "distillation_temperature": self.model_metadata.get("distillation", {}).get("temperature"),
+            "distillation_top_k": self.model_metadata.get("distillation", {}).get("cache_teacher_top_k"),
+            "hard_example_replay_enabled": self.model_metadata.get("hard_example_replay", {}).get("enabled"),
+            "hard_example_replay_multiplier": self.model_metadata.get("hard_example_replay", {}).get("multiplier"),
+            "hard_example_count": self.model_metadata.get("hard_example_replay", {}).get("hard_example_count"),
+            "hard_replayed_example_count": self.model_metadata.get("hard_example_replay", {}).get("replayed_example_count"),
+            "cached_backbone_offloaded_param_count": self.model_metadata.get(
+                "cached_training_backbone_offload",
+                {},
+            ).get("offloaded_param_count"),
         }
 
 
@@ -772,6 +941,76 @@ def apply_activation_checkpointing(model, enabled: bool, policy: str = "auto") -
             else ["Model does not expose native activation checkpointing support."]
         ),
     }
+
+
+def offload_cached_frozen_backbone(model, *, runtime) -> dict[str, Any]:
+    """Move unused frozen cached-training backbone modules off CUDA."""
+
+    candidate_names = [
+        "token_embedding",
+        "position_embedding",
+        "blocks",
+        "shared_blocks",
+        "routed_blocks",
+        "module_bank",
+    ]
+    offloaded: list[dict[str, Any]] = []
+    skipped: list[dict[str, Any]] = []
+    for name in candidate_names:
+        module = getattr(model, name, None)
+        if module is None:
+            continue
+        param_count = _module_param_count(module)
+        if _module_has_trainable_parameters(module):
+            skipped.append(
+                {
+                    "name": name,
+                    "reason": "has_trainable_parameters",
+                    "param_count": param_count,
+                }
+            )
+            continue
+        try:
+            module.to("cpu")
+            offloaded.append({"name": name, "param_count": param_count})
+        except Exception as exc:
+            skipped.append(
+                {
+                    "name": name,
+                    "reason": f"offload_failed:{exc}",
+                    "param_count": param_count,
+                }
+            )
+    cuda_cleanup = False
+    try:
+        import torch
+
+        if runtime.device_info.device_type == "cuda":
+            torch.cuda.empty_cache()
+            cuda_cleanup = True
+    except Exception:
+        cuda_cleanup = False
+    return {
+        "enabled": True,
+        "selected_device": getattr(runtime.device_info, "selected", None),
+        "offloaded_modules": offloaded,
+        "skipped_modules": skipped,
+        "offloaded_param_count": sum(int(item["param_count"]) for item in offloaded),
+        "skipped_param_count": sum(int(item["param_count"]) for item in skipped),
+        "cuda_empty_cache_after_offload": cuda_cleanup,
+        "note": "Only modules unused by forward_from_hidden are offloaded.",
+    }
+
+
+def _module_has_trainable_parameters(module) -> bool:
+    return any(parameter.requires_grad for parameter in module.parameters(recurse=True))
+
+
+def _module_param_count(module) -> int:
+    try:
+        return sum(int(parameter.numel()) for parameter in module.parameters(recurse=True))
+    except Exception:
+        return 0
 
 
 def select_attention_metadata(efficient_attention: str) -> dict[str, Any]:
@@ -865,6 +1104,17 @@ def _round_or_none(value: float | None, digits: int = 4) -> float | None:
         return None
     try:
         return round(float(value), digits)
+    except Exception:
+        return None
+
+
+def _float_or_none(value) -> float | None:
+    if value is None:
+        return None
+    try:
+        if hasattr(value, "detach"):
+            value = value.detach().float().cpu().item()
+        return float(value)
     except Exception:
         return None
 

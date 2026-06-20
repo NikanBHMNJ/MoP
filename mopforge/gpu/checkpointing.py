@@ -37,6 +37,8 @@ def save_gpu_checkpoint(
     architecture_dict = dict((model_metadata or {}).get("architecture") or {})
     config_sha256 = _stable_sha256(config_dict)
     architecture_sha256 = _stable_sha256(architecture_dict) if architecture_dict else None
+    activation_cache_path = (data_metadata or {}).get("source_path")
+    activation_cache_metadata = dict((data_metadata or {}).get("cache_metadata") or {})
     model_state = None if trainable_only else model.state_dict()
     trainable_model_state = _trainable_state_dict(model) if trainable_only else None
     payload = {
@@ -66,6 +68,8 @@ def save_gpu_checkpoint(
         "data_metadata": dict(data_metadata or {}),
         "model_metadata": dict(model_metadata or {}),
         "memory_metadata": dict(memory_metadata or {}),
+        "activation_cache_path": activation_cache_path,
+        "activation_cache_metadata": activation_cache_metadata,
         "rng_state": capture_rng_state(),
         "metadata": {
             "training_kind": "gpu_train",
@@ -78,6 +82,8 @@ def save_gpu_checkpoint(
             "scaler_enabled": bool((scaler.state_dict() if scaler is not None else {}).get("enabled")),
             "trainable_only": bool(trainable_only),
             "base_checkpoint_path": base_checkpoint_path,
+            "activation_cache_path": activation_cache_path,
+            "activation_cache_manifest_sha256": activation_cache_metadata.get("manifest_sha256"),
             "config_sha256": config_sha256,
             "architecture_sha256": architecture_sha256,
         },

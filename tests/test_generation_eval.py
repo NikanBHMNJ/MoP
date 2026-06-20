@@ -153,9 +153,11 @@ def test_generation_summary_separates_exact_and_verifier_pass_rates() -> None:
         [
             {"passed": True, "exact_match": True, "failure_type": None},
             {"passed": True, "exact_match": False, "failure_type": None},
-            {"passed": False, "exact_match": False, "failure_type": "tests_failed"},
+            {"passed": False, "exact_match": False, "failure_type": "syntax_error"},
         ]
     )
 
     assert summary["gen_verifier_pass_rate"] == 2 / 3
     assert summary["gen_exact_match_rate"] == 1 / 3
+    assert summary["gen_syntax_pass_rate"] == 2 / 3
+    assert summary["gen_compile_pass_rate"] == 2 / 3

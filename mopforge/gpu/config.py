@@ -97,6 +97,7 @@ class GPUTrainingConfig:
     empty_cache_every_steps: int | None = None
 
     save_full_checkpoints: bool = True
+    save_best_eval_checkpoint: bool = True
     resume_from_checkpoint: str | None = None
     resume_model_only: bool = False
     save_trainable_only_checkpoints: bool = False
@@ -106,6 +107,15 @@ class GPUTrainingConfig:
 
     activation_cache_path: str | None = None
     activation_cache_dtype: str = "bf16"
+    offload_frozen_backbone_for_cache: bool = True
+    distillation_enabled: bool = False
+    distillation_weight: float = 0.0
+    distillation_temperature: float = 1.0
+    distillation_top_k: int = 0
+    hard_example_replay_enabled: bool = False
+    hard_example_replay_loss_threshold: float | None = None
+    hard_example_replay_multiplier: int = 1
+    target_eval_loss: float | None = None
     max_train_examples: int | None = None
     max_eval_examples: int | None = None
     num_workers: int = 0
@@ -145,6 +155,25 @@ class GPUTrainingConfig:
             raise ValueError("learning_rate must be positive.")
         if self.weight_decay < 0:
             raise ValueError("weight_decay must be non-negative.")
+        if self.distillation_weight < 0:
+            raise ValueError("distillation_weight must be non-negative.")
+        if self.distillation_temperature <= 0:
+            raise ValueError("distillation_temperature must be positive.")
+        if type(self.distillation_top_k) is not int or self.distillation_top_k < 0:
+            raise ValueError("distillation_top_k must be a non-negative integer.")
+        if type(self.hard_example_replay_multiplier) is not int or self.hard_example_replay_multiplier <= 0:
+            raise ValueError("hard_example_replay_multiplier must be a positive integer.")
+        if self.hard_example_replay_loss_threshold is not None:
+            if (
+                not isinstance(self.hard_example_replay_loss_threshold, (int, float))
+                or self.hard_example_replay_loss_threshold < 0
+            ):
+                raise ValueError("hard_example_replay_loss_threshold must be non-negative or None.")
+            self.hard_example_replay_loss_threshold = float(self.hard_example_replay_loss_threshold)
+        if self.target_eval_loss is not None:
+            if not isinstance(self.target_eval_loss, (int, float)) or self.target_eval_loss <= 0:
+                raise ValueError("target_eval_loss must be a positive number or None.")
+            self.target_eval_loss = float(self.target_eval_loss)
         if not isinstance(self.early_stopping_min_delta, (int, float)) or self.early_stopping_min_delta < 0:
             raise ValueError("early_stopping_min_delta must be a non-negative number.")
         self.early_stopping_min_delta = float(self.early_stopping_min_delta)
@@ -208,11 +237,15 @@ class GPUTrainingConfig:
             "activation_checkpointing",
             "always_include_core",
             "save_full_checkpoints",
+            "save_best_eval_checkpoint",
             "resume_model_only",
             "save_trainable_only_checkpoints",
             "save_optimizer_state",
             "save_rng_state",
             "use_lora_deltas",
+            "offload_frozen_backbone_for_cache",
+            "distillation_enabled",
+            "hard_example_replay_enabled",
             "pin_memory",
             "run_generation_eval",
             "early_stopping_enabled",
@@ -284,9 +317,17 @@ class GPUTrainingState:
     latest_eval_loss: float | None = None
     best_eval_loss: float | None = None
     evals_without_improvement: int = 0
+    target_eval_loss_reached: bool = False
+    target_eval_loss_value: float | None = None
+    target_eval_loss_step: int | None = None
+    target_eval_loss_samples_seen: int | None = None
+    target_eval_loss_tokens_seen: int | None = None
+    target_eval_loss_time_sec: float | None = None
+    target_eval_loss_memory_snapshot: dict[str, Any] = field(default_factory=dict)
     stopped_early: bool = False
     stop_reason: str | None = None
     latest_checkpoint_path: str | None = None
+    best_checkpoint_path: str | None = None
     scaler_state: dict[str, Any] = field(default_factory=dict)
     runtime_metadata: dict[str, Any] = field(default_factory=dict)
     memory_snapshots: list[dict[str, Any]] = field(default_factory=list)
@@ -306,9 +347,17 @@ class GPUTrainingState:
             latest_eval_loss=data.get("latest_eval_loss"),
             best_eval_loss=data.get("best_eval_loss"),
             evals_without_improvement=int(data.get("evals_without_improvement", 0)),
+            target_eval_loss_reached=bool(data.get("target_eval_loss_reached", False)),
+            target_eval_loss_value=data.get("target_eval_loss_value"),
+            target_eval_loss_step=data.get("target_eval_loss_step"),
+            target_eval_loss_samples_seen=data.get("target_eval_loss_samples_seen"),
+            target_eval_loss_tokens_seen=data.get("target_eval_loss_tokens_seen"),
+            target_eval_loss_time_sec=data.get("target_eval_loss_time_sec"),
+            target_eval_loss_memory_snapshot=dict(data.get("target_eval_loss_memory_snapshot") or {}),
             stopped_early=bool(data.get("stopped_early", False)),
             stop_reason=data.get("stop_reason"),
             latest_checkpoint_path=data.get("latest_checkpoint_path"),
+            best_checkpoint_path=data.get("best_checkpoint_path"),
             scaler_state=dict(data.get("scaler_state", {})),
             runtime_metadata=dict(data.get("runtime_metadata", {})),
             memory_snapshots=[dict(item) for item in data.get("memory_snapshots", [])],

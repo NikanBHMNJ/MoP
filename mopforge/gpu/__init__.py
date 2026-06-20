@@ -59,6 +59,7 @@ from mopforge.gpu.scaler import AmpScaler
 from mopforge.gpu.trainer import (
     GPUTrainer,
     apply_activation_checkpointing,
+    offload_cached_frozen_backbone,
     select_attention_metadata,
 )
 from mopforge.gpu.validation import dry_run_gpu_training_config, validate_gpu_training_config
@@ -104,6 +105,7 @@ __all__ = [
     "load_gpu_lesson_splits",
     "model_profile_100m_dense",
     "model_profile_100m_mop",
+    "offload_cached_frozen_backbone",
     "model_profile_1b_mop",
     "model_profile_2b_mop",
     "model_profile_500m_dense",

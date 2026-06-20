@@ -26,6 +26,17 @@ def validate_gpu_training_config(config: GPUTrainingConfig) -> list[str]:
         messages.append(f"WARNING: corpus_path does not exist yet: {config.corpus_path}")
     if config.activation_cache_path and not Path(config.activation_cache_path).exists():
         messages.append(f"WARNING: activation_cache_path does not exist yet: {config.activation_cache_path}")
+    if config.distillation_enabled and not config.activation_cache_path:
+        messages.append("WARNING: distillation_enabled is only active for cached teacher-top-k training.")
+    if config.distillation_enabled and config.distillation_weight <= 0:
+        messages.append("WARNING: distillation_enabled is true but distillation_weight is zero.")
+    if config.hard_example_replay_enabled and not config.activation_cache_path:
+        messages.append("WARNING: hard_example_replay_enabled is only active for cached training.")
+    if config.hard_example_replay_enabled and config.hard_example_replay_loss_threshold is None:
+        messages.append(
+            "WARNING: hard_example_replay_enabled has no loss threshold; only records "
+            "explicitly marked hard_example will be replayed."
+        )
     if config.dataset_ref:
         try:
             DatasetRegistry().resolve_dataset_ref(config.dataset_ref)
@@ -85,8 +96,18 @@ def dry_run_gpu_training_config(config: GPUTrainingConfig) -> dict:
         "always_include_core": config.always_include_core,
         "mop_block_type": config.mop_block_type,
         "resume_model_only": config.resume_model_only,
+        "save_best_eval_checkpoint": config.save_best_eval_checkpoint,
         "save_trainable_only_checkpoints": config.save_trainable_only_checkpoints,
         "activation_cache_path": config.activation_cache_path,
+        "offload_frozen_backbone_for_cache": config.offload_frozen_backbone_for_cache,
+        "distillation_enabled": config.distillation_enabled,
+        "distillation_weight": config.distillation_weight,
+        "distillation_temperature": config.distillation_temperature,
+        "distillation_top_k": config.distillation_top_k,
+        "hard_example_replay_enabled": config.hard_example_replay_enabled,
+        "hard_example_replay_loss_threshold": config.hard_example_replay_loss_threshold,
+        "hard_example_replay_multiplier": config.hard_example_replay_multiplier,
+        "target_eval_loss": config.target_eval_loss,
         "dataset_split_id": config.dataset_split_id,
         "run_generation_eval": config.run_generation_eval,
         "early_stopping_enabled": config.early_stopping_enabled,

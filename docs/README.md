@@ -19,6 +19,7 @@ and tested before it has proven a GPU efficiency result.
 
 - [GPU quickstart](gpu_quickstart.md)
 - [Colab L4 TinyStories v0.46.0 efficiency comparison notebook](../notebooks/colab_l4_v046_efficiency_comparison.ipynb)
+- [Colab L4 Goal 48 code cached-sparse report notebook](../notebooks/colab_l4_goal48_code_cached_sparse_report.ipynb)
 - [GPU job profiles](gpu_job_profiles.md)
 - [GPU efficiency benchmarking](gpu_efficiency_benchmarking.md)
 - [Warm sparse GPU efficiency comparison template](warm_sparse_efficiency_comparison_template.md)
@@ -58,11 +59,18 @@ The current code adds the pieces needed for a more serious next comparison:
 - warm-started sparse training,
 - trainable-only sparse checkpoints,
 - frozen-prefix activation caches,
+- cached teacher top-k distillation for code sparse-tail training,
+- optional hard-example replay from cached teacher CE loss,
+- cached sparse offload of unused frozen backbone modules,
+- best eval-loss checkpoint and time/tokens-to-target-loss reporting,
 - fixed train/eval/test splits,
 - generated-code quality metrics,
 - routed FFN expert execution,
 - internal routed low-rank deltas,
 - comparison and acceptance-gate reports.
 
-Run longer GPU experiments before turning these capabilities into broad
-performance claims.
+The next report should use a fixed code dataset rather than TinyStories and
+compare Dense, MoP Full, warm sparse, and cached sparse distillation on the same
+train/eval/test split. Configure a shared `target_eval_loss` after the baseline
+run if the report claims time-to-target-loss. Run longer GPU experiments before
+turning these capabilities into broad performance claims.

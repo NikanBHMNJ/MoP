@@ -14,6 +14,14 @@ COMPARISON_FIELDS = [
     "status",
     "train_loss",
     "eval_loss",
+    "best_eval_loss",
+    "target_eval_loss",
+    "target_eval_loss_reached",
+    "time_to_target_loss_sec",
+    "tokens_to_target_loss",
+    "samples_to_target_loss",
+    "target_peak_allocated_gb",
+    "target_peak_reserved_gb",
     "tokens_per_sec",
     "original_token_equivalent_tokens_per_sec",
     "cached_hidden_steps_per_sec",
@@ -41,6 +49,17 @@ COMPARISON_FIELDS = [
     "active_module_density",
     "active_adapter_density",
     "generated_condition_density",
+    "gen_exact_match_rate",
+    "gen_verifier_pass_rate",
+    "gen_syntax_pass_rate",
+    "gen_compile_pass_rate",
+    "distillation_enabled",
+    "distillation_weight",
+    "distillation_top_k",
+    "hard_example_replay_enabled",
+    "hard_example_count",
+    "hard_replayed_example_count",
+    "cached_backbone_offloaded_param_count",
     "selected_device",
     "selected_precision",
 ]
@@ -76,6 +95,7 @@ def extract_run_row(run: str, *, gpu_runs_dir: str | Path = "gpu_runs") -> dict[
     runtime = dict(metrics.get("runtime") or result.get("runtime_metadata") or {})
     model = dict(metrics.get("model") or {})
     efficiency = dict(metrics.get("efficiency") or {})
+    generation = dict(metrics.get("generation_eval") or {})
     state = dict(result.get("state") or {})
     artifacts = dict(result.get("artifacts") or {})
     checkpoint_path = (
@@ -88,6 +108,14 @@ def extract_run_row(run: str, *, gpu_runs_dir: str | Path = "gpu_runs") -> dict[
         "status": metrics.get("status") or result.get("status"),
         "train_loss": metrics.get("latest_train_loss"),
         "eval_loss": metrics.get("latest_eval_loss"),
+        "best_eval_loss": metrics.get("best_eval_loss"),
+        "target_eval_loss": _first(efficiency, metrics, "target_eval_loss"),
+        "target_eval_loss_reached": _first(efficiency, metrics, "target_eval_loss_reached"),
+        "time_to_target_loss_sec": _first(efficiency, metrics, "time_to_target_loss_sec", "target_eval_loss_time_sec"),
+        "tokens_to_target_loss": _first(efficiency, metrics, "tokens_to_target_loss", "target_eval_loss_tokens_seen"),
+        "samples_to_target_loss": _first(efficiency, metrics, "samples_to_target_loss", "target_eval_loss_samples_seen"),
+        "target_peak_allocated_gb": _first(efficiency, metrics, "target_peak_allocated_gb"),
+        "target_peak_reserved_gb": _first(efficiency, metrics, "target_peak_reserved_gb"),
         "tokens_per_sec": _first(efficiency, metrics, "tokens_per_sec"),
         "original_token_equivalent_tokens_per_sec": _first(
             efficiency,
@@ -131,6 +159,36 @@ def extract_run_row(run: str, *, gpu_runs_dir: str | Path = "gpu_runs") -> dict[
         "active_module_density": _first(efficiency, model, "active_module_density"),
         "active_adapter_density": _first(efficiency, model, "active_adapter_density"),
         "generated_condition_density": _first(efficiency, model, "generated_condition_density"),
+        "gen_exact_match_rate": _first(generation, metrics, "gen_exact_match_rate"),
+        "gen_verifier_pass_rate": _first(generation, metrics, "gen_verifier_pass_rate"),
+        "gen_syntax_pass_rate": _first(generation, metrics, "gen_syntax_pass_rate"),
+        "gen_compile_pass_rate": _first(generation, metrics, "gen_compile_pass_rate"),
+        "distillation_enabled": _first(efficiency, model.get("distillation", {}), "distillation_enabled", "enabled"),
+        "distillation_weight": _first(efficiency, model.get("distillation", {}), "distillation_weight", "weight"),
+        "distillation_top_k": _first(efficiency, model.get("distillation", {}), "distillation_top_k", "cache_teacher_top_k"),
+        "hard_example_replay_enabled": _first(
+            efficiency,
+            model.get("hard_example_replay", {}),
+            "hard_example_replay_enabled",
+            "enabled",
+        ),
+        "hard_example_count": _first(
+            efficiency,
+            model.get("hard_example_replay", {}),
+            "hard_example_count",
+        ),
+        "hard_replayed_example_count": _first(
+            efficiency,
+            model.get("hard_example_replay", {}),
+            "hard_replayed_example_count",
+            "replayed_example_count",
+        ),
+        "cached_backbone_offloaded_param_count": _first(
+            efficiency,
+            model.get("cached_training_backbone_offload", {}),
+            "cached_backbone_offloaded_param_count",
+            "offloaded_param_count",
+        ),
         "selected_device": runtime.get("selected_device"),
         "selected_precision": runtime.get("selected_precision"),
     }
@@ -182,6 +240,8 @@ def format_table(rows: list[dict[str, Any]]) -> str:
         "run_id",
         "train_loss",
         "eval_loss",
+        "best_eval_loss",
+        "time_to_target_loss_sec",
         "tokens_per_sec",
         "peak_reserved_gb",
         "trainable_param_ratio",

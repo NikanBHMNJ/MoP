@@ -118,6 +118,8 @@ def summarize_generation_results(results: list[dict[str, Any]]) -> dict[str, Any
     pass_count = sum(1 for result in results if result.get("passed"))
     exact_match_count = sum(1 for result in results if result.get("exact_match"))
     total = len(results)
+    syntax_failure_count = int(failures.get("syntax_error", 0))
+    syntax_pass_count = max(0, total - syntax_failure_count)
     return {
         "gen_eval_examples": total,
         "gen_pass_count": pass_count,
@@ -126,6 +128,10 @@ def summarize_generation_results(results: list[dict[str, Any]]) -> dict[str, Any
         "gen_verifier_pass_rate": pass_count / total if total else 0.0,
         "gen_exact_match_count": exact_match_count,
         "gen_exact_match_rate": exact_match_count / total if total else 0.0,
+        "gen_syntax_pass_count": syntax_pass_count,
+        "gen_syntax_pass_rate": syntax_pass_count / total if total else 0.0,
+        "gen_compile_pass_count": syntax_pass_count,
+        "gen_compile_pass_rate": syntax_pass_count / total if total else 0.0,
         "gen_failures_by_type": dict(sorted(failures.items())),
     }
 

@@ -25,6 +25,13 @@ def write_warm_sparse_sweep_configs(
     lora_ranks: list[int] | None = None,
     max_steps: int = 2000,
     seed: int = 42,
+    cached_distillation_weight: float = 0.0,
+    cached_distillation_temperature: float = 1.0,
+    cached_distillation_top_k: int = 0,
+    hard_example_replay_enabled: bool = False,
+    hard_example_replay_loss_threshold: float | None = None,
+    hard_example_replay_multiplier: int = 1,
+    target_eval_loss: float | None = None,
 ) -> list[Path]:
     """Write warm sparse adapter/norm-head/core-frozen sweep configs."""
 
@@ -51,6 +58,7 @@ def write_warm_sparse_sweep_configs(
                         dataset_split_id=dataset_split_id,
                         train_norm=False,
                         train_lm_head=False,
+                        target_eval_loss=target_eval_loss,
                     ),
                 )
             )
@@ -69,6 +77,7 @@ def write_warm_sparse_sweep_configs(
                         dataset_split_id=dataset_split_id,
                         train_norm=True,
                         train_lm_head=True,
+                        target_eval_loss=target_eval_loss,
                     ),
                 )
             )
@@ -89,6 +98,13 @@ def write_warm_sparse_sweep_configs(
                             train_norm=True,
                             train_lm_head=True,
                             activation_cache_path=activation_cache_path,
+                            distillation_weight=cached_distillation_weight,
+                            distillation_temperature=cached_distillation_temperature,
+                            distillation_top_k=cached_distillation_top_k,
+                            hard_example_replay_enabled=hard_example_replay_enabled,
+                            hard_example_replay_loss_threshold=hard_example_replay_loss_threshold,
+                            hard_example_replay_multiplier=hard_example_replay_multiplier,
+                            target_eval_loss=target_eval_loss,
                         ),
                     )
                 )
@@ -106,10 +122,11 @@ def write_warm_sparse_sweep_configs(
                     seed=seed,
                     dataset_ref=dataset_ref,
                     dataset_split_id=dataset_split_id,
-                    train_norm=True,
-                    train_lm_head=False,
-                ),
-            )
+                train_norm=True,
+                train_lm_head=False,
+                target_eval_loss=target_eval_loss,
+            ),
+        )
         )
         for lora_rank in lora_rank_values:
             written.append(
@@ -130,6 +147,7 @@ def write_warm_sparse_sweep_configs(
                         use_fast_adapters=False,
                         use_lora_deltas=True,
                         lora_rank=lora_rank,
+                        target_eval_loss=target_eval_loss,
                     ),
                 )
             )
@@ -153,6 +171,13 @@ def _profile_payload(
     use_fast_adapters: bool = True,
     use_lora_deltas: bool = False,
     lora_rank: int = 0,
+    distillation_weight: float = 0.0,
+    distillation_temperature: float = 1.0,
+    distillation_top_k: int = 0,
+    hard_example_replay_enabled: bool = False,
+    hard_example_replay_loss_threshold: float | None = None,
+    hard_example_replay_multiplier: int = 1,
+    target_eval_loss: float | None = None,
 ) -> dict[str, Any]:
     lr_slug = _lr_slug(learning_rate)
     cache_slug = "_cached" if activation_cache_path else ""
@@ -208,6 +233,7 @@ def _profile_payload(
         "resume_model_only": True,
         "base_checkpoint_path": base_checkpoint,
         "save_trainable_only_checkpoints": True,
+        "save_best_eval_checkpoint": True,
         "run_generation_eval": True,
         "generation_eval_examples": 2,
         "generation_max_new_tokens": 32,
@@ -222,6 +248,29 @@ def _profile_payload(
         payload["lora_target_modules"] = ["coding", "debugging", "repair"]
     if activation_cache_path:
         payload["activation_cache_path"] = activation_cache_path
+        if distillation_weight > 0:
+            payload["distillation_enabled"] = True
+            payload["distillation_weight"] = distillation_weight
+            payload["distillation_temperature"] = distillation_temperature
+            payload["distillation_top_k"] = distillation_top_k
+            metadata["distillation"] = {
+                "teacher": "cached_top_k_logits",
+                "weight": distillation_weight,
+                "temperature": distillation_temperature,
+                "top_k": distillation_top_k,
+            }
+        if hard_example_replay_enabled:
+            payload["hard_example_replay_enabled"] = True
+            payload["hard_example_replay_loss_threshold"] = hard_example_replay_loss_threshold
+            payload["hard_example_replay_multiplier"] = int(hard_example_replay_multiplier)
+            metadata["hard_example_replay"] = {
+                "source": "teacher_ce_loss",
+                "loss_threshold": hard_example_replay_loss_threshold,
+                "multiplier": int(hard_example_replay_multiplier),
+            }
+    if target_eval_loss is not None:
+        payload["target_eval_loss"] = float(target_eval_loss)
+        metadata["target_eval_loss"] = float(target_eval_loss)
     if dataset_ref:
         payload["dataset_ref"] = dataset_ref
     if dataset_split_id:

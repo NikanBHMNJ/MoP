@@ -207,6 +207,8 @@ def _build_parser() -> argparse.ArgumentParser:
     gpu_cache.add_argument("--output", required=True)
     gpu_cache.add_argument("--max-batches", type=int)
     gpu_cache.add_argument("--dtype", choices=["fp32", "fp16", "bf16"], default="bf16")
+    gpu_cache.add_argument("--teacher-top-k", type=int, default=0)
+    gpu_cache.add_argument("--records-per-shard", type=int)
     gpu_cache.set_defaults(func=_cmd_gpu_cache_activations)
     gpu_sweep = gpu_sub.add_parser(
         "write-warm-sparse-sweep",
@@ -222,6 +224,13 @@ def _build_parser() -> argparse.ArgumentParser:
     gpu_sweep.add_argument("--lora-ranks", type=int, nargs="+", default=[4, 8, 16])
     gpu_sweep.add_argument("--max-steps", type=int, default=2000)
     gpu_sweep.add_argument("--seed", type=int, default=42)
+    gpu_sweep.add_argument("--cached-distillation-weight", type=float, default=0.0)
+    gpu_sweep.add_argument("--cached-distillation-temperature", type=float, default=1.0)
+    gpu_sweep.add_argument("--cached-distillation-top-k", type=int, default=0)
+    gpu_sweep.add_argument("--hard-example-replay", action="store_true")
+    gpu_sweep.add_argument("--hard-example-replay-loss-threshold", type=float)
+    gpu_sweep.add_argument("--hard-example-replay-multiplier", type=int, default=1)
+    gpu_sweep.add_argument("--target-eval-loss", type=float)
     gpu_sweep.set_defaults(func=_cmd_gpu_write_warm_sparse_sweep)
     gpu_data = gpu_sub.add_parser(
         "prepare-efficiency-data",
@@ -925,6 +934,8 @@ def _cmd_gpu_cache_activations(args) -> int:
         runtime=trainer.runtime,
         dtype=args.dtype,
         max_batches=args.max_batches,
+        teacher_top_k=int(args.teacher_top_k),
+        records_per_shard=args.records_per_shard,
         metadata={
             "source_config": str(args.path),
             "source_checkpoint": checkpoint_path,
@@ -937,6 +948,8 @@ def _cmd_gpu_cache_activations(args) -> int:
     print(f"cache_format={result['cache_format']}")
     print(f"train_records={result['train_records']}")
     print(f"eval_records={result['eval_records']}")
+    print(f"sharded={result.get('sharded')}")
+    print(f"shard_count={result.get('shard_count')}")
     print(f"source_checkpoint={checkpoint_path}")
     return 0
 
@@ -953,6 +966,13 @@ def _cmd_gpu_write_warm_sparse_sweep(args) -> int:
         lora_ranks=list(args.lora_ranks),
         max_steps=int(args.max_steps),
         seed=int(args.seed),
+        cached_distillation_weight=float(args.cached_distillation_weight),
+        cached_distillation_temperature=float(args.cached_distillation_temperature),
+        cached_distillation_top_k=int(args.cached_distillation_top_k),
+        hard_example_replay_enabled=bool(args.hard_example_replay),
+        hard_example_replay_loss_threshold=args.hard_example_replay_loss_threshold,
+        hard_example_replay_multiplier=int(args.hard_example_replay_multiplier),
+        target_eval_loss=args.target_eval_loss,
     )
     print(f"config_count={len(written)}")
     for path in written:

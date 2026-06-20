@@ -27,6 +27,9 @@ MoP-Forge currently includes:
 - Model-only checkpoint resume for warm-started sparse runs.
 - Trainable-only sparse checkpoints with base-checkpoint references.
 - Frozen-prefix execution and activation-cache training for sparse tails.
+- Cached teacher top-k distillation for sparse-tail code training.
+- Cached sparse training can offload unused frozen backbone modules from CUDA
+  before the trainable tail phase.
 - Native non-reentrant PyTorch activation checkpointing for dense, shared, and
   routed transformer blocks.
 - Routed FFN expert blocks with top-k example or token routing.
@@ -85,13 +88,20 @@ not a paper-grade conclusion.
 
 ## Current Research Direction
 
-Goal 47 implemented the infrastructure needed to reduce sparse-run loss without
+Goal 48 extends the warm sparse path toward better loss efficiency without
 giving up the efficiency story:
 
 - Warm-start sparse runs from a learned dense or full-MoP checkpoint instead of
   training adapters on a random frozen base.
 - Train adapters with optional norm/head updates for a small capacity increase.
 - Cache frozen-prefix activations for repeated sparse-tail sweeps.
+- Cache teacher top-k logits and add a KL distillation term during sparse-tail
+  training, so code runs can learn from a Dense or MoP Full teacher without
+  keeping that teacher resident during the sparse phase.
+- Optionally replay high-loss cached examples using per-record teacher CE loss.
+- Offload frozen backbone modules from CUDA for cached sparse-tail training.
+- Save the best eval-loss checkpoint and record time/tokens-to-target-loss when
+  a shared `target_eval_loss` is configured.
 - Save trainable-only checkpoints so artifact size matches the sparse claim.
 - Use routed FFN experts and internal low-rank deltas as quality recovery paths.
 - Gate claims with eval loss, throughput, VRAM, checkpoint size, generated-code
@@ -155,10 +165,33 @@ Use the fixed-split dataset and extended 100M profiles:
 mopforge gpu prepare-efficiency-data --count-per-category 100 --split-seed 42
 mopforge gpu train configs/jobs/100m_dense_extended_efficiency.json
 mopforge gpu train configs/jobs/100m_mop_full_extended_efficiency.json
+```
+
+Build the cached teacher signal once from the warm teacher:
+
+```bash
+mopforge gpu cache-activations configs/jobs/100m_mop_warm_adapters_norm_head_64_colab_efficiency.json \
+  --checkpoint <mop_full_run_id_or_checkpoint> \
+  --output outputs/warm_sparse_cache_manifest.json \
+  --teacher-top-k 16 \
+  --records-per-shard 512
+```
+
+Write cached sparse distillation profiles:
+
+```bash
 mopforge gpu write-warm-sparse-sweep \
   --base-checkpoint <mop_full_run_id_or_checkpoint> \
   --dataset-ref <dataset_id@version_id> \
   --dataset-split-id <split_id> \
+  --activation-cache-path outputs/warm_sparse_cache_manifest.json \
+  --cached-distillation-weight 0.2 \
+  --cached-distillation-temperature 2.0 \
+  --cached-distillation-top-k 16 \
+  --hard-example-replay \
+  --hard-example-replay-loss-threshold <teacher_ce_loss_threshold> \
+  --hard-example-replay-multiplier 2 \
+  --target-eval-loss <dense_or_mop_full_target_loss> \
   --output-dir configs/jobs/warm_sparse_sweep
 ```
 
@@ -173,13 +206,16 @@ mopforge gpu gate-efficiency \
 
 Do not claim same-quality sparse efficiency unless the sparse run remains close
 to Dense eval loss and generated-code quality while improving a named efficiency
-axis.
+axis. Use `target_eval_loss` only with the same fixed split and eval cadence, so
+time-to-target-loss is comparable across Dense, MoP Full, warm sparse, and
+cached sparse runs.
 
 ## Documentation
 
 - [Docs index](docs/README.md)
 - [GPU quickstart](docs/gpu_quickstart.md)
 - [Colab L4 TinyStories v0.46.0 efficiency comparison notebook](notebooks/colab_l4_v046_efficiency_comparison.ipynb)
+- [Colab L4 Goal 48 code cached-sparse report notebook](notebooks/colab_l4_goal48_code_cached_sparse_report.ipynb)
 - [GPU efficiency benchmarking](docs/gpu_efficiency_benchmarking.md)
 - [Warm sparse comparison template](docs/warm_sparse_efficiency_comparison_template.md)
 - [Goal 46 GPU efficiency report](reports/goal46_gpu_efficiency/README.md)

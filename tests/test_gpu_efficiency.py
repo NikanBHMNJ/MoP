@@ -81,6 +81,30 @@ def test_gpu_trainer_records_efficiency_metrics(tmp_path) -> None:
     assert "efficiency" in result_payload["metrics"]
 
 
+def test_gpu_trainer_records_target_loss_and_best_checkpoint(tmp_path) -> None:
+    result = GPUTrainer(
+        _config(
+            tmp_path,
+            name="target_loss_gpu",
+            save_every_steps=10,
+            target_eval_loss=100.0,
+        )
+    ).train()
+
+    efficiency = result.metrics["efficiency"]
+
+    assert result.metrics["target_eval_loss_reached"] is True
+    assert result.metrics["target_eval_loss_value"] == result.metrics["latest_eval_loss"]
+    assert result.state["target_eval_loss_reached"] is True
+    assert result.state["target_eval_loss_step"] == 1
+    assert efficiency["target_eval_loss"] == 100.0
+    assert efficiency["target_eval_loss_reached"] is True
+    assert efficiency["time_to_target_loss_sec"] is not None
+    assert efficiency["tokens_to_target_loss"] == result.metrics["tokens_seen"]
+    assert "best_checkpoint_path" in result.artifacts
+    assert Path(result.artifacts["best_checkpoint_path"]).exists()
+
+
 def test_cuda_memory_helpers_are_safe_without_cuda() -> None:
     reset_cuda_peak_memory(None)
     payload = cuda_memory_metrics(None)
@@ -157,6 +181,17 @@ def test_compare_script_handles_old_and_new_run_json(tmp_path) -> None:
     assert rows[0]["tokens_per_sec"] is None
     assert rows[1]["tokens_per_sec"] == 123.4
     assert rows[1]["checkpoint_size_mb"] is not None
+    assert rows[1]["distillation_top_k"] == 16
+    assert rows[1]["cached_backbone_offloaded_param_count"] == 900
+    assert rows[1]["hard_example_replay_enabled"] is True
+    assert rows[1]["hard_replayed_example_count"] == 12
+    assert rows[1]["best_eval_loss"] == 1.3
+    assert rows[1]["target_eval_loss"] == 1.35
+    assert rows[1]["target_eval_loss_reached"] is True
+    assert rows[1]["time_to_target_loss_sec"] == 12.0
+    assert rows[1]["gen_exact_match_rate"] == 0.75
+    assert rows[1]["gen_verifier_pass_rate"] == 0.8
+    assert rows[1]["gen_syntax_pass_rate"] == 0.9
 
 
 def test_compare_cli_outputs_json_and_csv(tmp_path, capsys) -> None:
@@ -210,17 +245,43 @@ def _fake_run(
         "status": "completed",
         "latest_train_loss": 1.2,
         "latest_eval_loss": 1.4,
+        "best_eval_loss": 1.3,
+        "target_eval_loss": 1.35,
+        "target_eval_loss_reached": True,
+        "target_eval_loss_time_sec": 12.0,
+        "target_eval_loss_tokens_seen": 4096,
+        "target_eval_loss_samples_seen": 64,
         "runtime": {"selected_device": "cpu", "selected_precision": "fp32"},
+        "generation_eval": {
+            "gen_exact_match_rate": 0.75,
+            "gen_verifier_pass_rate": 0.8,
+            "gen_syntax_pass_rate": 0.9,
+            "gen_compile_pass_rate": 0.9,
+        },
         "model": model,
     }
     if nested:
         metrics["efficiency"] = {
             "tokens_per_sec": 123.4,
             "samples_per_sec": 12.3,
+            "target_eval_loss": 1.35,
+            "target_eval_loss_reached": True,
+            "time_to_target_loss_sec": 12.0,
+            "tokens_to_target_loss": 4096,
+            "samples_to_target_loss": 64,
+            "target_peak_allocated_gb": 0.4,
+            "target_peak_reserved_gb": 0.5,
             "peak_reserved_gb": None,
             "trainable_param_ratio": trainable_ratio,
             "active_param_ratio": 0.5,
             "checkpoint_size_mb": None,
+            "distillation_enabled": True,
+            "distillation_weight": 0.2,
+            "distillation_top_k": 16,
+            "hard_example_replay_enabled": True,
+            "hard_example_count": 6,
+            "hard_replayed_example_count": 12,
+            "cached_backbone_offloaded_param_count": 900,
         }
     result = {
         "run_id": run_id,

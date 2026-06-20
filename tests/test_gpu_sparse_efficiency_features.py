@@ -51,6 +51,16 @@ def test_gpu_config_sparse_efficiency_fields_roundtrip() -> None:
         early_stopping_enabled=True,
         early_stopping_patience_evals=3,
         early_stopping_min_delta=0.01,
+        offload_frozen_backbone_for_cache=True,
+        distillation_enabled=True,
+        distillation_weight=0.25,
+        distillation_temperature=2.0,
+        distillation_top_k=8,
+        hard_example_replay_enabled=True,
+        hard_example_replay_loss_threshold=1.5,
+        hard_example_replay_multiplier=2,
+        target_eval_loss=3.25,
+        save_best_eval_checkpoint=True,
     )
 
     loaded = GPUTrainingConfig.from_dict(config.to_dict())
@@ -64,6 +74,16 @@ def test_gpu_config_sparse_efficiency_fields_roundtrip() -> None:
     assert loaded.early_stopping_enabled is True
     assert loaded.early_stopping_patience_evals == 3
     assert loaded.early_stopping_min_delta == 0.01
+    assert loaded.offload_frozen_backbone_for_cache is True
+    assert loaded.distillation_enabled is True
+    assert loaded.distillation_weight == 0.25
+    assert loaded.distillation_temperature == 2.0
+    assert loaded.distillation_top_k == 8
+    assert loaded.hard_example_replay_enabled is True
+    assert loaded.hard_example_replay_loss_threshold == 1.5
+    assert loaded.hard_example_replay_multiplier == 2
+    assert loaded.target_eval_loss == 3.25
+    assert loaded.save_best_eval_checkpoint is True
 
 
 def test_adapters_norm_head_policy_trains_sparse_tail_only() -> None:
@@ -203,8 +223,11 @@ def test_activation_cache_can_train_sparse_tail(tmp_path: Path) -> None:
         output_path=cache_path,
         runtime=source.runtime,
         max_batches=1,
+        teacher_top_k=4,
     )
     assert result["train_records"] > 0
+    assert result["metadata"]["teacher_top_k"] == 4
+    assert result["metadata"]["distillation_ready"] is True
 
     train_loader, _, metadata = build_cached_activation_dataloaders(
         cache_path,
@@ -212,7 +235,20 @@ def test_activation_cache_can_train_sparse_tail(tmp_path: Path) -> None:
     )
     batch = next(iter(train_loader))
     assert "hidden_states" in batch
+    assert batch["teacher_topk_indices"].shape[-1] == 4
+    assert batch["teacher_topk_logits"].shape[-1] == 4
+    assert batch["teacher_ce_loss"].shape[0] == 1
     assert metadata["kind"] == "activation_cache"
+    replay_loader, _, replay_metadata = build_cached_activation_dataloaders(
+        cache_path,
+        micro_batch_size=1,
+        hard_example_replay_enabled=True,
+        hard_example_replay_loss_threshold=0.0,
+        hard_example_replay_multiplier=2,
+    )
+    assert len(replay_loader.dataset) == result["train_records"] * 2
+    assert replay_metadata["hard_example_replay"]["enabled"] is True
+    assert replay_metadata["hard_example_replay"]["hard_example_count"] == result["train_records"]
 
     cached = GPUTrainer(
         _config(
@@ -225,10 +261,89 @@ def test_activation_cache_can_train_sparse_tail(tmp_path: Path) -> None:
             target_modules=["coding", "debugging", "repair"],
             activation_cache_path=str(cache_path),
             max_steps=1,
+            distillation_enabled=True,
+            distillation_weight=0.1,
+            distillation_temperature=2.0,
+            distillation_top_k=4,
+            hard_example_replay_enabled=True,
+            hard_example_replay_loss_threshold=0.0,
+            hard_example_replay_multiplier=2,
         )
     ).train()
     assert cached.status == "completed"
     assert cached.metrics["data"]["kind"] == "activation_cache"
+    assert cached.metrics["efficiency"]["distillation_enabled"] is True
+    assert cached.metrics["efficiency"]["distillation_top_k"] == 4
+    assert cached.metrics["efficiency"]["hard_example_replay_enabled"] is True
+    assert cached.metrics["efficiency"]["hard_replayed_example_count"] > 0
+    assert cached.metrics["efficiency"]["cached_backbone_offloaded_param_count"] > 0
+    assert cached.metrics["model"]["cached_training_backbone_offload"]["offloaded_modules"]
+    payload = torch.load(cached.artifacts["latest_checkpoint_path"], map_location="cpu", weights_only=False)
+    assert payload["metadata"]["activation_cache_path"] == str(cache_path)
+    assert payload["activation_cache_metadata"]["teacher_top_k"] == 4
+
+
+def test_sharded_activation_cache_manifest_can_train_sparse_tail(tmp_path: Path) -> None:
+    source = GPUTrainer(
+        _config(
+            tmp_path,
+            name="cache_shard_source",
+            model_type="mop_oracle",
+            use_fast_adapters=True,
+            fast_adapter_names=["coding", "debugging", "repair"],
+            trainable_policy_mode="adapters_only",
+            target_modules=["coding", "debugging", "repair"],
+        )
+    )
+    source.setup()
+    cache_path = tmp_path / "activation_cache_manifest.json"
+
+    result = write_activation_cache(
+        model=source.model,
+        train_loader=source.train_loader,
+        eval_loader=source.eval_loader,
+        output_path=cache_path,
+        runtime=source.runtime,
+        max_batches=2,
+        teacher_top_k=2,
+        records_per_shard=1,
+    )
+
+    assert result["sharded"] is True
+    assert result["shard_count"] >= 2
+    assert cache_path.exists()
+    assert list((tmp_path / "activation_cache_manifest_shards").glob("*.pt"))
+
+    train_loader, _, metadata = build_cached_activation_dataloaders(
+        cache_path,
+        micro_batch_size=1,
+    )
+    batch = next(iter(train_loader))
+    assert metadata["sharded"] is True
+    assert metadata["cache_metadata"]["manifest_sha256"]
+    assert batch["teacher_topk_indices"].shape[-1] == 2
+
+    cached = GPUTrainer(
+        _config(
+            tmp_path,
+            name="cache_shard_tail",
+            model_type="mop_oracle",
+            use_fast_adapters=True,
+            fast_adapter_names=["coding", "debugging", "repair"],
+            trainable_policy_mode="adapters_norm_head",
+            target_modules=["coding", "debugging", "repair"],
+            activation_cache_path=str(cache_path),
+            max_steps=1,
+            distillation_enabled=True,
+            distillation_weight=0.1,
+            distillation_top_k=2,
+        )
+    ).train()
+
+    payload = torch.load(cached.artifacts["latest_checkpoint_path"], map_location="cpu", weights_only=False)
+    assert cached.status == "completed"
+    assert payload["metadata"]["activation_cache_path"] == str(cache_path)
+    assert payload["metadata"]["activation_cache_manifest_sha256"]
 
 
 def test_activation_cache_rejects_trainable_prefix(tmp_path: Path) -> None:
@@ -603,6 +718,13 @@ def test_warm_sparse_sweep_writer_generates_valid_gpu_configs(tmp_path: Path) ->
         bottlenecks=[64, 128],
         learning_rates=[3e-4],
         max_steps=2000,
+        cached_distillation_weight=0.2,
+        cached_distillation_temperature=2.0,
+        cached_distillation_top_k=16,
+        hard_example_replay_enabled=True,
+        hard_example_replay_loss_threshold=3.5,
+        hard_example_replay_multiplier=2,
+        target_eval_loss=3.25,
     )
 
     assert len(paths) == 10
@@ -617,9 +739,19 @@ def test_warm_sparse_sweep_writer_generates_valid_gpu_configs(tmp_path: Path) ->
         assert gpu_config.resume_model_only is True
         assert gpu_config.save_trainable_only_checkpoints is True
         assert gpu_config.max_steps == 2000
+        assert gpu_config.target_eval_loss == 3.25
+        assert gpu_config.save_best_eval_checkpoint is True
         assert gpu_config.metadata["same_token_budget"] is True
         assert gpu_config.dataset_ref == "coding_bugfix_efficiency@version"
         assert gpu_config.dataset_split_id == "split-seed42-train80-eval10-test10"
+        if gpu_config.activation_cache_path:
+            assert gpu_config.distillation_enabled is True
+            assert gpu_config.distillation_weight == 0.2
+            assert gpu_config.distillation_temperature == 2.0
+            assert gpu_config.distillation_top_k == 16
+            assert gpu_config.hard_example_replay_enabled is True
+            assert gpu_config.hard_example_replay_loss_threshold == 3.5
+            assert gpu_config.hard_example_replay_multiplier == 2
     lora_configs = [
         GPUTrainingConfig.from_dict(MoPForgeConfig.load(path).payload)
         for path in paths

@@ -22,7 +22,7 @@ efficiency gates both pass.
 | Warm adapters 64 | `configs/jobs/100m_mop_warm_adapters_64_colab_efficiency.json` |  |  |
 | Warm adapters norm/head 64 | `configs/jobs/100m_mop_warm_adapters_norm_head_64_colab_efficiency.json` |  |  |
 | Core frozen quality | `configs/jobs/100m_mop_core_frozen_quality_colab_efficiency.json` |  |  |
-| Cached warm adapter tail | generated warm sparse cache config |  |  |
+| Cached warm adapter tail + teacher top-k KL | generated warm sparse cache config |  |  |
 | Warm routed LoRA rank 4/8/16 | generated warm sparse sweep config |  |  |
 | Routed FFN top-1 | `configs/jobs/100m_mop_routed_ffn_expert_efficiency.json` |  |  |
 
@@ -33,6 +33,7 @@ efficiency gates both pass.
 | Dataset ref |  |
 | Split ID |  |
 | Split seed | `42` |
+| Target eval loss |  |
 | Max steps | `2000` |
 | Gradient accumulation | `8` |
 | Micro batch size | `1` |
@@ -42,16 +43,16 @@ efficiency gates both pass.
 
 ## Results
 
-| Model | Train loss | Eval loss | Tokens/sec | Peak reserved VRAM | Trainable ratio | Active ratio | Active trainable ratio | Checkpoint size | Exact match | Verifier pass |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Dense |  |  |  |  |  |  |  |  |  |  |
-| MoP Full |  |  |  |  |  |  |  |  |  |  |
-| Warm Adapter 64 |  |  |  |  |  |  |  |  |  |  |
-| Warm Adapter Norm/Head 64 |  |  |  |  |  |  |  |  |  |  |
-| Core Frozen |  |  |  |  |  |  |  |  |  |  |
-| Cached Warm Adapter 64 |  |  |  |  |  |  |  |  |  |  |
-| Warm Routed LoRA |  |  |  |  |  |  |  |  |  |  |
-| Routed FFN Top-1 |  |  |  |  |  |  |  |  |  |  |
+| Model | Train loss | Eval loss | Best eval loss | Time-to-target sec | Tokens-to-target | Tokens/sec | Peak allocated VRAM | Peak reserved VRAM | Target peak reserved VRAM | Trainable ratio | Active trainable ratio | Checkpoint size | Distill top-k | Offloaded params | Hard replayed | Exact match | Verifier pass | Syntax pass |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Dense |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| MoP Full |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Warm Adapter 64 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Warm Adapter Norm/Head 64 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Core Frozen |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Cached Warm Adapter Norm/Head 64 + KL |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Warm Routed LoRA |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Routed FFN Top-1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 
 ## Commands
 
@@ -61,16 +62,26 @@ mopforge gpu prepare-efficiency-data --count-per-category 100 --split-seed 42
 mopforge gpu train configs/jobs/100m_dense_extended_efficiency.json
 mopforge gpu train configs/jobs/100m_mop_full_extended_efficiency.json
 
+mopforge gpu cache-activations `
+  configs/jobs/100m_mop_warm_adapters_norm_head_64_colab_efficiency.json `
+  --checkpoint <mop_full_run_id_or_checkpoint> `
+  --output outputs/warm_sparse_teacher_topk_cache_manifest.json `
+  --teacher-top-k 16 `
+  --records-per-shard 512
+
 mopforge gpu write-warm-sparse-sweep `
   --base-checkpoint <mop_full_run_id_or_checkpoint> `
   --dataset-ref <dataset_id@version_id> `
   --dataset-split-id <split_id> `
+  --activation-cache-path outputs/warm_sparse_teacher_topk_cache_manifest.json `
+  --cached-distillation-weight 0.2 `
+  --cached-distillation-temperature 2.0 `
+  --cached-distillation-top-k 16 `
+  --hard-example-replay `
+  --hard-example-replay-loss-threshold <teacher_ce_loss_threshold> `
+  --hard-example-replay-multiplier 2 `
+  --target-eval-loss <dense_or_mop_full_target_loss> `
   --output-dir configs/jobs/warm_sparse_sweep
-
-mopforge gpu cache-activations `
-  configs/jobs/100m_mop_warm_adapters_norm_head_64_colab_efficiency.json `
-  --checkpoint <mop_full_run_id_or_checkpoint> `
-  --output outputs/warm_sparse_cache.pt
 
 mopforge gpu compare-runs <dense_run_id> <mop_full_run_id> <sparse_run_id> `
   --output outputs/warm_sparse_efficiency_comparison.json `
@@ -90,8 +101,14 @@ Record the gate result here:
 | --- | --- | --- | --- |
 | Eval loss | within configured delta of Dense |  |  |
 | Generated-code verifier pass | within configured delta of Dense |  |  |
+| Syntax/compile pass | not materially worse than Dense |  |  |
+| Time-to-target-loss | improves or matches Dense/MoP Full |  |  |
 | Tokens/sec | not materially worse than Dense |  |  |
+| Peak allocated VRAM | improves named target axis |  |  |
 | Peak reserved VRAM | improves named target axis |  |  |
+| Frozen-backbone offload | cached run records offloaded params |  |  |
+| Teacher KL | cached run records teacher top-k metadata |  |  |
+| Hard-example replay | cached run records replay threshold and count |  |  |
 | Trainable ratio | improves named target axis |  |  |
 | Checkpoint size | improves named target axis |  |  |
 
@@ -105,7 +122,8 @@ compute.
 Use this wording unless the data says otherwise:
 
 ```text
-This run evaluates whether warm-started sparse MoP can close the Goal 46
+This run evaluates whether warm-started sparse MoP, especially cached sparse
+teacher-distilled training on a fixed code split, can close the Goal 46
 adapter-only loss gap while retaining a measurable efficiency advantage.
 It is evidence for the measured axes only and should not be generalized beyond
 the tested data, model size, hardware, and seed.
