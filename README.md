@@ -171,7 +171,6 @@ axis.
 - [Warm sparse comparison template](docs/warm_sparse_efficiency_comparison_template.md)
 - [Goal 46 GPU efficiency report](reports/goal46_gpu_efficiency/README.md)
 - [Known limitations](docs/known_limitations.md)
-- [Implementation plan and status](Implementation.md)
 
 ## Validation
 
