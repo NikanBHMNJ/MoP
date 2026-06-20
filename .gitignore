@@ -19,6 +19,8 @@ pytest_tmp/
 !/reports/goal46_gpu_efficiency/**
 !/reports/v0_46_0_l4_warm_sparse_comparison/
 !/reports/v0_46_0_l4_warm_sparse_comparison/**
+!/reports/goal48_code_cached_sparse_efficiency/
+!/reports/goal48_code_cached_sparse_efficiency/**
 /benchmarks/
 /experiments/
 /ablations/

@@ -25,6 +25,7 @@ and tested before it has proven a GPU efficiency result.
 - [Warm sparse GPU efficiency comparison template](warm_sparse_efficiency_comparison_template.md)
 - [Goal 46 GPU efficiency report](../reports/goal46_gpu_efficiency/README.md)
 - [v0.46.0 L4 warm sparse comparison report](../reports/v0_46_0_l4_warm_sparse_comparison/README.md)
+- [Goal 48 code cached-sparse L4 report](../reports/goal48_code_cached_sparse_efficiency/README.md)
 - [GPU runtime limitations](gpu_runtime_limitations.md)
 - [Serious jobs checklist](serious_jobs_checklist.md)
 - [Colab 100M training notebook](colab_training.md)
@@ -39,9 +40,10 @@ and tested before it has proven a GPU efficiency result.
 
 ## Current Evidence
 
-The repository GPU evidence includes the Goal 46 report and the newer v0.46.0
-L4 warm sparse comparison. Together they show that MoP-Forge can measure Dense,
-MoP Full, adapter-only, and warm sparse runs on Colab/L4 hardware.
+The repository GPU evidence includes the Goal 46 report, the v0.46.0 L4 warm
+sparse TinyStories comparison, and the Goal 48 code cached-sparse L4 report.
+Together they show that MoP-Forge can measure Dense, MoP Full, adapter-only,
+warm sparse, and cached sparse runs on Colab/L4 hardware.
 
 These reports do not prove MoP superiority. The measured result is more careful:
 
@@ -50,6 +52,9 @@ These reports do not prove MoP superiority. The measured result is more careful:
 - Warm Adapter Norm/Head 64 and Warm LoRA Rank 8 looked stronger on the short
   TinyStories warm sparse run, but that evidence still needs longer runs and
   repeated seeds.
+- Goal 48 cached sparse code training was much faster and used much less peak
+  reserved VRAM than Dense in the measured cached-tail phase, but generated-code
+  quality and time-to-target-loss were not proven in that report.
 - The framework can measure the tradeoff and preserve the evidence.
 
 ## Current Implementation Focus
@@ -69,8 +74,8 @@ The current code adds the pieces needed for a more serious next comparison:
 - internal routed low-rank deltas,
 - comparison and acceptance-gate reports.
 
-The next report should use a fixed code dataset rather than TinyStories and
-compare Dense, MoP Full, warm sparse, and cached sparse distillation on the same
-train/eval/test split. Configure a shared `target_eval_loss` after the baseline
-run if the report claims time-to-target-loss. Run longer GPU experiments before
-turning these capabilities into broad performance claims.
+The next report should repeat the fixed code-dataset comparison with a configured
+shared `target_eval_loss`, hard-example replay when justified by teacher-loss
+metadata, and generated-code quality checks that can support or reject a
+same-quality efficiency claim. Run longer GPU experiments before turning these
+capabilities into broad performance claims.

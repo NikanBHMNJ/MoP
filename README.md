@@ -86,6 +86,18 @@ tokens/sec, lower reserved VRAM, far fewer trainable parameters, and much
 smaller trainable-only checkpoints. Treat this as promising workflow evidence,
 not a paper-grade conclusion.
 
+The first Goal 48 code-dataset cached sparse L4 report is available under:
+
+`reports/goal48_code_cached_sparse_efficiency/`
+
+It compares Dense, MoP Full, Warm Adapter Norm/Head 64, and Cached Warm Adapter
+Norm/Head 64 with teacher top-k KL on the same fixed code split. The cached
+sparse run was much faster, used far less peak reserved VRAM, offloaded the
+frozen backbone, and kept a tiny trainable-only checkpoint. Its generated-code
+quality is not proven in this report, and `target_eval_loss` was not configured,
+so treat it as evidence that the cached sparse efficiency path works rather
+than proof of same-quality sparse superiority.
+
 ## Current Research Direction
 
 Goal 48 extends the warm sparse path toward better loss efficiency without
@@ -220,6 +232,7 @@ cached sparse runs.
 - [Warm sparse comparison template](docs/warm_sparse_efficiency_comparison_template.md)
 - [Goal 46 GPU efficiency report](reports/goal46_gpu_efficiency/README.md)
 - [v0.46.0 L4 warm sparse comparison report](reports/v0_46_0_l4_warm_sparse_comparison/README.md)
+- [Goal 48 code cached-sparse L4 report](reports/goal48_code_cached_sparse_efficiency/README.md)
 - [Known limitations](docs/known_limitations.md)
 
 ## Validation
