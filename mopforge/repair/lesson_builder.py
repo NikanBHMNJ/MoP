@@ -6,6 +6,7 @@ import hashlib
 import re
 from typing import Any
 
+from mopforge.formatting import FIXED_CODE_XML_FORMAT
 from mopforge.kts import KnowledgeLesson
 from mopforge.repair.schema import RepairFailureRecord
 
@@ -61,6 +62,9 @@ def build_repair_lesson_from_failure(
             "generated_failure_type": failure.failure_type,
             "candidate_code": failure.candidate_code,
             "generated_text": failure.generated_text,
+            "quality_output_format": FIXED_CODE_XML_FORMAT,
+            "verified_teacher_target": True,
+            "teacher_source": "known_verified_target",
             "repair_generated_from_failure": True,
             "verifier_stdout": failure.verifier_stdout,
             "verifier_stderr": failure.verifier_stderr,

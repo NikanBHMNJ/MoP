@@ -68,6 +68,7 @@ class GPUTrainingConfig:
     routing_granularity: str = "example"
     shared_depth_ratio: float = 1.0
     use_lora_deltas: bool = False
+    lora_tail_only: bool = False
     lora_rank: int = 0
     lora_target_modules: list[str] | None = None
 
@@ -204,6 +205,10 @@ class GPUTrainingConfig:
             raise ValueError("lora_rank must be a non-negative integer.")
         if self.use_lora_deltas and self.lora_rank <= 0:
             raise ValueError("lora_rank must be positive when use_lora_deltas is true.")
+        if not isinstance(self.lora_tail_only, bool):
+            raise ValueError("lora_tail_only must be a boolean.")
+        if self.lora_tail_only and not self.use_lora_deltas:
+            raise ValueError("lora_tail_only requires use_lora_deltas=true.")
         for field_name in (
             "module_names",
             "target_modules",
@@ -243,6 +248,7 @@ class GPUTrainingConfig:
             "save_optimizer_state",
             "save_rng_state",
             "use_lora_deltas",
+            "lora_tail_only",
             "offload_frozen_backbone_for_cache",
             "distillation_enabled",
             "hard_example_replay_enabled",

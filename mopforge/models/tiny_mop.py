@@ -613,6 +613,7 @@ else:
             routing_granularity: str = "example",
             shared_depth_ratio: float = 1.0,
             use_lora_deltas: bool = False,
+            lora_tail_only: bool = False,
             lora_rank: int = 0,
             lora_target_modules: Sequence[str] | None = None,
             use_fast_adapters: bool = False,
@@ -647,6 +648,8 @@ else:
                 raise ValueError("shared_depth_ratio must be in (0.0, 1.0].")
             if use_lora_deltas and lora_rank <= 0:
                 raise ValueError("lora_rank must be positive when use_lora_deltas is true.")
+            if lora_tail_only and not use_lora_deltas:
+                raise ValueError("lora_tail_only requires use_lora_deltas=true.")
 
             self.max_seq_len = max_seq_len
             self.always_include_core = bool(always_include_core)
@@ -660,6 +663,7 @@ else:
             self.use_generated_params = bool(use_generated_params)
             self.generated_condition_names = list(generated_condition_names or ["default"])
             self.use_lora_deltas = bool(use_lora_deltas)
+            self.lora_tail_only = bool(lora_tail_only)
             self.lora_target_modules = list(lora_target_modules or self.module_names)
             self.last_forward_metadata: dict[str, object] = {}
             self.token_embedding = nn.Embedding(vocab_size, d_model)
@@ -673,7 +677,7 @@ else:
             self.requested_shared_depth_ratio = float(shared_depth_ratio)
 
             def new_encoder_layer():
-                if self.use_lora_deltas:
+                if self.use_lora_deltas and not self.lora_tail_only:
                     return RoutedLoRATransformerEncoderLayer(
                         module_names=self.lora_target_modules,
                         lora_rank=lora_rank,
@@ -729,7 +733,9 @@ else:
                 self.module_bank = ModuleBank(self.module_names, d_model, dropout)
             self.last_warm_start_metadata: dict[str, object] = {}
             self.internal_lora_enabled = bool(
-                self.use_lora_deltas and self.shared_blocks is not None
+                self.use_lora_deltas
+                and not self.lora_tail_only
+                and self.shared_blocks is not None
             )
             self.lora_delta_bank = None
             if self.use_lora_deltas and not self.internal_lora_enabled:
@@ -968,6 +974,7 @@ else:
                     "tail_from_hidden": True,
                     "lora_delta_enabled": self.use_lora_deltas,
                     "internal_lora_enabled": self.internal_lora_enabled,
+                    "lora_tail_only": self.lora_tail_only,
                 }
             )
             return {

@@ -20,6 +20,7 @@ and tested before it has proven a GPU efficiency result.
 - [GPU quickstart](gpu_quickstart.md)
 - [Colab L4 TinyStories v0.46.0 efficiency comparison notebook](../notebooks/colab_l4_v046_efficiency_comparison.ipynb)
 - [Colab L4 Goal 48 code cached-sparse report notebook](../notebooks/colab_l4_goal48_code_cached_sparse_report.ipynb)
+- [Colab L4 Goal 49 verified-code quality report notebook](../notebooks/colab_l4_goal49_verified_code_quality_report.ipynb)
 - [GPU job profiles](gpu_job_profiles.md)
 - [GPU efficiency benchmarking](gpu_efficiency_benchmarking.md)
 - [Warm sparse GPU efficiency comparison template](warm_sparse_efficiency_comparison_template.md)
@@ -67,15 +68,23 @@ The current code adds the pieces needed for a more serious next comparison:
 - cached teacher top-k distillation for code sparse-tail training,
 - optional hard-example replay from cached teacher CE loss,
 - cached sparse offload of unused frozen backbone modules,
+- cache-compatible tail-only LoRA rank 8/16 training,
+- verified fixed-code XML target framing for small code-repair quality runs,
 - best eval-loss checkpoint and time/tokens-to-target-loss reporting,
 - fixed train/eval/test splits,
-- generated-code quality metrics,
+- generated-code quality metrics and per-run generated sample artifacts,
 - routed FFN expert execution,
 - internal routed low-rank deltas,
 - comparison and acceptance-gate reports.
 
 The next report should repeat the fixed code-dataset comparison with a configured
 shared `target_eval_loss`, hard-example replay when justified by teacher-loss
-metadata, and generated-code quality checks that can support or reject a
+metadata, `--quality-format fixed_code_xml` for narrow repair/completion
+targets, and generated-code quality checks that can support or reject a
 same-quality efficiency claim. Run longer GPU experiments before turning these
 capabilities into broad performance claims.
+
+The Goal 49 Colab notebook automates that comparison and creates a downloadable
+lightweight report. For cached profiles, full-model generation happens after
+the cached-tail VRAM metrics are captured, so quality evaluation does not
+inflate the reported sparse-training memory peak.

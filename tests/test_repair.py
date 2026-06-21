@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from mopforge.builders import generate_coding_bugfix_lessons
+from mopforge.formatting import FIXED_CODE_XML_FORMAT, format_lesson_for_causal_lm
 from mopforge.kts import KnowledgeLesson, LessonStore
 from mopforge.repair import (
     RepairFailureRecord,
@@ -84,7 +85,12 @@ def test_repair_lesson_contains_failure_context_and_validates() -> None:
     assert "coding" in repair_lesson.target_modules
     assert "debugging" in repair_lesson.target_modules
     assert repair_lesson.verification["status"] == "verified_target"
+    assert repair_lesson.metadata["quality_output_format"] == FIXED_CODE_XML_FORMAT
+    assert repair_lesson.metadata["verified_teacher_target"] is True
     assert repair_lesson.metadata["repair_generated_from_failure"] is True
+    formatted = format_lesson_for_causal_lm(repair_lesson)
+    assert str(formatted["target"]).startswith("<fixed_code>\n")
+    assert str(formatted["target"]).endswith("\n</fixed_code>\n")
 
 
 def test_build_repair_lessons_from_generation_results() -> None:

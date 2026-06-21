@@ -20,7 +20,9 @@ from mopforge.gpu import (
 )
 from mopforge.cli.main import main as cli_main
 from mopforge.configs import MoPForgeConfig
+from mopforge.formatting import FIXED_CODE_XML_FORMAT, format_lesson_for_causal_lm
 from mopforge.gpu.trainer import apply_activation_checkpointing
+from mopforge.kts import LessonStore
 from mopforge.models import TinyCausalTransformer, TinyMoPCausalTransformer
 from mopforge.training import (
     TrainableParameterPolicy,
@@ -45,6 +47,7 @@ def test_gpu_config_sparse_efficiency_fields_roundtrip() -> None:
         expert_count=4,
         active_experts=1,
         use_lora_deltas=True,
+        lora_tail_only=True,
         lora_rank=4,
         lora_target_modules=["coding"],
         run_generation_eval=True,
@@ -71,6 +74,7 @@ def test_gpu_config_sparse_efficiency_fields_roundtrip() -> None:
     assert loaded.save_trainable_only_checkpoints is True
     assert loaded.mop_block_type == "routed_ffn"
     assert loaded.lora_rank == 4
+    assert loaded.lora_tail_only is True
     assert loaded.early_stopping_enabled is True
     assert loaded.early_stopping_patience_evals == 3
     assert loaded.early_stopping_min_delta == 0.01
@@ -268,6 +272,9 @@ def test_activation_cache_can_train_sparse_tail(tmp_path: Path) -> None:
             hard_example_replay_enabled=True,
             hard_example_replay_loss_threshold=0.0,
             hard_example_replay_multiplier=2,
+            run_generation_eval=True,
+            generation_eval_examples=1,
+            generation_max_new_tokens=4,
         )
     ).train()
     assert cached.status == "completed"
@@ -278,6 +285,11 @@ def test_activation_cache_can_train_sparse_tail(tmp_path: Path) -> None:
     assert cached.metrics["efficiency"]["hard_replayed_example_count"] > 0
     assert cached.metrics["efficiency"]["cached_backbone_offloaded_param_count"] > 0
     assert cached.metrics["model"]["cached_training_backbone_offload"]["offloaded_modules"]
+    assert cached.metrics["generation_eval"]["enabled"] is True
+    assert cached.metrics["generation_eval"]["measurement_scope"] == (
+        "post_training_full_model_quality_eval"
+    )
+    assert Path(cached.artifacts["generation_eval_json"]).exists()
     payload = torch.load(cached.artifacts["latest_checkpoint_path"], map_location="cpu", weights_only=False)
     assert payload["metadata"]["activation_cache_path"] == str(cache_path)
     assert payload["activation_cache_metadata"]["teacher_top_k"] == 4
@@ -392,6 +404,52 @@ def test_routed_ffn_and_lora_delta_forward_smoke() -> None:
     assert output["logits"].shape[:2] == input_ids.shape
     assert output["active_modules"] == [["coding"]]
     assert model.last_forward_metadata["mop_block_type"] == "routed_ffn"
+
+
+def test_tail_only_lora_trains_from_cached_hidden_boundary() -> None:
+    model = TinyMoPCausalTransformer(
+        vocab_size=64,
+        d_model=16,
+        n_heads=2,
+        n_layers=1,
+        max_seq_len=16,
+        module_names=["coding", "debugging"],
+        always_include_core=False,
+        use_lora_deltas=True,
+        lora_tail_only=True,
+        lora_rank=2,
+        lora_target_modules=["coding", "debugging"],
+    )
+    apply_trainable_policy(
+        model,
+        TrainableParameterPolicy(
+            mode="adapters_norm_head",
+            train_lora_deltas=True,
+        ),
+    )
+    input_ids = torch.tensor([[1, 8, 9, 2]], dtype=torch.long)
+    attention_mask = torch.ones_like(input_ids)
+    encoded = model.encode_for_sparse_tail(
+        input_ids,
+        attention_mask=attention_mask,
+        active_modules=[["coding"]],
+    )
+    output = model.forward_from_hidden(
+        encoded["hidden_states"],
+        attention_mask=attention_mask,
+        labels=input_ids,
+        active_modules=[["coding"]],
+    )
+    output["loss"].backward()
+
+    assert model.internal_lora_enabled is False
+    assert model.lora_delta_bank is not None
+    assert model.last_forward_metadata["lora_tail_only"] is True
+    assert any(
+        parameter.grad is not None and parameter.grad.abs().sum() > 0
+        for name, parameter in model.named_parameters()
+        if "lora_delta_bank.deltas.coding" in name and name.endswith("up.weight")
+    )
 
 
 def test_internal_routed_lora_is_zero_init_and_receives_gradients() -> None:
@@ -813,6 +871,31 @@ def test_prepare_efficiency_dataset_writes_versioned_fixed_split(tmp_path: Path)
     assert metadata["fixed_held_out_eval"] is True
 
 
+def test_prepare_efficiency_dataset_can_write_verified_fixed_code_targets(tmp_path: Path) -> None:
+    source = tmp_path / "verified_lessons.jsonl"
+    result = prepare_efficiency_dataset(
+        source_path=source,
+        dataset_root=tmp_path / "datasets",
+        dataset_id="goal49_quality_efficiency",
+        count_per_category=1,
+        verify=True,
+        split_seed=42,
+        quality_format=FIXED_CODE_XML_FORMAT,
+    )
+
+    lessons = LessonStore(source).load_all()
+    formatted = format_lesson_for_causal_lm(lessons[0])
+
+    assert result["record_count"] == 5
+    assert result["verified_count"] == 5
+    assert result["quality_format"] == FIXED_CODE_XML_FORMAT
+    assert lessons[0].verification["status"] == "verified_target"
+    assert lessons[0].metadata["quality_output_format"] == FIXED_CODE_XML_FORMAT
+    assert lessons[0].metadata["verified_teacher_target"] is True
+    assert formatted["output_format"] == FIXED_CODE_XML_FORMAT
+    assert str(formatted["target"]).startswith("<fixed_code>\n")
+
+
 def test_prepare_efficiency_dataset_cli(tmp_path: Path) -> None:
     source = tmp_path / "cli_lessons.jsonl"
     root = tmp_path / "datasets"
@@ -830,6 +913,8 @@ def test_prepare_efficiency_dataset_cli(tmp_path: Path) -> None:
             "--count-per-category",
             "1",
             "--no-verify",
+            "--quality-format",
+            "fixed_code_xml",
         ]
     )
 

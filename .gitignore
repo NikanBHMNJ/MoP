@@ -21,6 +21,8 @@ pytest_tmp/
 !/reports/v0_46_0_l4_warm_sparse_comparison/**
 !/reports/goal48_code_cached_sparse_efficiency/
 !/reports/goal48_code_cached_sparse_efficiency/**
+!/reports/goal49_verified_code_quality_efficiency/
+!/reports/goal49_verified_code_quality_efficiency/**
 /benchmarks/
 /experiments/
 /ablations/
@@ -31,6 +33,8 @@ pytest_tmp/
 /models/
 /notebooks/*
 !/notebooks/colab_l4_v046_efficiency_comparison.ipynb
+!/notebooks/colab_l4_goal48_code_cached_sparse_report.ipynb
+!/notebooks/colab_l4_goal49_verified_code_quality_report.ipynb
 
 # Local registries and generated data
 /data/*.jsonl
@@ -47,4 +51,3 @@ dist/
 .idea/
 Thumbs.db
 .DS_Store
-AGENTS.md

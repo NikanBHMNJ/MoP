@@ -63,3 +63,29 @@ unused frozen backbone modules from CUDA, save the best eval-loss checkpoint,
 optionally replay high-loss cached examples, and report distillation/offload,
 hard replay, plus time/tokens-to-target-loss metadata in `metrics.json` and
 `compare-runs` outputs.
+
+For the next small-model code-quality run, keep the same fixed split discipline
+but frame verified repair targets as narrow XML blocks:
+
+```bash
+mopforge gpu prepare-efficiency-data \
+  --count-per-category 100 \
+  --split-seed 42 \
+  --quality-format fixed_code_xml
+```
+
+That mode writes lessons whose supervised target is
+`<fixed_code>...</fixed_code>`. It is intended for code repair, short
+completion, and test-error-conditioned fixing experiments where syntax pass,
+verifier pass, and exact-match quality are measured alongside VRAM, throughput,
+loss, and checkpoint size.
+
+For the full L4 quality comparison, run
+`notebooks/colab_l4_goal49_verified_code_quality_report.ipynb`. It compares
+Warm Adapter/Norm/Head 128 with cached Adapter 128 and tail-only LoRA rank 8/16.
+Tail-only LoRA places the trainable deltas after the activation-cache boundary,
+allowing the frozen backbone to remain off CUDA during sparse training.
+
+Cached runs now restore the full model only after training to generate and
+verify code samples. Those samples are written to `generation_eval.json`; the
+restoration occurs after cached-tail VRAM metrics are captured.

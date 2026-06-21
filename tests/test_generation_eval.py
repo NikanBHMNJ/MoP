@@ -8,6 +8,7 @@ from mopforge.builders import generate_coding_bugfix_lessons
 from mopforge.eval import (
     evaluate_candidate_text_for_lesson,
     evaluate_generated_code_for_lesson,
+    extract_python_code,
     summarize_generation_results,
     write_generation_eval_results,
 )
@@ -135,6 +136,18 @@ def test_verifier_integration_passes_when_candidate_matches_expected_output() ->
     assert result["exact_match"] is True
     assert result["failure_type"] is None
     assert result["exit_code"] == 0
+
+
+def test_fixed_code_block_extraction_supports_quality_framing() -> None:
+    lesson = generate_coding_bugfix_lessons(count_per_category=1, verify=False)[0]
+    generated_text = f"notes ignored\n<fixed_code>\n{lesson.expected_output}\n</fixed_code>"
+
+    result = evaluate_candidate_text_for_lesson(generated_text, lesson)
+
+    assert extract_python_code(generated_text) == lesson.expected_output.strip()
+    assert result["candidate_code"] == lesson.expected_output.strip()
+    assert result["passed"] is True
+    assert result["exact_match"] is True
 
 
 def test_generation_eval_writer_outputs_valid_json(tmp_path) -> None:

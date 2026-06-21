@@ -9,6 +9,10 @@ _FENCE_RE = re.compile(
     r"```(?P<label>[A-Za-z0-9_-]*)[ \t]*\r?\n(?P<code>.*?)```",
     re.DOTALL,
 )
+_FIXED_CODE_RE = re.compile(
+    r"<fixed_code>[ \t]*\r?\n?(?P<code>.*?)\r?\n?[ \t]*</fixed_code>",
+    re.DOTALL | re.IGNORECASE,
+)
 
 
 def extract_python_code(text: str) -> str:
@@ -19,6 +23,10 @@ def extract_python_code(text: str) -> str:
     stripped = text.strip()
     if not stripped:
         return ""
+
+    fixed_code = _FIXED_CODE_RE.search(stripped)
+    if fixed_code:
+        return fixed_code.group("code").strip()
 
     matches = list(_FENCE_RE.finditer(stripped))
     for match in matches:

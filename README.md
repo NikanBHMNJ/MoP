@@ -30,6 +30,11 @@ MoP-Forge currently includes:
 - Cached teacher top-k distillation for sparse-tail code training.
 - Cached sparse training can offload unused frozen backbone modules from CUDA
   before the trainable tail phase.
+- Cache-compatible tail-only LoRA keeps low-rank deltas after the hidden-state
+  boundary, so LoRA rank 8/16 students can train without restoring the frozen
+  backbone to CUDA.
+- Opt-in verified fixed-code target framing for small code-quality students via
+  `--quality-format fixed_code_xml`.
 - Native non-reentrant PyTorch activation checkpointing for dense, shared, and
   routed transformer blocks.
 - Routed FFN expert blocks with top-k example or token routing.
@@ -38,7 +43,9 @@ MoP-Forge currently includes:
   up/down projections.
 - Fixed-split coding dataset preparation for fair dense-vs-sparse comparisons.
 - Generated-code evaluation metrics, including exact match and verifier pass
-  rate.
+  rate, with extraction support for `<fixed_code>...</fixed_code>` outputs.
+  Cached runs restore the full model only after training for quality evaluation
+  and save generated samples to `generation_eval.json`.
 - JSON/CSV GPU run comparison and sparse-efficiency acceptance gates.
 
 ## Latest Evidence
@@ -100,7 +107,7 @@ than proof of same-quality sparse superiority.
 
 ## Current Research Direction
 
-Goal 48 extends the warm sparse path toward better loss efficiency without
+Goal 49 extends the warm sparse path toward better loss efficiency without
 giving up the efficiency story:
 
 - Warm-start sparse runs from a learned dense or full-MoP checkpoint instead of
@@ -118,10 +125,20 @@ giving up the efficiency story:
 - Use routed FFN experts and internal low-rank deltas as quality recovery paths.
 - Gate claims with eval loss, throughput, VRAM, checkpoint size, generated-code
   exact match, and verifier pass rate.
+- For the next output-quality run, frame code-repair targets as verified
+  `<fixed_code>...</fixed_code>` blocks so small students learn a narrow
+  repair/completion contract instead of broad free-form code generation.
+- Compare Adapter/Norm/Head 128 with cache-compatible tail-only LoRA rank 8/16,
+  and evaluate every profile on generated samples after training.
 
 This work is implemented and tested. The first L4 warm sparse report is
 available under `reports/v0_46_0_l4_warm_sparse_comparison/`, but broader claims
 still need longer runs, repeated seeds, and task-specific quality checks.
+
+The runnable Goal 49 experiment is
+`notebooks/colab_l4_goal49_verified_code_quality_report.ipynb`. It builds a
+downloadable lightweight report with comparison JSON/CSV, run metadata, and
+generated-code samples while excluding caches and model weights.
 
 ## Quickstart
 
@@ -179,6 +196,16 @@ mopforge gpu train configs/jobs/100m_dense_extended_efficiency.json
 mopforge gpu train configs/jobs/100m_mop_full_extended_efficiency.json
 ```
 
+For a small-model code-quality run, prepare the same fixed split with verified
+fixed-code targets:
+
+```bash
+mopforge gpu prepare-efficiency-data \
+  --count-per-category 100 \
+  --split-seed 42 \
+  --quality-format fixed_code_xml
+```
+
 Build the cached teacher signal once from the warm teacher:
 
 ```bash
@@ -228,6 +255,7 @@ cached sparse runs.
 - [GPU quickstart](docs/gpu_quickstart.md)
 - [Colab L4 TinyStories v0.46.0 efficiency comparison notebook](notebooks/colab_l4_v046_efficiency_comparison.ipynb)
 - [Colab L4 Goal 48 code cached-sparse report notebook](notebooks/colab_l4_goal48_code_cached_sparse_report.ipynb)
+- [Colab L4 Goal 49 verified-code quality report notebook](notebooks/colab_l4_goal49_verified_code_quality_report.ipynb)
 - [GPU efficiency benchmarking](docs/gpu_efficiency_benchmarking.md)
 - [Warm sparse comparison template](docs/warm_sparse_efficiency_comparison_template.md)
 - [Goal 46 GPU efficiency report](reports/goal46_gpu_efficiency/README.md)

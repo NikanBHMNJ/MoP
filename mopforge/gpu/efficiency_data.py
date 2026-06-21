@@ -8,7 +8,12 @@ from typing import Any
 
 from mopforge.builders import BUG_CATEGORIES, generate_coding_bugfix_lessons
 from mopforge.datasets import DatasetRegistry, create_dataset_split, write_split_jsonl
+from mopforge.formatting import FIXED_CODE_XML_FORMAT
 from mopforge.kts import LessonStore
+from mopforge.quality import frame_verified_target_lessons
+
+
+QUALITY_FORMATS = {"raw", FIXED_CODE_XML_FORMAT}
 
 
 def prepare_efficiency_dataset(
@@ -24,9 +29,12 @@ def prepare_efficiency_dataset(
     eval_ratio: float = 0.1,
     test_ratio: float = 0.1,
     overwrite: bool = False,
+    quality_format: str = "raw",
 ) -> dict[str, Any]:
     """Generate, register, split, and materialize a serious lesson dataset."""
 
+    if quality_format not in QUALITY_FORMATS:
+        raise ValueError(f"quality_format must be one of: {', '.join(sorted(QUALITY_FORMATS))}.")
     source = Path(source_path)
     if source.exists():
         if not overwrite:
@@ -43,6 +51,13 @@ def prepare_efficiency_dataset(
         failed = [lesson.id for lesson in lessons if not lesson.is_verified]
         if failed:
             raise ValueError(f"Generated dataset has {len(failed)} unverified lessons.")
+    if quality_format == FIXED_CODE_XML_FORMAT:
+        lessons = frame_verified_target_lessons(
+            lessons,
+            teacher_source="known_verified_bugfix_target",
+            output_format=FIXED_CODE_XML_FORMAT,
+            require_verified=verify,
+        )
     store = LessonStore(source)
     store.add_many(lessons)
 
@@ -53,11 +68,12 @@ def prepare_efficiency_dataset(
         source_paths=[str(source)],
         dataset_id=dataset_id,
         description="Deterministic larger coding bugfix dataset for GPU efficiency comparisons.",
-        tags=["coding", "debugging", "gpu-efficiency"],
+        tags=["coding", "debugging", "gpu-efficiency", f"quality-format:{quality_format}"],
         metadata={
             "count_per_category": count_per_category,
             "bug_categories": list(BUG_CATEGORIES),
             "verified": verify,
+            "quality_format": quality_format,
             "split_seed": split_seed,
             "purpose": "warm_sparse_gpu_efficiency",
         },
@@ -89,8 +105,13 @@ def prepare_efficiency_dataset(
         "source_path": str(source),
         "combined_sha256": manifest.combined_sha256,
         "record_count": len(lessons),
-        "verified_count": sum(1 for lesson in lessons if lesson.is_verified),
+        "verified_count": sum(
+            1
+            for lesson in lessons
+            if lesson.verification.get("status") in {"verified", "verified_target"}
+        ),
         "count_per_category": count_per_category,
+        "quality_format": quality_format,
         "split_id": split.split_id,
         "split_seed": split.seed,
         "split_counts": dict(split.counts),

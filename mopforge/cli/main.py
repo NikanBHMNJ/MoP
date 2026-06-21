@@ -246,6 +246,12 @@ def _build_parser() -> argparse.ArgumentParser:
     gpu_data.add_argument("--train-ratio", type=float, default=0.8)
     gpu_data.add_argument("--eval-ratio", type=float, default=0.1)
     gpu_data.add_argument("--test-ratio", type=float, default=0.1)
+    gpu_data.add_argument(
+        "--quality-format",
+        choices=["raw", "fixed_code_xml"],
+        default="raw",
+        help="target framing for quality runs; fixed_code_xml emits <fixed_code> targets",
+    )
     gpu_data.add_argument("--overwrite", action="store_true")
     gpu_data.set_defaults(func=_cmd_gpu_prepare_efficiency_data)
     gpu_launch = gpu_sub.add_parser("launch-torchrun", help="print a torchrun dry-run command; never launches")
@@ -993,10 +999,12 @@ def _cmd_gpu_prepare_efficiency_data(args) -> int:
         eval_ratio=args.eval_ratio,
         test_ratio=args.test_ratio,
         overwrite=args.overwrite,
+        quality_format=args.quality_format,
     )
     print(f"dataset_ref={result['dataset_ref']}")
     print(f"record_count={result['record_count']}")
     print(f"verified_count={result['verified_count']}")
+    print(f"quality_format={result['quality_format']}")
     print(f"split_id={result['split_id']}")
     print(f"split_counts={json.dumps(result['split_counts'], sort_keys=True)}")
     print(f"summary_path={result['summary_path']}")

@@ -425,6 +425,7 @@ class GPUTrainer:
                 routing_granularity=self.config.routing_granularity,
                 shared_depth_ratio=self.config.shared_depth_ratio,
                 use_lora_deltas=self.config.use_lora_deltas,
+                lora_tail_only=self.config.lora_tail_only,
                 lora_rank=self.config.lora_rank,
                 lora_target_modules=self.config.lora_target_modules,
                 use_fast_adapters=self.config.use_fast_adapters,
@@ -740,13 +741,6 @@ class GPUTrainer:
             pass
 
     def _generation_eval_metrics(self) -> dict[str, Any]:
-        if self.config.activation_cache_path:
-            return {
-                "generation_eval": {
-                    "enabled": False,
-                    "reason": "activation_cache_training_has_no_source_lessons",
-                }
-            }
         if self._data_config is None:
             return {
                 "generation_eval": {
@@ -763,6 +757,9 @@ class GPUTrainer:
                     "error": str(exc),
                 }
             }
+        cached_training = bool(self.config.activation_cache_path)
+        if cached_training:
+            self.model = move_model_to_runtime(self.model, self.runtime)
         previous_mode = self.model.training
         self.model.eval()
         results = []
@@ -799,11 +796,31 @@ class GPUTrainer:
         finally:
             if previous_mode:
                 self.model.train()
+            if cached_training and self.config.offload_frozen_backbone_for_cache:
+                offload_cached_frozen_backbone(self.model, runtime=self.runtime)
+                self._empty_cache()
         summary = summarize_generation_results(results)
+        generation_path = self.output_dir / "generation_eval.json"
+        measurement_scope = (
+            "post_training_full_model_quality_eval"
+            if cached_training
+            else "post_training_quality_eval"
+        )
+        _write_json(
+            generation_path,
+            {
+                "measurement_scope": measurement_scope,
+                "summary": summary,
+                "results": results,
+            },
+        )
+        self.artifacts["generation_eval_json"] = str(generation_path)
         return {
             "generation_eval": {
                 "enabled": True,
                 "examples": len(results),
+                "measurement_scope": measurement_scope,
+                "artifact_path": str(generation_path),
                 **summary,
             }
         }

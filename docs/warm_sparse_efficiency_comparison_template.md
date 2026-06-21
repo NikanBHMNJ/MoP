@@ -23,6 +23,8 @@ efficiency gates both pass.
 | Warm adapters norm/head 64 | `configs/jobs/100m_mop_warm_adapters_norm_head_64_colab_efficiency.json` |  |  |
 | Core frozen quality | `configs/jobs/100m_mop_core_frozen_quality_colab_efficiency.json` |  |  |
 | Cached warm adapter tail + teacher top-k KL | generated warm sparse cache config |  |  |
+| Cached warm adapter norm/head 128 + teacher top-k KL | Goal 49 notebook config |  |  |
+| Cached tail-only LoRA rank 8/16 + teacher top-k KL | Goal 49 notebook config |  |  |
 | Warm routed LoRA rank 4/8/16 | generated warm sparse sweep config |  |  |
 | Routed FFN top-1 | `configs/jobs/100m_mop_routed_ffn_expert_efficiency.json` |  |  |
 
@@ -33,6 +35,7 @@ efficiency gates both pass.
 | Dataset ref |  |
 | Split ID |  |
 | Split seed | `42` |
+| Quality format | `raw` or `fixed_code_xml` |
 | Target eval loss |  |
 | Max steps | `2000` |
 | Gradient accumulation | `8` |
@@ -51,13 +54,15 @@ efficiency gates both pass.
 | Warm Adapter Norm/Head 64 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | Core Frozen |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | Cached Warm Adapter Norm/Head 64 + KL |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Cached Warm Adapter Norm/Head 128 + KL |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Cached Tail-Only LoRA Rank 8/16 + KL |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | Warm Routed LoRA |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | Routed FFN Top-1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 
 ## Commands
 
 ```powershell
-mopforge gpu prepare-efficiency-data --count-per-category 100 --split-seed 42
+mopforge gpu prepare-efficiency-data --count-per-category 100 --split-seed 42 --quality-format fixed_code_xml
 
 mopforge gpu train configs/jobs/100m_dense_extended_efficiency.json
 mopforge gpu train configs/jobs/100m_mop_full_extended_efficiency.json
@@ -116,6 +121,15 @@ Same-quality sparse efficiency requires both quality and efficiency evidence.
 Any `3x` to `50x` claim must name the exact axis: peak VRAM, trainable
 parameters, checkpoint delta, cached-tail training time, or active expert
 compute.
+
+Use `fixed_code_xml` for small-model code-repair quality runs. It frames
+verified targets as `<fixed_code>...</fixed_code>` so generated samples can be
+evaluated as narrow repair/completion outputs rather than free-form code.
+
+Use `lora_tail_only=true` for cached LoRA comparisons. This places LoRA after
+the cached boundary; ordinary routed LoRA remains inside transformer blocks and
+is not a valid frozen-backbone cached-tail profile. Cached-run generation is a
+post-training quality evaluation and must not be counted as cached-tail VRAM.
 
 ## Interpretation
 

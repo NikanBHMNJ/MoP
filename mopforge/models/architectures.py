@@ -34,6 +34,7 @@ class ModelArchitectureConfig:
     routing_granularity: str = "example"
     shared_depth_ratio: float = 1.0
     use_lora_deltas: bool = False
+    lora_tail_only: bool = False
     lora_rank: int = 0
     lora_target_modules: list[str] | None = None
     use_fast_adapters: bool = False
@@ -79,6 +80,10 @@ class ModelArchitectureConfig:
         self.shared_depth_ratio = float(self.shared_depth_ratio)
         if not isinstance(self.use_lora_deltas, bool):
             raise ValueError("use_lora_deltas must be a boolean.")
+        if not isinstance(self.lora_tail_only, bool):
+            raise ValueError("lora_tail_only must be a boolean.")
+        if self.lora_tail_only and not self.use_lora_deltas:
+            raise ValueError("lora_tail_only requires use_lora_deltas=true.")
         if type(self.lora_rank) is not int or self.lora_rank < 0:
             raise ValueError("lora_rank must be a non-negative integer.")
         if self.use_lora_deltas and self.lora_rank <= 0:
@@ -180,6 +185,7 @@ def build_tiny_model_from_architecture(config: ModelArchitectureConfig, tokenize
         routing_granularity=config.routing_granularity,
         shared_depth_ratio=config.shared_depth_ratio,
         use_lora_deltas=config.use_lora_deltas,
+        lora_tail_only=config.lora_tail_only,
         lora_rank=config.lora_rank,
         lora_target_modules=config.lora_target_modules,
         **kwargs,
