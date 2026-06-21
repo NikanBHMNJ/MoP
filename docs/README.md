@@ -31,6 +31,7 @@ and tested before it has proven a GPU efficiency result.
 - [Goal 48 code cached-sparse L4 report](../reports/goal48_code_cached_sparse_efficiency/README.md)
 - [Goal 49 verified code-quality L4 report](../reports/goal49_verified_code_quality_efficiency/README.md)
 - [Goal 50 100M learning-gate L4 report](../reports/goal50_100m_learning_gate/README.md)
+- [Goal 50 full 100M quality comparison](../reports/goal50_100m_quality_comparison/README.md)
 - [GPU runtime limitations](gpu_runtime_limitations.md)
 - [Serious jobs checklist](serious_jobs_checklist.md)
 - [Colab 100M training notebook](colab_training.md)
@@ -84,6 +85,12 @@ These reports do not prove MoP superiority. The measured result is more careful:
 - After that boundary fix, the rerun reached `100%` train and held-out XML
   completion, syntax, verifier, and exact match, with `0.0000904` best eval
   loss. The memorization gate now passes and Phase C is allowed.
+- The full Goal 50 comparison then passed its corrected acceptance gate. Cached
+  Adapter/Norm/Head 128 reached `88.0%` verifier/exact match versus Dense at
+  `82.4%`, with `8.35x` throughput and `31.70x` lower peak reserved VRAM.
+- The report-only correction uses sequence-length evidence from an uncached
+  profile on the shared fixed split because cached loaders omit that metadata;
+  no measured run value changed.
 - The framework can measure the tradeoff and preserve the evidence.
 
 ## Current Implementation Focus
@@ -108,10 +115,9 @@ The current code adds the pieces needed for a more serious next comparison:
 - internal routed low-rank deltas,
 - comparison and acceptance-gate reports.
 
-The next run is the full Goal 50 100M comparison. The memorization gate now
-passes, but 1B remains blocked until the full comparison demonstrates nonzero
-held-out verifier/exact-match quality and retains the measured cached-training
-efficiency advantage.
+The next permitted run is a separate 1B L4 memory/throughput probe. The full
+100M comparison passed its narrow repair-quality and cached-efficiency gates,
+but this does not establish broad code generation or 1B feasibility.
 
 The Goal 49 Colab notebook automates that comparison and creates a downloadable
 lightweight report. For cached profiles, full-model generation happens after

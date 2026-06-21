@@ -111,3 +111,9 @@ on the Goal 49 Dense best loss of `0.8022`. The notebook uses
 2,000 optimizer updates per enabled profile, 10,000 balanced verified lessons,
 full held-out loss, a five-category stratified generation subset, and an
 `acceptance_gates.json` claim boundary.
+
+The first measured full comparison passes after correcting a report-only
+metadata fallback: Cached Adapter/Norm/Head 128 reached `88.0%` verifier/exact
+match, `8.35x` Dense throughput, and `31.70x` lower peak reserved VRAM. Cached
+Tail-Only LoRA Rank 8 reached the same quality with `6.70x` throughput and
+`22.83x` lower peak reserved VRAM.

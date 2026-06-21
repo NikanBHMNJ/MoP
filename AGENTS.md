@@ -473,6 +473,26 @@ Minimum quality gate before scaling:
 - cached profiles retain a measured efficiency advantage,
 - no broad code-generation claim is made from these narrow repair tasks.
 
+Measured Phase C outcome:
+
+- all five profiles completed 2,000 optimizer updates on the same balanced
+  10,000-lesson fixed split with full held-out loss and best-checkpoint
+  generation,
+- Cached Adapter/Norm/Head 128 reached `88.0%` verifier/exact match versus
+  Dense at `82.4%`, with `8.35x` throughput, `31.70x` lower peak reserved VRAM,
+  and a `127.53x` smaller checkpoint,
+- Cached Tail-Only LoRA Rank 8 also reached `88.0%` verifier/exact match, with
+  `6.70x` throughput and `22.83x` lower peak reserved VRAM,
+- all ground-truth, category, best-checkpoint, full-eval, optimizer-budget,
+  framing, syntax, verifier, exact-match, throughput, and VRAM gates passed,
+- the generated report initially false-failed because cached loaders omit
+  sequence-length metadata; shared fixed-split evidence records zero truncation
+  and a 166-token maximum target within the 256-token budget,
+- correcting that report-only fallback changed no measured run value,
+- the run used a fixed update budget rather than early stopping,
+- Phase C supports a 1B memory/throughput probe, not a broad code-generation
+  claim or an automatic 1B full-training claim.
+
 #### 1B Scaling Gate
 
 A 1B run may begin only after:

@@ -25,6 +25,8 @@ pytest_tmp/
 !/reports/goal49_verified_code_quality_efficiency/**
 !/reports/goal50_100m_learning_gate/
 !/reports/goal50_100m_learning_gate/**
+!/reports/goal50_100m_quality_comparison/
+!/reports/goal50_100m_quality_comparison/**
 /benchmarks/
 /experiments/
 /ablations/

@@ -159,6 +159,23 @@ The initial failed run exposed a concrete boundary mismatch: training encoded
 the same BOS-only prompt boundary as training. The passing rerun confirms that
 this mismatch, rather than model capacity or the verifier, caused the failure.
 
+The Goal 50 full 100M quality comparison is available under:
+
+`reports/goal50_100m_quality_comparison/`
+
+On the fixed 10,000-lesson code-repair dataset, Cached Adapter/Norm/Head 128
+reached `88.0%` verifier and exact match versus Dense at `82.4%`. It measured
+`8.35x` Dense throughput, `31.70x` lower peak reserved VRAM, `36.52x` lower
+peak allocated VRAM, a `127.53x` smaller checkpoint, and `7.74x` faster
+time-to-target loss. Cached Tail-Only LoRA Rank 8 also reached `88.0%` verifier
+and exact match with `6.70x` throughput and `22.83x` lower peak reserved VRAM.
+
+The generated gate initially reported `FAIL` only because cached-loader metrics
+omitted shared sequence-length metadata. Uncached profiles on the identical
+fixed split prove zero truncation and a 166-token maximum target within the
+256-token generation budget. Correcting that report-only logic produces a
+`PASS` without changing measured run values.
+
 ## Current Research Direction
 
 Goal 50 first tests whether the 100M pipeline can learn its narrow verified
@@ -221,6 +238,9 @@ on 10,000 balanced verified lessons for 2,000 optimizer updates each. It writes
 `acceptance_gates.json` and refuses to start without a passing memorization gate
 and a preconfigured shared target eval loss. The committed target is `0.85`,
 declared before all runs from the Goal 49 Dense `0.8022` baseline evidence.
+The first measured full comparison now passes its configured narrow code-repair
+quality and efficiency gates. This supports proceeding to a separate 1B probe,
+not a broad general-code claim.
 
 ## Quickstart
 

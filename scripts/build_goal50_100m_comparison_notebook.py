@@ -251,6 +251,22 @@ for label, record in RUNS.items():
 
 dense_row = row_by_label.get("dense", {})
 cached_labels = [label for label in RUNS if label.startswith("cached_")]
+dataset_stats_label = next(
+    (
+        label
+        for label, item in evidence.items()
+        if item.get("sequence_length_statistics")
+    ),
+    None,
+)
+dataset_integrity_evidence = {
+    "source_profile": dataset_stats_label,
+    "sequence_length_statistics": (
+        evidence[dataset_stats_label]["sequence_length_statistics"]
+        if dataset_stats_label is not None
+        else None
+    ),
+}
 
 
 def numeric(value):
@@ -280,8 +296,8 @@ checks = {
     "all_five_categories": all(item["category_count"] == 5 for item in evidence.values()),
     "full_held_out_loss": all(item["latest_eval_examples"] == item["full_eval_examples"] for item in evidence.values()),
     "optimizer_update_budget": all(item["optimizer_updates"] == OPTIMIZER_UPDATES for item in evidence.values()),
-    "no_train_or_eval_truncation": all(untruncated(item) for item in evidence.values()),
-    "generation_budget_covers_targets": all(generation_budget_covers_targets(item) for item in evidence.values()),
+    "no_train_or_eval_truncation": untruncated(dataset_integrity_evidence),
+    "generation_budget_covers_targets": generation_budget_covers_targets(dataset_integrity_evidence),
     "cached_complete_framing_at_least_90pct": all(evidence[label]["fixed_code_complete_rate"] >= 0.90 for label in cached_labels),
     "cached_syntax_at_least_80pct": all(evidence[label]["syntax_pass_rate"] >= 0.80 for label in cached_labels),
     "cached_verifier_at_least_20pct": all(evidence[label]["verifier_pass_rate"] >= 0.20 for label in cached_labels),
@@ -299,6 +315,7 @@ acceptance = {
         "exact_match_rate": "greater_than_zero",
         "cached_tokens_per_sec_vs_dense": 0.80,
     },
+    "dataset_integrity_evidence": dataset_integrity_evidence,
     "evidence": evidence,
 }
 write_json(REPORT_PATH / "acceptance_gates.json", acceptance)

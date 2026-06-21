@@ -1,0 +1,27 @@
+{
+  "cached_warm_adapter_norm_head_128": {
+    "checkpoint_path": "gpu_runs/20260621T214425Z-goal50-100m-quality-comparison-cached-warm-adapter-norm-head-128-65c0e025/checkpoints/checkpoint-best-eval.pt",
+    "config_path": "configs/jobs/colab_l4_goal50_100m_quality/cached_warm_adapter_norm_head_128.json",
+    "run_id": "20260621T214425Z-goal50-100m-quality-comparison-cached-warm-adapter-norm-head-128-65c0e025"
+  },
+  "cached_warm_lora_rank8": {
+    "checkpoint_path": "gpu_runs/20260621T215700Z-goal50-100m-quality-comparison-cached-warm-lora-rank8-2acf9d5e/checkpoints/checkpoint-best-eval.pt",
+    "config_path": "configs/jobs/colab_l4_goal50_100m_quality/cached_warm_lora_rank8.json",
+    "run_id": "20260621T215700Z-goal50-100m-quality-comparison-cached-warm-lora-rank8-2acf9d5e"
+  },
+  "dense": {
+    "checkpoint_path": "gpu_runs/20260621T201304Z-goal50-100m-quality-comparison-dense-475621f6/checkpoints/checkpoint-best-eval.pt",
+    "config_path": "configs/jobs/colab_l4_goal50_100m_quality/dense.json",
+    "run_id": "20260621T201304Z-goal50-100m-quality-comparison-dense-475621f6"
+  },
+  "mop_full": {
+    "checkpoint_path": "gpu_runs/20260621T204500Z-goal50-100m-quality-comparison-mop-full-f663b186/checkpoints/checkpoint-best-eval.pt",
+    "config_path": "configs/jobs/colab_l4_goal50_100m_quality/mop_full.json",
+    "run_id": "20260621T204500Z-goal50-100m-quality-comparison-mop-full-f663b186"
+  },
+  "warm_adapter_norm_head_128": {
+    "checkpoint_path": "gpu_runs/20260621T212138Z-goal50-100m-quality-comparison-warm-adapter-norm-head-128-63018e84/checkpoints/checkpoint-best-eval.pt",
+    "config_path": "configs/jobs/colab_l4_goal50_100m_quality/warm_adapter_norm_head_128.json",
+    "run_id": "20260621T212138Z-goal50-100m-quality-comparison-warm-adapter-norm-head-128-63018e84"
+  }
+}
