@@ -1,39 +1,39 @@
 {
   "files": [
     {
-      "bytes": 1007,
+      "bytes": 1017,
       "path": "README.md",
-      "sha256": "ac69161e735b5d90d6a9a140b0a376c37f626fa0d86bdc09250843d888558310"
+      "sha256": "31a79ccfde4aa86b65825d85f76ef5f2105309d5f55c0d2eb76da54e82c1b222"
     },
     {
       "bytes": 3569,
       "path": "config.json",
-      "sha256": "cea85d0dc64907f6bdbde67816d501b2dfb70369913bd31eaa248ab461698220"
+      "sha256": "c27afc874bb046287caa79eca177d922e4110137fe5e2f010ca2b1fbbe513aff"
     },
     {
       "bytes": 628,
       "path": "experiment_settings.json",
-      "sha256": "7205554e8289b3aa419e783cfe2553f6878414cc2af509a6bed2389638af3274"
+      "sha256": "64c98197e5c7f0eeb25565507fcfbdb81cb67bdf5874109476be76b924011dc3"
     },
     {
-      "bytes": 66578,
+      "bytes": 56943,
       "path": "generation_eval.json",
-      "sha256": "9c7a2531203aee9c3542017d5b59b76607b7906d3264f638bb7019cb26104569"
+      "sha256": "97e9dd132126f2fa651770a7da5769c9c254775f6b3bc560d0bc334a733ac49b"
     },
     {
-      "bytes": 186040,
+      "bytes": 189032,
       "path": "gpu_training_result.json",
-      "sha256": "5c6d861349affa976dfc8a0ce3b4ac5905fa05d3519a4fa984b5ae738e7eae0f"
+      "sha256": "19df34e46db0cc0596ba435e221acae1d050c6b3fd02ceb1297c01157318c800"
     },
     {
-      "bytes": 15854,
+      "bytes": 15853,
       "path": "ground_truth_controls.json",
-      "sha256": "b99d3c22b45d307aba1eaf4e90a77a23281f5218972b930f190c1deaf6db41dd"
+      "sha256": "ab31aa26ba92992dbc7231d4dbc41f8e43553c4a71691e2871d1264cb52c785e"
     },
     {
-      "bytes": 8935,
+      "bytes": 8867,
       "path": "learning_gate.json",
-      "sha256": "b95a2cedf5b55d8f8dbd66eac566261e9b5c4b87e4bbbaca63e934d8e66c7165"
+      "sha256": "dd31ebb28f3c7ee178ae8b35a37dc3c153fbb2d7340417ecc00d6e138c5e1b5a"
     },
     {
       "bytes": 569,
@@ -41,9 +41,9 @@
       "sha256": "8dd391ce38911cd31f20eaca938c1cf782bf58db8f2ce132607b8aac1c486920"
     },
     {
-      "bytes": 21184,
+      "bytes": 21986,
       "path": "metrics.json",
-      "sha256": "5c91a581b3f6b1b14b438b9b3e7d30115028336b7751c1d848c6402ef7d65aa5"
+      "sha256": "72de5beea505511d3611c0f2e027625448762b6ba9dde910a8dccd0228e3096f"
     },
     {
       "bytes": 616,
@@ -51,9 +51,9 @@
       "sha256": "4d1f371b89df89c6d8663afb0a79675103708dc4630a11d2fdc4b8f53da22b93"
     },
     {
-      "bytes": 147685,
+      "bytes": 149731,
       "path": "state.json",
-      "sha256": "842ba116cd563c20fee17cececed45d96f2c36c54f7d885c49c26bd937287463"
+      "sha256": "5b697fd5f426dc7cc718994a25c42d87b7e27d75d4d5ce21fb254085f9ed7ad3"
     }
   ],
   "forbidden_model_files_detected": false,

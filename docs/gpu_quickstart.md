@@ -99,13 +99,10 @@ categories, and raw/XML ground-truth controls. The generated report records
 microsteps and optimizer updates separately and blocks scaling when the
 memorization thresholds fail.
 
-The first measured Goal 50 gate did fail: all protocol and ground-truth checks
-passed, but train and held-out generation remained at `0%` XML completion,
-syntax, verifier, and exact match. Keep the full comparison blocked until the
-autoregressive generation path succeeds on the memorized training lessons.
-The audit found and fixed an EOS token inserted after the generation prompt but
-absent from the training prompt boundary. Rerun the gate with this fix before
-starting the full comparison.
+The first measured Goal 50 gate exposed an EOS prompt-boundary mismatch. After
+that fix, the rerun reached `100%` train and held-out XML completion, syntax,
+verifier, and exact match. The full 100M comparison is now permitted; 1B remains
+gated on its quality and efficiency evidence.
 
 After a passing gate, use
 `notebooks/colab_l4_goal50_100m_quality_comparison.ipynb` for the full 100M

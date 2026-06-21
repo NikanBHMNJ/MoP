@@ -1,9 +1,9 @@
 {
   "checkpoint": {
-    "best_eval_loss": 0.01291472438024357,
-    "global_step": 7200,
-    "optimizer_step": 900,
-    "path": "gpu_runs/20260621T185710Z-goal50-100m-learning-gate-98e2f072/checkpoints/checkpoint-best-eval.pt",
+    "best_eval_loss": 9.042929959832691e-05,
+    "global_step": 8000,
+    "optimizer_step": 1000,
+    "path": "gpu_runs/20260621T192047Z-goal50-100m-learning-gate-5bef7629/checkpoints/checkpoint-best-eval.pt",
     "restore": {
       "model_load_strict": false,
       "model_loaded_key_count": 149,
@@ -27,125 +27,125 @@
     "ground_truth_controls": true,
     "no_train_or_eval_truncation": true,
     "optimizer_update_budget": true,
-    "train_exact_match_rate": false,
-    "train_fixed_code_complete_rate": false,
-    "train_syntax_pass_rate": false,
-    "train_verifier_pass_rate": false
+    "train_exact_match_rate": true,
+    "train_fixed_code_complete_rate": true,
+    "train_syntax_pass_rate": true,
+    "train_verifier_pass_rate": true
   },
   "eval_summary": {
-    "gen_compile_pass_count": 0,
-    "gen_compile_pass_rate": 0.0,
+    "gen_compile_pass_count": 5,
+    "gen_compile_pass_rate": 1.0,
     "gen_eval_examples": 5,
-    "gen_exact_match_count": 0,
-    "gen_exact_match_rate": 0.0,
+    "gen_exact_match_count": 5,
+    "gen_exact_match_rate": 1.0,
     "gen_failures_by_type": {
-      "syntax_error": 5
+      "passed": 5
     },
-    "gen_fixed_code_complete_count": 0,
-    "gen_fixed_code_complete_rate": 0.0,
-    "gen_pass_count": 0,
-    "gen_pass_rate": 0.0,
-    "gen_syntax_pass_count": 0,
-    "gen_syntax_pass_rate": 0.0,
-    "gen_verifier_pass_count": 0,
-    "gen_verifier_pass_rate": 0.0,
+    "gen_fixed_code_complete_count": 5,
+    "gen_fixed_code_complete_rate": 1.0,
+    "gen_pass_count": 5,
+    "gen_pass_rate": 1.0,
+    "gen_syntax_pass_count": 5,
+    "gen_syntax_pass_rate": 1.0,
+    "gen_verifier_pass_count": 5,
+    "gen_verifier_pass_rate": 1.0,
     "per_category": {
       "incorrect base case in recursion": {
-        "gen_compile_pass_count": 0,
-        "gen_compile_pass_rate": 0.0,
+        "gen_compile_pass_count": 1,
+        "gen_compile_pass_rate": 1.0,
         "gen_eval_examples": 1,
-        "gen_exact_match_count": 0,
-        "gen_exact_match_rate": 0.0,
+        "gen_exact_match_count": 1,
+        "gen_exact_match_rate": 1.0,
         "gen_failures_by_type": {
-          "syntax_error": 1
+          "passed": 1
         },
-        "gen_fixed_code_complete_count": 0,
-        "gen_fixed_code_complete_rate": 0.0,
-        "gen_pass_count": 0,
-        "gen_pass_rate": 0.0,
-        "gen_syntax_pass_count": 0,
-        "gen_syntax_pass_rate": 0.0,
-        "gen_verifier_pass_count": 0,
-        "gen_verifier_pass_rate": 0.0
+        "gen_fixed_code_complete_count": 1,
+        "gen_fixed_code_complete_rate": 1.0,
+        "gen_pass_count": 1,
+        "gen_pass_rate": 1.0,
+        "gen_syntax_pass_count": 1,
+        "gen_syntax_pass_rate": 1.0,
+        "gen_verifier_pass_count": 1,
+        "gen_verifier_pass_rate": 1.0
       },
       "missing return": {
-        "gen_compile_pass_count": 0,
-        "gen_compile_pass_rate": 0.0,
+        "gen_compile_pass_count": 1,
+        "gen_compile_pass_rate": 1.0,
         "gen_eval_examples": 1,
-        "gen_exact_match_count": 0,
-        "gen_exact_match_rate": 0.0,
+        "gen_exact_match_count": 1,
+        "gen_exact_match_rate": 1.0,
         "gen_failures_by_type": {
-          "syntax_error": 1
+          "passed": 1
         },
-        "gen_fixed_code_complete_count": 0,
-        "gen_fixed_code_complete_rate": 0.0,
-        "gen_pass_count": 0,
-        "gen_pass_rate": 0.0,
-        "gen_syntax_pass_count": 0,
-        "gen_syntax_pass_rate": 0.0,
-        "gen_verifier_pass_count": 0,
-        "gen_verifier_pass_rate": 0.0
+        "gen_fixed_code_complete_count": 1,
+        "gen_fixed_code_complete_rate": 1.0,
+        "gen_pass_count": 1,
+        "gen_pass_rate": 1.0,
+        "gen_syntax_pass_count": 1,
+        "gen_syntax_pass_rate": 1.0,
+        "gen_verifier_pass_count": 1,
+        "gen_verifier_pass_rate": 1.0
       },
       "off-by-one loop/index bug": {
-        "gen_compile_pass_count": 0,
-        "gen_compile_pass_rate": 0.0,
+        "gen_compile_pass_count": 1,
+        "gen_compile_pass_rate": 1.0,
         "gen_eval_examples": 1,
-        "gen_exact_match_count": 0,
-        "gen_exact_match_rate": 0.0,
+        "gen_exact_match_count": 1,
+        "gen_exact_match_rate": 1.0,
         "gen_failures_by_type": {
-          "syntax_error": 1
+          "passed": 1
         },
-        "gen_fixed_code_complete_count": 0,
-        "gen_fixed_code_complete_rate": 0.0,
-        "gen_pass_count": 0,
-        "gen_pass_rate": 0.0,
-        "gen_syntax_pass_count": 0,
-        "gen_syntax_pass_rate": 0.0,
-        "gen_verifier_pass_count": 0,
-        "gen_verifier_pass_rate": 0.0
+        "gen_fixed_code_complete_count": 1,
+        "gen_fixed_code_complete_rate": 1.0,
+        "gen_pass_count": 1,
+        "gen_pass_rate": 1.0,
+        "gen_syntax_pass_count": 1,
+        "gen_syntax_pass_rate": 1.0,
+        "gen_verifier_pass_count": 1,
+        "gen_verifier_pass_rate": 1.0
       },
       "wrong accumulator initialization": {
-        "gen_compile_pass_count": 0,
-        "gen_compile_pass_rate": 0.0,
+        "gen_compile_pass_count": 1,
+        "gen_compile_pass_rate": 1.0,
         "gen_eval_examples": 1,
-        "gen_exact_match_count": 0,
-        "gen_exact_match_rate": 0.0,
+        "gen_exact_match_count": 1,
+        "gen_exact_match_rate": 1.0,
         "gen_failures_by_type": {
-          "syntax_error": 1
+          "passed": 1
         },
-        "gen_fixed_code_complete_count": 0,
-        "gen_fixed_code_complete_rate": 0.0,
-        "gen_pass_count": 0,
-        "gen_pass_rate": 0.0,
-        "gen_syntax_pass_count": 0,
-        "gen_syntax_pass_rate": 0.0,
-        "gen_verifier_pass_count": 0,
-        "gen_verifier_pass_rate": 0.0
+        "gen_fixed_code_complete_count": 1,
+        "gen_fixed_code_complete_rate": 1.0,
+        "gen_pass_count": 1,
+        "gen_pass_rate": 1.0,
+        "gen_syntax_pass_count": 1,
+        "gen_syntax_pass_rate": 1.0,
+        "gen_verifier_pass_count": 1,
+        "gen_verifier_pass_rate": 1.0
       },
       "wrong comparison operator": {
-        "gen_compile_pass_count": 0,
-        "gen_compile_pass_rate": 0.0,
+        "gen_compile_pass_count": 1,
+        "gen_compile_pass_rate": 1.0,
         "gen_eval_examples": 1,
-        "gen_exact_match_count": 0,
-        "gen_exact_match_rate": 0.0,
+        "gen_exact_match_count": 1,
+        "gen_exact_match_rate": 1.0,
         "gen_failures_by_type": {
-          "syntax_error": 1
+          "passed": 1
         },
-        "gen_fixed_code_complete_count": 0,
-        "gen_fixed_code_complete_rate": 0.0,
-        "gen_pass_count": 0,
-        "gen_pass_rate": 0.0,
-        "gen_syntax_pass_count": 0,
-        "gen_syntax_pass_rate": 0.0,
-        "gen_verifier_pass_count": 0,
-        "gen_verifier_pass_rate": 0.0
+        "gen_fixed_code_complete_count": 1,
+        "gen_fixed_code_complete_rate": 1.0,
+        "gen_pass_count": 1,
+        "gen_pass_rate": 1.0,
+        "gen_syntax_pass_count": 1,
+        "gen_syntax_pass_rate": 1.0,
+        "gen_verifier_pass_count": 1,
+        "gen_verifier_pass_rate": 1.0
       }
     }
   },
   "generation_max_new_tokens": 256,
   "microsteps": 8000,
   "optimizer_updates": 1000,
-  "passed": false,
+  "passed": true,
   "sequence_length_statistics": {
     "eval": {
       "examples": 5,
@@ -175,112 +175,112 @@
   },
   "train_epoch": 200,
   "train_summary": {
-    "gen_compile_pass_count": 0,
-    "gen_compile_pass_rate": 0.0,
+    "gen_compile_pass_count": 40,
+    "gen_compile_pass_rate": 1.0,
     "gen_eval_examples": 40,
-    "gen_exact_match_count": 0,
-    "gen_exact_match_rate": 0.0,
+    "gen_exact_match_count": 40,
+    "gen_exact_match_rate": 1.0,
     "gen_failures_by_type": {
-      "syntax_error": 40
+      "passed": 40
     },
-    "gen_fixed_code_complete_count": 0,
-    "gen_fixed_code_complete_rate": 0.0,
-    "gen_pass_count": 0,
-    "gen_pass_rate": 0.0,
-    "gen_syntax_pass_count": 0,
-    "gen_syntax_pass_rate": 0.0,
-    "gen_verifier_pass_count": 0,
-    "gen_verifier_pass_rate": 0.0,
+    "gen_fixed_code_complete_count": 40,
+    "gen_fixed_code_complete_rate": 1.0,
+    "gen_pass_count": 40,
+    "gen_pass_rate": 1.0,
+    "gen_syntax_pass_count": 40,
+    "gen_syntax_pass_rate": 1.0,
+    "gen_verifier_pass_count": 40,
+    "gen_verifier_pass_rate": 1.0,
     "per_category": {
       "incorrect base case in recursion": {
-        "gen_compile_pass_count": 0,
-        "gen_compile_pass_rate": 0.0,
+        "gen_compile_pass_count": 8,
+        "gen_compile_pass_rate": 1.0,
         "gen_eval_examples": 8,
-        "gen_exact_match_count": 0,
-        "gen_exact_match_rate": 0.0,
+        "gen_exact_match_count": 8,
+        "gen_exact_match_rate": 1.0,
         "gen_failures_by_type": {
-          "syntax_error": 8
+          "passed": 8
         },
-        "gen_fixed_code_complete_count": 0,
-        "gen_fixed_code_complete_rate": 0.0,
-        "gen_pass_count": 0,
-        "gen_pass_rate": 0.0,
-        "gen_syntax_pass_count": 0,
-        "gen_syntax_pass_rate": 0.0,
-        "gen_verifier_pass_count": 0,
-        "gen_verifier_pass_rate": 0.0
+        "gen_fixed_code_complete_count": 8,
+        "gen_fixed_code_complete_rate": 1.0,
+        "gen_pass_count": 8,
+        "gen_pass_rate": 1.0,
+        "gen_syntax_pass_count": 8,
+        "gen_syntax_pass_rate": 1.0,
+        "gen_verifier_pass_count": 8,
+        "gen_verifier_pass_rate": 1.0
       },
       "missing return": {
-        "gen_compile_pass_count": 0,
-        "gen_compile_pass_rate": 0.0,
+        "gen_compile_pass_count": 8,
+        "gen_compile_pass_rate": 1.0,
         "gen_eval_examples": 8,
-        "gen_exact_match_count": 0,
-        "gen_exact_match_rate": 0.0,
+        "gen_exact_match_count": 8,
+        "gen_exact_match_rate": 1.0,
         "gen_failures_by_type": {
-          "syntax_error": 8
+          "passed": 8
         },
-        "gen_fixed_code_complete_count": 0,
-        "gen_fixed_code_complete_rate": 0.0,
-        "gen_pass_count": 0,
-        "gen_pass_rate": 0.0,
-        "gen_syntax_pass_count": 0,
-        "gen_syntax_pass_rate": 0.0,
-        "gen_verifier_pass_count": 0,
-        "gen_verifier_pass_rate": 0.0
+        "gen_fixed_code_complete_count": 8,
+        "gen_fixed_code_complete_rate": 1.0,
+        "gen_pass_count": 8,
+        "gen_pass_rate": 1.0,
+        "gen_syntax_pass_count": 8,
+        "gen_syntax_pass_rate": 1.0,
+        "gen_verifier_pass_count": 8,
+        "gen_verifier_pass_rate": 1.0
       },
       "off-by-one loop/index bug": {
-        "gen_compile_pass_count": 0,
-        "gen_compile_pass_rate": 0.0,
+        "gen_compile_pass_count": 8,
+        "gen_compile_pass_rate": 1.0,
         "gen_eval_examples": 8,
-        "gen_exact_match_count": 0,
-        "gen_exact_match_rate": 0.0,
+        "gen_exact_match_count": 8,
+        "gen_exact_match_rate": 1.0,
         "gen_failures_by_type": {
-          "syntax_error": 8
+          "passed": 8
         },
-        "gen_fixed_code_complete_count": 0,
-        "gen_fixed_code_complete_rate": 0.0,
-        "gen_pass_count": 0,
-        "gen_pass_rate": 0.0,
-        "gen_syntax_pass_count": 0,
-        "gen_syntax_pass_rate": 0.0,
-        "gen_verifier_pass_count": 0,
-        "gen_verifier_pass_rate": 0.0
+        "gen_fixed_code_complete_count": 8,
+        "gen_fixed_code_complete_rate": 1.0,
+        "gen_pass_count": 8,
+        "gen_pass_rate": 1.0,
+        "gen_syntax_pass_count": 8,
+        "gen_syntax_pass_rate": 1.0,
+        "gen_verifier_pass_count": 8,
+        "gen_verifier_pass_rate": 1.0
       },
       "wrong accumulator initialization": {
-        "gen_compile_pass_count": 0,
-        "gen_compile_pass_rate": 0.0,
+        "gen_compile_pass_count": 8,
+        "gen_compile_pass_rate": 1.0,
         "gen_eval_examples": 8,
-        "gen_exact_match_count": 0,
-        "gen_exact_match_rate": 0.0,
+        "gen_exact_match_count": 8,
+        "gen_exact_match_rate": 1.0,
         "gen_failures_by_type": {
-          "syntax_error": 8
+          "passed": 8
         },
-        "gen_fixed_code_complete_count": 0,
-        "gen_fixed_code_complete_rate": 0.0,
-        "gen_pass_count": 0,
-        "gen_pass_rate": 0.0,
-        "gen_syntax_pass_count": 0,
-        "gen_syntax_pass_rate": 0.0,
-        "gen_verifier_pass_count": 0,
-        "gen_verifier_pass_rate": 0.0
+        "gen_fixed_code_complete_count": 8,
+        "gen_fixed_code_complete_rate": 1.0,
+        "gen_pass_count": 8,
+        "gen_pass_rate": 1.0,
+        "gen_syntax_pass_count": 8,
+        "gen_syntax_pass_rate": 1.0,
+        "gen_verifier_pass_count": 8,
+        "gen_verifier_pass_rate": 1.0
       },
       "wrong comparison operator": {
-        "gen_compile_pass_count": 0,
-        "gen_compile_pass_rate": 0.0,
+        "gen_compile_pass_count": 8,
+        "gen_compile_pass_rate": 1.0,
         "gen_eval_examples": 8,
-        "gen_exact_match_count": 0,
-        "gen_exact_match_rate": 0.0,
+        "gen_exact_match_count": 8,
+        "gen_exact_match_rate": 1.0,
         "gen_failures_by_type": {
-          "syntax_error": 8
+          "passed": 8
         },
-        "gen_fixed_code_complete_count": 0,
-        "gen_fixed_code_complete_rate": 0.0,
-        "gen_pass_count": 0,
-        "gen_pass_rate": 0.0,
-        "gen_syntax_pass_count": 0,
-        "gen_syntax_pass_rate": 0.0,
-        "gen_verifier_pass_count": 0,
-        "gen_verifier_pass_rate": 0.0
+        "gen_fixed_code_complete_count": 8,
+        "gen_fixed_code_complete_rate": 1.0,
+        "gen_pass_count": 8,
+        "gen_pass_rate": 1.0,
+        "gen_syntax_pass_count": 8,
+        "gen_syntax_pass_rate": 1.0,
+        "gen_verifier_pass_count": 8,
+        "gen_verifier_pass_rate": 1.0
       }
     }
   }

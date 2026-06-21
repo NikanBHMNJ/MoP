@@ -148,16 +148,16 @@ The Goal 50 100M memorization-gate report is available under:
 The protocol checks worked: all five categories were represented, full eval was
 used, raw/XML ground-truth controls passed, no examples were truncated, 1,000
 optimizer updates completed, and generation restored the best checkpoint.
-However, the gate failed. Train and held-out XML completion, syntax pass,
-verifier pass, and exact match were all `0%`, despite best eval loss reaching
-`0.0129`. This isolates a teacher-forced-loss versus autoregressive-generation
-failure; the full comparison and 1B run remain blocked.
+The corrected rerun passed: train and held-out XML completion, syntax pass,
+verifier pass, and exact match were all `100%`, with best eval loss reaching
+`0.0000904`. Phase C is now unblocked; the 1B run still waits for the full 100M
+comparison.
 
-The post-report audit found a concrete boundary mismatch: training encoded
+The initial failed run exposed a concrete boundary mismatch: training encoded
 `BOS + prompt + target`, while greedy generation encoded
 `BOS + prompt + EOS` before predicting the target. Greedy generation now uses
-the same BOS-only prompt boundary as training. This report remains the honest
-pre-fix result; rerun the learning gate before unblocking Phase C.
+the same BOS-only prompt boundary as training. The passing rerun confirms that
+this mismatch, rather than model capacity or the verifier, caused the failure.
 
 ## Current Research Direction
 
@@ -211,7 +211,8 @@ The completed diagnostic is
 50-lesson 100M Dense memorization test for 1,000 optimizer updates, evaluates
 full train and held-out generation from the best checkpoint, and emits an
 explicit pass/fail report. The first measured run failed that gate, so the 1B
-run and full 100M comparison must not proceed unchanged.
+run remained blocked. The corrected rerun passed every gate, so the full 100M
+comparison may proceed; 1B remains gated on that comparison.
 
 After that gate passes, run
 `notebooks/colab_l4_goal50_100m_quality_comparison.ipynb`. It compares the five

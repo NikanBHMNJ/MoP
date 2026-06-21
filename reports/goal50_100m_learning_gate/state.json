@@ -1,11 +1,11 @@
 {
-  "best_checkpoint_path": "gpu_runs/20260621T185710Z-goal50-100m-learning-gate-98e2f072/checkpoints/checkpoint-best-eval.pt",
-  "best_eval_loss": 0.01291472438024357,
-  "evals_without_improvement": 1,
+  "best_checkpoint_path": "gpu_runs/20260621T192047Z-goal50-100m-learning-gate-5bef7629/checkpoints/checkpoint-best-eval.pt",
+  "best_eval_loss": 9.042929959832691e-05,
+  "evals_without_improvement": 0,
   "global_step": 8000,
-  "latest_checkpoint_path": "gpu_runs/20260621T185710Z-goal50-100m-learning-gate-98e2f072/checkpoints/checkpoint-step-008000.pt",
-  "latest_eval_loss": 0.044044743198901413,
-  "latest_train_loss": 0.019528690725564957,
+  "latest_checkpoint_path": "gpu_runs/20260621T192047Z-goal50-100m-learning-gate-5bef7629/checkpoints/checkpoint-step-008000.pt",
+  "latest_eval_loss": 9.042929959832691e-05,
+  "latest_train_loss": 2.544008384575136e-05,
   "memory_snapshots": [
     {
       "allocated_gb": 0.9903,
@@ -41,7 +41,43 @@
       "peak_reserved_gb": 1.9121,
       "reserved_gb": 1.9121,
       "selected_device": "cuda:0",
+      "step": 4800
+    },
+    {
+      "allocated_gb": 0.9903,
+      "cuda_available": true,
+      "peak_allocated_gb": 1.6437,
+      "peak_reserved_gb": 1.9121,
+      "reserved_gb": 1.9121,
+      "selected_device": "cuda:0",
+      "step": 5600
+    },
+    {
+      "allocated_gb": 0.9903,
+      "cuda_available": true,
+      "peak_allocated_gb": 1.6437,
+      "peak_reserved_gb": 1.9121,
+      "reserved_gb": 1.9121,
+      "selected_device": "cuda:0",
+      "step": 6400
+    },
+    {
+      "allocated_gb": 0.9903,
+      "cuda_available": true,
+      "peak_allocated_gb": 1.6437,
+      "peak_reserved_gb": 1.9121,
+      "reserved_gb": 1.9121,
+      "selected_device": "cuda:0",
       "step": 7200
+    },
+    {
+      "allocated_gb": 0.9903,
+      "cuda_available": true,
+      "peak_allocated_gb": 1.6437,
+      "peak_reserved_gb": 1.9121,
+      "reserved_gb": 1.9121,
+      "selected_device": "cuda:0",
+      "step": 8000
     },
     {
       "allocated_gb": 0.9903,
@@ -55,7 +91,7 @@
   ],
   "metric_history": [
     {
-      "ce_loss": 4.797198295593262,
+      "ce_loss": 4.6200432777404785,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -67,10 +103,10 @@
       "optimizer_step": 3,
       "samples_seen": 25,
       "tokens_seen": 17610,
-      "train_loss": 4.797198295593262
+      "train_loss": 4.6200432777404785
     },
     {
-      "ce_loss": 3.9993896484375,
+      "ce_loss": 3.9658203125,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -82,10 +118,10 @@
       "optimizer_step": 6,
       "samples_seen": 50,
       "tokens_seen": 35085,
-      "train_loss": 3.9993896484375
+      "train_loss": 3.9658203125
     },
     {
-      "ce_loss": 3.58884334564209,
+      "ce_loss": 3.599942922592163,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -97,10 +133,10 @@
       "optimizer_step": 9,
       "samples_seen": 75,
       "tokens_seen": 52344,
-      "train_loss": 3.58884334564209
+      "train_loss": 3.599942922592163
     },
     {
-      "ce_loss": 3.302924871444702,
+      "ce_loss": 3.2436881065368652,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -112,10 +148,10 @@
       "optimizer_step": 12,
       "samples_seen": 100,
       "tokens_seen": 69981,
-      "train_loss": 3.302924871444702
+      "train_loss": 3.2436881065368652
     },
     {
-      "ce_loss": 2.80853271484375,
+      "ce_loss": 2.686859130859375,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -127,10 +163,10 @@
       "optimizer_step": 15,
       "samples_seen": 125,
       "tokens_seen": 87269,
-      "train_loss": 2.80853271484375
+      "train_loss": 2.686859130859375
     },
     {
-      "ce_loss": 2.4466464519500732,
+      "ce_loss": 2.253227472305298,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -142,10 +178,10 @@
       "optimizer_step": 18,
       "samples_seen": 150,
       "tokens_seen": 105167,
-      "train_loss": 2.4466464519500732
+      "train_loss": 2.253227472305298
     },
     {
-      "ce_loss": 2.058248281478882,
+      "ce_loss": 1.8814905881881714,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -157,10 +193,10 @@
       "optimizer_step": 21,
       "samples_seen": 175,
       "tokens_seen": 122612,
-      "train_loss": 2.058248281478882
+      "train_loss": 1.8814905881881714
     },
     {
-      "ce_loss": 1.6708602905273438,
+      "ce_loss": 1.5315055847167969,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -172,10 +208,10 @@
       "optimizer_step": 25,
       "samples_seen": 200,
       "tokens_seen": 139840,
-      "train_loss": 1.6708602905273438
+      "train_loss": 1.5315055847167969
     },
     {
-      "ce_loss": 1.2615547180175781,
+      "ce_loss": 0.9401791095733643,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -187,10 +223,10 @@
       "optimizer_step": 28,
       "samples_seen": 225,
       "tokens_seen": 157500,
-      "train_loss": 1.2615547180175781
+      "train_loss": 0.9401791095733643
     },
     {
-      "ce_loss": 1.0667574405670166,
+      "ce_loss": 0.6997047662734985,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -202,10 +238,10 @@
       "optimizer_step": 31,
       "samples_seen": 250,
       "tokens_seen": 174694,
-      "train_loss": 1.0667574405670166
+      "train_loss": 0.6997047662734985
     },
     {
-      "ce_loss": 0.6246519088745117,
+      "ce_loss": 0.6647161245346069,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -217,10 +253,10 @@
       "optimizer_step": 34,
       "samples_seen": 275,
       "tokens_seen": 192286,
-      "train_loss": 0.6246519088745117
+      "train_loss": 0.6647161245346069
     },
     {
-      "ce_loss": 0.47484180331230164,
+      "ce_loss": 0.252873033285141,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -232,10 +268,10 @@
       "optimizer_step": 37,
       "samples_seen": 300,
       "tokens_seen": 209816,
-      "train_loss": 0.47484180331230164
+      "train_loss": 0.252873033285141
     },
     {
-      "ce_loss": 0.29315710067749023,
+      "ce_loss": 0.25183796882629395,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -247,10 +283,10 @@
       "optimizer_step": 40,
       "samples_seen": 325,
       "tokens_seen": 227240,
-      "train_loss": 0.29315710067749023
+      "train_loss": 0.25183796882629395
     },
     {
-      "ce_loss": 0.2704594135284424,
+      "ce_loss": 0.2482830286026001,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -262,10 +298,10 @@
       "optimizer_step": 43,
       "samples_seen": 350,
       "tokens_seen": 244665,
-      "train_loss": 0.2704594135284424
+      "train_loss": 0.2482830286026001
     },
     {
-      "ce_loss": 0.11758926510810852,
+      "ce_loss": 0.11512298882007599,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -277,10 +313,10 @@
       "optimizer_step": 46,
       "samples_seen": 375,
       "tokens_seen": 261969,
-      "train_loss": 0.11758926510810852
+      "train_loss": 0.11512298882007599
     },
     {
-      "ce_loss": 0.13358217477798462,
+      "ce_loss": 0.11786040663719177,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -292,10 +328,10 @@
       "optimizer_step": 50,
       "samples_seen": 400,
       "tokens_seen": 279680,
-      "train_loss": 0.13358217477798462
+      "train_loss": 0.11786040663719177
     },
     {
-      "ce_loss": 0.1581939160823822,
+      "ce_loss": 0.08736243098974228,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -307,10 +343,10 @@
       "optimizer_step": 53,
       "samples_seen": 425,
       "tokens_seen": 297135,
-      "train_loss": 0.1581939160823822
+      "train_loss": 0.08736243098974228
     },
     {
-      "ce_loss": 0.056388355791568756,
+      "ce_loss": 0.08573024719953537,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -322,10 +358,10 @@
       "optimizer_step": 56,
       "samples_seen": 450,
       "tokens_seen": 314638,
-      "train_loss": 0.056388355791568756
+      "train_loss": 0.08573024719953537
     },
     {
-      "ce_loss": 0.059311434626579285,
+      "ce_loss": 0.066851407289505,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -337,10 +373,10 @@
       "optimizer_step": 59,
       "samples_seen": 475,
       "tokens_seen": 332119,
-      "train_loss": 0.059311434626579285
+      "train_loss": 0.066851407289505
     },
     {
-      "ce_loss": 0.051414988934993744,
+      "ce_loss": 0.08826948702335358,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -352,10 +388,10 @@
       "optimizer_step": 62,
       "samples_seen": 500,
       "tokens_seen": 349725,
-      "train_loss": 0.051414988934993744
+      "train_loss": 0.08826948702335358
     },
     {
-      "ce_loss": 0.02338595502078533,
+      "ce_loss": 0.040983881801366806,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -367,10 +403,10 @@
       "optimizer_step": 65,
       "samples_seen": 525,
       "tokens_seen": 367226,
-      "train_loss": 0.02338595502078533
+      "train_loss": 0.040983881801366806
     },
     {
-      "ce_loss": 0.03297221288084984,
+      "ce_loss": 0.04167057201266289,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -382,10 +418,10 @@
       "optimizer_step": 68,
       "samples_seen": 550,
       "tokens_seen": 384842,
-      "train_loss": 0.03297221288084984
+      "train_loss": 0.04167057201266289
     },
     {
-      "ce_loss": 0.025824708864092827,
+      "ce_loss": 0.02507127821445465,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -397,10 +433,10 @@
       "optimizer_step": 71,
       "samples_seen": 575,
       "tokens_seen": 402076,
-      "train_loss": 0.025824708864092827
+      "train_loss": 0.02507127821445465
     },
     {
-      "ce_loss": 0.05177184194326401,
+      "ce_loss": 0.05680433660745621,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -412,10 +448,10 @@
       "optimizer_step": 75,
       "samples_seen": 600,
       "tokens_seen": 419520,
-      "train_loss": 0.05177184194326401
+      "train_loss": 0.05680433660745621
     },
     {
-      "ce_loss": 0.018470611423254013,
+      "ce_loss": 0.023739110678434372,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -427,10 +463,10 @@
       "optimizer_step": 78,
       "samples_seen": 625,
       "tokens_seen": 436960,
-      "train_loss": 0.018470611423254013
+      "train_loss": 0.023739110678434372
     },
     {
-      "ce_loss": 0.034041356295347214,
+      "ce_loss": 0.050383441150188446,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -442,10 +478,10 @@
       "optimizer_step": 81,
       "samples_seen": 650,
       "tokens_seen": 454541,
-      "train_loss": 0.034041356295347214
+      "train_loss": 0.050383441150188446
     },
     {
-      "ce_loss": 0.021183457225561142,
+      "ce_loss": 0.02263888344168663,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -457,10 +493,10 @@
       "optimizer_step": 84,
       "samples_seen": 675,
       "tokens_seen": 471925,
-      "train_loss": 0.021183457225561142
+      "train_loss": 0.02263888344168663
     },
     {
-      "ce_loss": 0.03580014407634735,
+      "ce_loss": 0.03625238314270973,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -472,10 +508,10 @@
       "optimizer_step": 87,
       "samples_seen": 700,
       "tokens_seen": 489806,
-      "train_loss": 0.03580014407634735
+      "train_loss": 0.03625238314270973
     },
     {
-      "ce_loss": 0.016146324574947357,
+      "ce_loss": 0.016215316951274872,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -487,10 +523,10 @@
       "optimizer_step": 90,
       "samples_seen": 725,
       "tokens_seen": 506931,
-      "train_loss": 0.016146324574947357
+      "train_loss": 0.016215316951274872
     },
     {
-      "ce_loss": 0.01494517456740141,
+      "ce_loss": 0.018677957355976105,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -502,10 +538,10 @@
       "optimizer_step": 93,
       "samples_seen": 750,
       "tokens_seen": 524492,
-      "train_loss": 0.01494517456740141
+      "train_loss": 0.018677957355976105
     },
     {
-      "ce_loss": 0.018024038523435593,
+      "ce_loss": 0.015477519482374191,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
@@ -517,7 +553,7 @@
       "optimizer_step": 96,
       "samples_seen": 775,
       "tokens_seen": 541839,
-      "train_loss": 0.018024038523435593
+      "train_loss": 0.015477519482374191
     },
     {
       "effective_batch_size": 8,
@@ -525,7 +561,7 @@
       "eval_examples": 5,
       "eval_full_dataset": true,
       "eval_loss": null,
-      "eval_loss_mean": 0.04020219035446644,
+      "eval_loss_mean": 0.038320597261190414,
       "global_step": 800,
       "gradient_accumulation_steps": 8,
       "micro_batch_size": 1,
@@ -533,14 +569,14 @@
       "samples_seen": 800,
       "step": 800,
       "tokens_seen": 559360,
-      "train_loss": 0.022697633132338524
+      "train_loss": 0.02436854876577854
     },
     {
-      "ce_loss": 0.09153879433870316,
+      "ce_loss": 0.08364331722259521,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 800,
       "gradient_accumulation_steps": 8,
@@ -548,14 +584,14 @@
       "optimizer_step": 100,
       "samples_seen": 800,
       "tokens_seen": 559360,
-      "train_loss": 0.022697633132338524
+      "train_loss": 0.02436854876577854
     },
     {
-      "ce_loss": 0.046999383717775345,
+      "ce_loss": 0.04295194894075394,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 825,
       "gradient_accumulation_steps": 8,
@@ -563,14 +599,14 @@
       "optimizer_step": 103,
       "samples_seen": 825,
       "tokens_seen": 576799,
-      "train_loss": 0.046999383717775345
+      "train_loss": 0.04295194894075394
     },
     {
-      "ce_loss": 0.015406878665089607,
+      "ce_loss": 0.014649756252765656,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 850,
       "gradient_accumulation_steps": 8,
@@ -578,14 +614,14 @@
       "optimizer_step": 106,
       "samples_seen": 850,
       "tokens_seen": 594416,
-      "train_loss": 0.015406878665089607
+      "train_loss": 0.014649756252765656
     },
     {
-      "ce_loss": 0.02023887261748314,
+      "ce_loss": 0.019764678552746773,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 875,
       "gradient_accumulation_steps": 8,
@@ -593,14 +629,14 @@
       "optimizer_step": 109,
       "samples_seen": 875,
       "tokens_seen": 612021,
-      "train_loss": 0.02023887261748314
+      "train_loss": 0.019764678552746773
     },
     {
-      "ce_loss": 0.01614781655371189,
+      "ce_loss": 0.0161842443048954,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 900,
       "gradient_accumulation_steps": 8,
@@ -608,14 +644,14 @@
       "optimizer_step": 112,
       "samples_seen": 900,
       "tokens_seen": 629460,
-      "train_loss": 0.01614781655371189
+      "train_loss": 0.0161842443048954
     },
     {
-      "ce_loss": 0.01439047884196043,
+      "ce_loss": 0.015624434687197208,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 925,
       "gradient_accumulation_steps": 8,
@@ -623,14 +659,14 @@
       "optimizer_step": 115,
       "samples_seen": 925,
       "tokens_seen": 646584,
-      "train_loss": 0.01439047884196043
+      "train_loss": 0.015624434687197208
     },
     {
-      "ce_loss": 0.02569827064871788,
+      "ce_loss": 0.023235702887177467,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 950,
       "gradient_accumulation_steps": 8,
@@ -638,14 +674,14 @@
       "optimizer_step": 118,
       "samples_seen": 950,
       "tokens_seen": 664206,
-      "train_loss": 0.02569827064871788
+      "train_loss": 0.023235702887177467
     },
     {
-      "ce_loss": 0.024750694632530212,
+      "ce_loss": 0.02089310623705387,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 975,
       "gradient_accumulation_steps": 8,
@@ -653,14 +689,14 @@
       "optimizer_step": 121,
       "samples_seen": 975,
       "tokens_seen": 681438,
-      "train_loss": 0.024750694632530212
+      "train_loss": 0.02089310623705387
     },
     {
-      "ce_loss": 0.04161880910396576,
+      "ce_loss": 0.04151391610503197,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1000,
       "gradient_accumulation_steps": 8,
@@ -668,14 +704,14 @@
       "optimizer_step": 125,
       "samples_seen": 1000,
       "tokens_seen": 699200,
-      "train_loss": 0.04161880910396576
+      "train_loss": 0.04151391610503197
     },
     {
-      "ce_loss": 0.021305542439222336,
+      "ce_loss": 0.021624309942126274,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1025,
       "gradient_accumulation_steps": 8,
@@ -683,14 +719,14 @@
       "optimizer_step": 128,
       "samples_seen": 1025,
       "tokens_seen": 716580,
-      "train_loss": 0.021305542439222336
+      "train_loss": 0.021624309942126274
     },
     {
-      "ce_loss": 0.017078198492527008,
+      "ce_loss": 0.018099909648299217,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1050,
       "gradient_accumulation_steps": 8,
@@ -698,14 +734,14 @@
       "optimizer_step": 131,
       "samples_seen": 1050,
       "tokens_seen": 734014,
-      "train_loss": 0.017078198492527008
+      "train_loss": 0.018099909648299217
     },
     {
-      "ce_loss": 0.018605682998895645,
+      "ce_loss": 0.018159611150622368,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1075,
       "gradient_accumulation_steps": 8,
@@ -713,14 +749,14 @@
       "optimizer_step": 134,
       "samples_seen": 1075,
       "tokens_seen": 751534,
-      "train_loss": 0.018605682998895645
+      "train_loss": 0.018159611150622368
     },
     {
-      "ce_loss": 0.03500211983919144,
+      "ce_loss": 0.03269977867603302,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1100,
       "gradient_accumulation_steps": 8,
@@ -728,14 +764,14 @@
       "optimizer_step": 137,
       "samples_seen": 1100,
       "tokens_seen": 769069,
-      "train_loss": 0.03500211983919144
+      "train_loss": 0.03269977867603302
     },
     {
-      "ce_loss": 0.011952727101743221,
+      "ce_loss": 0.010197489522397518,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1125,
       "gradient_accumulation_steps": 8,
@@ -743,14 +779,14 @@
       "optimizer_step": 140,
       "samples_seen": 1125,
       "tokens_seen": 786695,
-      "train_loss": 0.011952727101743221
+      "train_loss": 0.010197489522397518
     },
     {
-      "ce_loss": 0.016158515587449074,
+      "ce_loss": 0.016056809574365616,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1150,
       "gradient_accumulation_steps": 8,
@@ -758,14 +794,14 @@
       "optimizer_step": 143,
       "samples_seen": 1150,
       "tokens_seen": 804266,
-      "train_loss": 0.016158515587449074
+      "train_loss": 0.016056809574365616
     },
     {
-      "ce_loss": 0.028282886371016502,
+      "ce_loss": 0.029204921796917915,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1175,
       "gradient_accumulation_steps": 8,
@@ -773,14 +809,14 @@
       "optimizer_step": 146,
       "samples_seen": 1175,
       "tokens_seen": 821439,
-      "train_loss": 0.028282886371016502
+      "train_loss": 0.029204921796917915
     },
     {
-      "ce_loss": 0.020496271550655365,
+      "ce_loss": 0.020969312638044357,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1200,
       "gradient_accumulation_steps": 8,
@@ -788,14 +824,14 @@
       "optimizer_step": 150,
       "samples_seen": 1200,
       "tokens_seen": 839040,
-      "train_loss": 0.020496271550655365
+      "train_loss": 0.020969312638044357
     },
     {
-      "ce_loss": 0.0170407984405756,
+      "ce_loss": 0.016153592616319656,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1225,
       "gradient_accumulation_steps": 8,
@@ -803,14 +839,14 @@
       "optimizer_step": 153,
       "samples_seen": 1225,
       "tokens_seen": 856282,
-      "train_loss": 0.0170407984405756
+      "train_loss": 0.016153592616319656
     },
     {
-      "ce_loss": 0.013431966304779053,
+      "ce_loss": 0.0147698437795043,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1250,
       "gradient_accumulation_steps": 8,
@@ -818,14 +854,14 @@
       "optimizer_step": 156,
       "samples_seen": 1250,
       "tokens_seen": 874041,
-      "train_loss": 0.013431966304779053
+      "train_loss": 0.0147698437795043
     },
     {
-      "ce_loss": 0.015273251570761204,
+      "ce_loss": 0.014951053075492382,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1275,
       "gradient_accumulation_steps": 8,
@@ -833,14 +869,14 @@
       "optimizer_step": 159,
       "samples_seen": 1275,
       "tokens_seen": 891481,
-      "train_loss": 0.015273251570761204
+      "train_loss": 0.014951053075492382
     },
     {
-      "ce_loss": 0.011284928768873215,
+      "ce_loss": 0.011106489226222038,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1300,
       "gradient_accumulation_steps": 8,
@@ -848,14 +884,14 @@
       "optimizer_step": 162,
       "samples_seen": 1300,
       "tokens_seen": 908950,
-      "train_loss": 0.011284928768873215
+      "train_loss": 0.011106489226222038
     },
     {
-      "ce_loss": 0.03899884596467018,
+      "ce_loss": 0.0386323481798172,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1325,
       "gradient_accumulation_steps": 8,
@@ -863,14 +899,14 @@
       "optimizer_step": 165,
       "samples_seen": 1325,
       "tokens_seen": 926440,
-      "train_loss": 0.03899884596467018
+      "train_loss": 0.0386323481798172
     },
     {
-      "ce_loss": 0.013982633128762245,
+      "ce_loss": 0.013427580706775188,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1350,
       "gradient_accumulation_steps": 8,
@@ -878,14 +914,14 @@
       "optimizer_step": 168,
       "samples_seen": 1350,
       "tokens_seen": 943800,
-      "train_loss": 0.013982633128762245
+      "train_loss": 0.013427580706775188
     },
     {
-      "ce_loss": 0.014508855529129505,
+      "ce_loss": 0.015050554648041725,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1375,
       "gradient_accumulation_steps": 8,
@@ -893,14 +929,14 @@
       "optimizer_step": 171,
       "samples_seen": 1375,
       "tokens_seen": 961269,
-      "train_loss": 0.014508855529129505
+      "train_loss": 0.015050554648041725
     },
     {
-      "ce_loss": 0.01665957272052765,
+      "ce_loss": 0.01705021597445011,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1400,
       "gradient_accumulation_steps": 8,
@@ -908,14 +944,14 @@
       "optimizer_step": 175,
       "samples_seen": 1400,
       "tokens_seen": 978880,
-      "train_loss": 0.01665957272052765
+      "train_loss": 0.01705021597445011
     },
     {
-      "ce_loss": 0.020424460992217064,
+      "ce_loss": 0.020547514781355858,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1425,
       "gradient_accumulation_steps": 8,
@@ -923,14 +959,14 @@
       "optimizer_step": 178,
       "samples_seen": 1425,
       "tokens_seen": 996314,
-      "train_loss": 0.020424460992217064
+      "train_loss": 0.020547514781355858
     },
     {
-      "ce_loss": 0.01373536977916956,
+      "ce_loss": 0.013955071568489075,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1450,
       "gradient_accumulation_steps": 8,
@@ -938,14 +974,14 @@
       "optimizer_step": 181,
       "samples_seen": 1450,
       "tokens_seen": 1013874,
-      "train_loss": 0.01373536977916956
+      "train_loss": 0.013955071568489075
     },
     {
-      "ce_loss": 0.020294539630413055,
+      "ce_loss": 0.018270917236804962,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1475,
       "gradient_accumulation_steps": 8,
@@ -953,14 +989,14 @@
       "optimizer_step": 184,
       "samples_seen": 1475,
       "tokens_seen": 1031269,
-      "train_loss": 0.020294539630413055
+      "train_loss": 0.018270917236804962
     },
     {
-      "ce_loss": 0.0180495698004961,
+      "ce_loss": 0.016872800886631012,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1500,
       "gradient_accumulation_steps": 8,
@@ -968,14 +1004,14 @@
       "optimizer_step": 187,
       "samples_seen": 1500,
       "tokens_seen": 1048649,
-      "train_loss": 0.0180495698004961
+      "train_loss": 0.016872800886631012
     },
     {
-      "ce_loss": 0.01796795427799225,
+      "ce_loss": 0.017081620171666145,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1525,
       "gradient_accumulation_steps": 8,
@@ -983,14 +1019,14 @@
       "optimizer_step": 190,
       "samples_seen": 1525,
       "tokens_seen": 1066280,
-      "train_loss": 0.01796795427799225
+      "train_loss": 0.017081620171666145
     },
     {
-      "ce_loss": 0.018875213339924812,
+      "ce_loss": 0.01442036498337984,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1550,
       "gradient_accumulation_steps": 8,
@@ -998,14 +1034,14 @@
       "optimizer_step": 193,
       "samples_seen": 1550,
       "tokens_seen": 1083644,
-      "train_loss": 0.018875213339924812
+      "train_loss": 0.01442036498337984
     },
     {
-      "ce_loss": 0.03714548423886299,
+      "ce_loss": 0.03423555940389633,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04020219035446644,
+      "eval_loss": 0.038320597261190414,
       "event": "log",
       "global_step": 1575,
       "gradient_accumulation_steps": 8,
@@ -1013,15 +1049,15 @@
       "optimizer_step": 196,
       "samples_seen": 1575,
       "tokens_seen": 1100968,
-      "train_loss": 0.03714548423886299
+      "train_loss": 0.03423555940389633
     },
     {
       "effective_batch_size": 8,
       "eval_batches": 5,
       "eval_examples": 5,
       "eval_full_dataset": true,
-      "eval_loss": 0.04020219035446644,
-      "eval_loss_mean": 0.04822172448039055,
+      "eval_loss": 0.038320597261190414,
+      "eval_loss_mean": 0.05167050659656525,
       "global_step": 1600,
       "gradient_accumulation_steps": 8,
       "micro_batch_size": 1,
@@ -1029,14 +1065,14 @@
       "samples_seen": 1600,
       "step": 1600,
       "tokens_seen": 1118720,
-      "train_loss": 0.01817304827272892
+      "train_loss": 0.015812288969755173
     },
     {
-      "ce_loss": 0.10946575552225113,
+      "ce_loss": 0.11473138630390167,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1600,
       "gradient_accumulation_steps": 8,
@@ -1044,14 +1080,14 @@
       "optimizer_step": 200,
       "samples_seen": 1600,
       "tokens_seen": 1118720,
-      "train_loss": 0.01817304827272892
+      "train_loss": 0.015812288969755173
     },
     {
-      "ce_loss": 0.019908588379621506,
+      "ce_loss": 0.007641687523573637,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1625,
       "gradient_accumulation_steps": 8,
@@ -1059,14 +1095,14 @@
       "optimizer_step": 203,
       "samples_seen": 1625,
       "tokens_seen": 1136160,
-      "train_loss": 0.019908588379621506
+      "train_loss": 0.007641687523573637
     },
     {
-      "ce_loss": 0.033232010900974274,
+      "ce_loss": 0.02179688774049282,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1650,
       "gradient_accumulation_steps": 8,
@@ -1074,14 +1110,14 @@
       "optimizer_step": 206,
       "samples_seen": 1650,
       "tokens_seen": 1153645,
-      "train_loss": 0.033232010900974274
+      "train_loss": 0.02179688774049282
     },
     {
-      "ce_loss": 0.02283034287393093,
+      "ce_loss": 0.015018988400697708,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1675,
       "gradient_accumulation_steps": 8,
@@ -1089,14 +1125,14 @@
       "optimizer_step": 209,
       "samples_seen": 1675,
       "tokens_seen": 1171075,
-      "train_loss": 0.02283034287393093
+      "train_loss": 0.015018988400697708
     },
     {
-      "ce_loss": 0.024341363459825516,
+      "ce_loss": 0.00564043503254652,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1700,
       "gradient_accumulation_steps": 8,
@@ -1104,14 +1140,14 @@
       "optimizer_step": 212,
       "samples_seen": 1700,
       "tokens_seen": 1188543,
-      "train_loss": 0.024341363459825516
+      "train_loss": 0.00564043503254652
     },
     {
-      "ce_loss": 0.01834023743867874,
+      "ce_loss": 0.004961869679391384,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1725,
       "gradient_accumulation_steps": 8,
@@ -1119,14 +1155,14 @@
       "optimizer_step": 215,
       "samples_seen": 1725,
       "tokens_seen": 1206141,
-      "train_loss": 0.01834023743867874
+      "train_loss": 0.004961869679391384
     },
     {
-      "ce_loss": 0.024650948122143745,
+      "ce_loss": 0.00292750122025609,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1750,
       "gradient_accumulation_steps": 8,
@@ -1134,14 +1170,14 @@
       "optimizer_step": 218,
       "samples_seen": 1750,
       "tokens_seen": 1223695,
-      "train_loss": 0.024650948122143745
+      "train_loss": 0.00292750122025609
     },
     {
-      "ce_loss": 0.013196310959756374,
+      "ce_loss": 0.0022700312547385693,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1775,
       "gradient_accumulation_steps": 8,
@@ -1149,14 +1185,14 @@
       "optimizer_step": 221,
       "samples_seen": 1775,
       "tokens_seen": 1241317,
-      "train_loss": 0.013196310959756374
+      "train_loss": 0.0022700312547385693
     },
     {
-      "ce_loss": 0.02466268464922905,
+      "ce_loss": 0.0007939577335491776,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1800,
       "gradient_accumulation_steps": 8,
@@ -1164,14 +1200,14 @@
       "optimizer_step": 225,
       "samples_seen": 1800,
       "tokens_seen": 1258560,
-      "train_loss": 0.02466268464922905
+      "train_loss": 0.0007939577335491776
     },
     {
-      "ce_loss": 0.017669474706053734,
+      "ce_loss": 0.0011188751086592674,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1825,
       "gradient_accumulation_steps": 8,
@@ -1179,14 +1215,14 @@
       "optimizer_step": 228,
       "samples_seen": 1825,
       "tokens_seen": 1276186,
-      "train_loss": 0.017669474706053734
+      "train_loss": 0.0011188751086592674
     },
     {
-      "ce_loss": 0.01359323225915432,
+      "ce_loss": 0.0012312540784478188,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1850,
       "gradient_accumulation_steps": 8,
@@ -1194,14 +1230,14 @@
       "optimizer_step": 231,
       "samples_seen": 1850,
       "tokens_seen": 1293796,
-      "train_loss": 0.01359323225915432
+      "train_loss": 0.0012312540784478188
     },
     {
-      "ce_loss": 0.01619788445532322,
+      "ce_loss": 0.00722447270527482,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1875,
       "gradient_accumulation_steps": 8,
@@ -1209,14 +1245,14 @@
       "optimizer_step": 234,
       "samples_seen": 1875,
       "tokens_seen": 1311000,
-      "train_loss": 0.01619788445532322
+      "train_loss": 0.00722447270527482
     },
     {
-      "ce_loss": 0.01954059675335884,
+      "ce_loss": 0.07799935340881348,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1900,
       "gradient_accumulation_steps": 8,
@@ -1224,14 +1260,14 @@
       "optimizer_step": 237,
       "samples_seen": 1900,
       "tokens_seen": 1328504,
-      "train_loss": 0.01954059675335884
+      "train_loss": 0.07799935340881348
     },
     {
-      "ce_loss": 0.018199728801846504,
+      "ce_loss": 0.009410018101334572,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1925,
       "gradient_accumulation_steps": 8,
@@ -1239,14 +1275,14 @@
       "optimizer_step": 240,
       "samples_seen": 1925,
       "tokens_seen": 1345915,
-      "train_loss": 0.018199728801846504
+      "train_loss": 0.009410018101334572
     },
     {
-      "ce_loss": 0.011442220769822598,
+      "ce_loss": 0.01868116855621338,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1950,
       "gradient_accumulation_steps": 8,
@@ -1254,14 +1290,14 @@
       "optimizer_step": 243,
       "samples_seen": 1950,
       "tokens_seen": 1363464,
-      "train_loss": 0.011442220769822598
+      "train_loss": 0.01868116855621338
     },
     {
-      "ce_loss": 0.018196148797869682,
+      "ce_loss": 0.025670122355222702,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 1975,
       "gradient_accumulation_steps": 8,
@@ -1269,14 +1305,14 @@
       "optimizer_step": 246,
       "samples_seen": 1975,
       "tokens_seen": 1380810,
-      "train_loss": 0.018196148797869682
+      "train_loss": 0.025670122355222702
     },
     {
-      "ce_loss": 0.014799542725086212,
+      "ce_loss": 0.16828535497188568,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2000,
       "gradient_accumulation_steps": 8,
@@ -1284,14 +1320,14 @@
       "optimizer_step": 250,
       "samples_seen": 2000,
       "tokens_seen": 1398400,
-      "train_loss": 0.014799542725086212
+      "train_loss": 0.16828535497188568
     },
     {
-      "ce_loss": 0.03040960058569908,
+      "ce_loss": 0.1616753339767456,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2025,
       "gradient_accumulation_steps": 8,
@@ -1299,14 +1335,14 @@
       "optimizer_step": 253,
       "samples_seen": 2025,
       "tokens_seen": 1415830,
-      "train_loss": 0.03040960058569908
+      "train_loss": 0.1616753339767456
     },
     {
-      "ce_loss": 0.02472902461886406,
+      "ce_loss": 0.10792228579521179,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2050,
       "gradient_accumulation_steps": 8,
@@ -1314,14 +1350,14 @@
       "optimizer_step": 256,
       "samples_seen": 2050,
       "tokens_seen": 1433129,
-      "train_loss": 0.02472902461886406
+      "train_loss": 0.10792228579521179
     },
     {
-      "ce_loss": 0.017659330740571022,
+      "ce_loss": 0.22469815611839294,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2075,
       "gradient_accumulation_steps": 8,
@@ -1329,14 +1365,14 @@
       "optimizer_step": 259,
       "samples_seen": 2075,
       "tokens_seen": 1450885,
-      "train_loss": 0.017659330740571022
+      "train_loss": 0.22469815611839294
     },
     {
-      "ce_loss": 0.03357984125614166,
+      "ce_loss": 0.06002628058195114,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2100,
       "gradient_accumulation_steps": 8,
@@ -1344,14 +1380,14 @@
       "optimizer_step": 262,
       "samples_seen": 2100,
       "tokens_seen": 1468411,
-      "train_loss": 0.03357984125614166
+      "train_loss": 0.06002628058195114
     },
     {
-      "ce_loss": 0.015427007339894772,
+      "ce_loss": 0.21695303916931152,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2125,
       "gradient_accumulation_steps": 8,
@@ -1359,14 +1395,14 @@
       "optimizer_step": 265,
       "samples_seen": 2125,
       "tokens_seen": 1485981,
-      "train_loss": 0.015427007339894772
+      "train_loss": 0.21695303916931152
     },
     {
-      "ce_loss": 0.022288111969828606,
+      "ce_loss": 0.15886561572551727,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2150,
       "gradient_accumulation_steps": 8,
@@ -1374,14 +1410,14 @@
       "optimizer_step": 268,
       "samples_seen": 2150,
       "tokens_seen": 1503249,
-      "train_loss": 0.022288111969828606
+      "train_loss": 0.15886561572551727
     },
     {
-      "ce_loss": 0.01621994934976101,
+      "ce_loss": 0.14421075582504272,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2175,
       "gradient_accumulation_steps": 8,
@@ -1389,14 +1425,14 @@
       "optimizer_step": 271,
       "samples_seen": 2175,
       "tokens_seen": 1520811,
-      "train_loss": 0.01621994934976101
+      "train_loss": 0.14421075582504272
     },
     {
-      "ce_loss": 0.03858059644699097,
+      "ce_loss": 0.030653495341539383,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2200,
       "gradient_accumulation_steps": 8,
@@ -1404,14 +1440,14 @@
       "optimizer_step": 275,
       "samples_seen": 2200,
       "tokens_seen": 1538240,
-      "train_loss": 0.03858059644699097
+      "train_loss": 0.030653495341539383
     },
     {
-      "ce_loss": 0.014561038464307785,
+      "ce_loss": 0.05309554934501648,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2225,
       "gradient_accumulation_steps": 8,
@@ -1419,14 +1455,14 @@
       "optimizer_step": 278,
       "samples_seen": 2225,
       "tokens_seen": 1555584,
-      "train_loss": 0.014561038464307785
+      "train_loss": 0.05309554934501648
     },
     {
-      "ce_loss": 0.01768975891172886,
+      "ce_loss": 0.32964634895324707,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2250,
       "gradient_accumulation_steps": 8,
@@ -1434,14 +1470,14 @@
       "optimizer_step": 281,
       "samples_seen": 2250,
       "tokens_seen": 1573233,
-      "train_loss": 0.01768975891172886
+      "train_loss": 0.32964634895324707
     },
     {
-      "ce_loss": 0.017222031950950623,
+      "ce_loss": 0.038862910121679306,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2275,
       "gradient_accumulation_steps": 8,
@@ -1449,14 +1485,14 @@
       "optimizer_step": 284,
       "samples_seen": 2275,
       "tokens_seen": 1590725,
-      "train_loss": 0.017222031950950623
+      "train_loss": 0.038862910121679306
     },
     {
-      "ce_loss": 0.013868465088307858,
+      "ce_loss": 0.04342962056398392,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2300,
       "gradient_accumulation_steps": 8,
@@ -1464,14 +1500,14 @@
       "optimizer_step": 287,
       "samples_seen": 2300,
       "tokens_seen": 1607994,
-      "train_loss": 0.013868465088307858
+      "train_loss": 0.04342962056398392
     },
     {
-      "ce_loss": 0.019634881988167763,
+      "ce_loss": 0.00849522091448307,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2325,
       "gradient_accumulation_steps": 8,
@@ -1479,14 +1515,14 @@
       "optimizer_step": 290,
       "samples_seen": 2325,
       "tokens_seen": 1625600,
-      "train_loss": 0.019634881988167763
+      "train_loss": 0.00849522091448307
     },
     {
-      "ce_loss": 0.02432629093527794,
+      "ce_loss": 0.111085444688797,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2350,
       "gradient_accumulation_steps": 8,
@@ -1494,14 +1530,14 @@
       "optimizer_step": 293,
       "samples_seen": 2350,
       "tokens_seen": 1643081,
-      "train_loss": 0.02432629093527794
+      "train_loss": 0.111085444688797
     },
     {
-      "ce_loss": 0.0077377185225486755,
+      "ce_loss": 0.023683471605181694,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04822172448039055,
+      "eval_loss": 0.05167050659656525,
       "event": "log",
       "global_step": 2375,
       "gradient_accumulation_steps": 8,
@@ -1509,15 +1545,15 @@
       "optimizer_step": 296,
       "samples_seen": 2375,
       "tokens_seen": 1660418,
-      "train_loss": 0.0077377185225486755
+      "train_loss": 0.023683471605181694
     },
     {
       "effective_batch_size": 8,
       "eval_batches": 5,
       "eval_examples": 5,
       "eval_full_dataset": true,
-      "eval_loss": 0.04822172448039055,
-      "eval_loss_mean": 0.05869654566049576,
+      "eval_loss": 0.05167050659656525,
+      "eval_loss_mean": 0.0465200113132596,
       "global_step": 2400,
       "gradient_accumulation_steps": 8,
       "micro_batch_size": 1,
@@ -1525,14 +1561,14 @@
       "samples_seen": 2400,
       "step": 2400,
       "tokens_seen": 1678080,
-      "train_loss": 0.007172594778239727
+      "train_loss": 0.02072569541633129
     },
     {
-      "ce_loss": 0.117637500166893,
+      "ce_loss": 0.175357386469841,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2400,
       "gradient_accumulation_steps": 8,
@@ -1540,14 +1576,14 @@
       "optimizer_step": 300,
       "samples_seen": 2400,
       "tokens_seen": 1678080,
-      "train_loss": 0.007172594778239727
+      "train_loss": 0.02072569541633129
     },
     {
-      "ce_loss": 0.006701257079839706,
+      "ce_loss": 0.012538308277726173,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2425,
       "gradient_accumulation_steps": 8,
@@ -1555,14 +1591,14 @@
       "optimizer_step": 303,
       "samples_seen": 2425,
       "tokens_seen": 1695696,
-      "train_loss": 0.006701257079839706
+      "train_loss": 0.012538308277726173
     },
     {
-      "ce_loss": 0.0032174421939998865,
+      "ce_loss": 0.0051079848781228065,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2450,
       "gradient_accumulation_steps": 8,
@@ -1570,14 +1606,14 @@
       "optimizer_step": 306,
       "samples_seen": 2450,
       "tokens_seen": 1713025,
-      "train_loss": 0.0032174421939998865
+      "train_loss": 0.0051079848781228065
     },
     {
-      "ce_loss": 0.03278111293911934,
+      "ce_loss": 0.0022436100989580154,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2475,
       "gradient_accumulation_steps": 8,
@@ -1585,14 +1621,14 @@
       "optimizer_step": 309,
       "samples_seen": 2475,
       "tokens_seen": 1730520,
-      "train_loss": 0.03278111293911934
+      "train_loss": 0.0022436100989580154
     },
     {
-      "ce_loss": 0.06280724704265594,
+      "ce_loss": 0.0015018320409581065,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2500,
       "gradient_accumulation_steps": 8,
@@ -1600,14 +1636,14 @@
       "optimizer_step": 312,
       "samples_seen": 2500,
       "tokens_seen": 1748479,
-      "train_loss": 0.06280724704265594
+      "train_loss": 0.0015018320409581065
     },
     {
-      "ce_loss": 0.6238187551498413,
+      "ce_loss": 0.0012993636773899198,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2525,
       "gradient_accumulation_steps": 8,
@@ -1615,14 +1651,14 @@
       "optimizer_step": 315,
       "samples_seen": 2525,
       "tokens_seen": 1765394,
-      "train_loss": 0.6238187551498413
+      "train_loss": 0.0012993636773899198
     },
     {
-      "ce_loss": 0.37332454323768616,
+      "ce_loss": 0.002524077193811536,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2550,
       "gradient_accumulation_steps": 8,
@@ -1630,14 +1666,14 @@
       "optimizer_step": 318,
       "samples_seen": 2550,
       "tokens_seen": 1782869,
-      "train_loss": 0.37332454323768616
+      "train_loss": 0.002524077193811536
     },
     {
-      "ce_loss": 0.39441657066345215,
+      "ce_loss": 0.0006558150053024292,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2575,
       "gradient_accumulation_steps": 8,
@@ -1645,14 +1681,14 @@
       "optimizer_step": 321,
       "samples_seen": 2575,
       "tokens_seen": 1800521,
-      "train_loss": 0.39441657066345215
+      "train_loss": 0.0006558150053024292
     },
     {
-      "ce_loss": 0.603431224822998,
+      "ce_loss": 0.0012787873856723309,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2600,
       "gradient_accumulation_steps": 8,
@@ -1660,14 +1696,14 @@
       "optimizer_step": 325,
       "samples_seen": 2600,
       "tokens_seen": 1817920,
-      "train_loss": 0.603431224822998
+      "train_loss": 0.0012787873856723309
     },
     {
-      "ce_loss": 0.12200522422790527,
+      "ce_loss": 0.000903623178601265,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2625,
       "gradient_accumulation_steps": 8,
@@ -1675,14 +1711,14 @@
       "optimizer_step": 328,
       "samples_seen": 2625,
       "tokens_seen": 1835266,
-      "train_loss": 0.12200522422790527
+      "train_loss": 0.000903623178601265
     },
     {
-      "ce_loss": 0.07243414223194122,
+      "ce_loss": 0.0003991704434156418,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2650,
       "gradient_accumulation_steps": 8,
@@ -1690,14 +1726,14 @@
       "optimizer_step": 331,
       "samples_seen": 2650,
       "tokens_seen": 1852834,
-      "train_loss": 0.07243414223194122
+      "train_loss": 0.0003991704434156418
     },
     {
-      "ce_loss": 0.20744332671165466,
+      "ce_loss": 0.0005580851575359702,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2675,
       "gradient_accumulation_steps": 8,
@@ -1705,14 +1741,14 @@
       "optimizer_step": 334,
       "samples_seen": 2675,
       "tokens_seen": 1870456,
-      "train_loss": 0.20744332671165466
+      "train_loss": 0.0005580851575359702
     },
     {
-      "ce_loss": 0.05114014446735382,
+      "ce_loss": 0.0004388299130368978,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2700,
       "gradient_accumulation_steps": 8,
@@ -1720,14 +1756,14 @@
       "optimizer_step": 337,
       "samples_seen": 2700,
       "tokens_seen": 1887895,
-      "train_loss": 0.05114014446735382
+      "train_loss": 0.0004388299130368978
     },
     {
-      "ce_loss": 0.06760934740304947,
+      "ce_loss": 0.0001997315848711878,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2725,
       "gradient_accumulation_steps": 8,
@@ -1735,14 +1771,14 @@
       "optimizer_step": 340,
       "samples_seen": 2725,
       "tokens_seen": 1905219,
-      "train_loss": 0.06760934740304947
+      "train_loss": 0.0001997315848711878
     },
     {
-      "ce_loss": 0.4883759617805481,
+      "ce_loss": 0.00023172250075731426,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2750,
       "gradient_accumulation_steps": 8,
@@ -1750,14 +1786,14 @@
       "optimizer_step": 343,
       "samples_seen": 2750,
       "tokens_seen": 1922925,
-      "train_loss": 0.4883759617805481
+      "train_loss": 0.00023172250075731426
     },
     {
-      "ce_loss": 0.02845521830022335,
+      "ce_loss": 0.00027432499337010086,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2775,
       "gradient_accumulation_steps": 8,
@@ -1765,14 +1801,14 @@
       "optimizer_step": 346,
       "samples_seen": 2775,
       "tokens_seen": 1940300,
-      "train_loss": 0.02845521830022335
+      "train_loss": 0.00027432499337010086
     },
     {
-      "ce_loss": 0.06600451469421387,
+      "ce_loss": 0.00024270359426736832,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2800,
       "gradient_accumulation_steps": 8,
@@ -1780,14 +1816,14 @@
       "optimizer_step": 350,
       "samples_seen": 2800,
       "tokens_seen": 1957760,
-      "train_loss": 0.06600451469421387
+      "train_loss": 0.00024270359426736832
     },
     {
-      "ce_loss": 0.09079355001449585,
+      "ce_loss": 0.0002469206228852272,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2825,
       "gradient_accumulation_steps": 8,
@@ -1795,14 +1831,14 @@
       "optimizer_step": 353,
       "samples_seen": 2825,
       "tokens_seen": 1974868,
-      "train_loss": 0.09079355001449585
+      "train_loss": 0.0002469206228852272
     },
     {
-      "ce_loss": 0.32552558183670044,
+      "ce_loss": 0.00014478502271231264,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2850,
       "gradient_accumulation_steps": 8,
@@ -1810,14 +1846,14 @@
       "optimizer_step": 356,
       "samples_seen": 2850,
       "tokens_seen": 1992650,
-      "train_loss": 0.32552558183670044
+      "train_loss": 0.00014478502271231264
     },
     {
-      "ce_loss": 0.11782415211200714,
+      "ce_loss": 0.00017705609207041562,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2875,
       "gradient_accumulation_steps": 8,
@@ -1825,14 +1861,14 @@
       "optimizer_step": 359,
       "samples_seen": 2875,
       "tokens_seen": 2010346,
-      "train_loss": 0.11782415211200714
+      "train_loss": 0.00017705609207041562
     },
     {
-      "ce_loss": 0.03218775615096092,
+      "ce_loss": 0.00012783049896825105,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2900,
       "gradient_accumulation_steps": 8,
@@ -1840,14 +1876,14 @@
       "optimizer_step": 362,
       "samples_seen": 2900,
       "tokens_seen": 2027555,
-      "train_loss": 0.03218775615096092
+      "train_loss": 0.00012783049896825105
     },
     {
-      "ce_loss": 0.019538652151823044,
+      "ce_loss": 0.0002122163714375347,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2925,
       "gradient_accumulation_steps": 8,
@@ -1855,14 +1891,14 @@
       "optimizer_step": 365,
       "samples_seen": 2925,
       "tokens_seen": 2045014,
-      "train_loss": 0.019538652151823044
+      "train_loss": 0.0002122163714375347
     },
     {
-      "ce_loss": 0.015270400792360306,
+      "ce_loss": 0.00014631543308496475,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2950,
       "gradient_accumulation_steps": 8,
@@ -1870,14 +1906,14 @@
       "optimizer_step": 368,
       "samples_seen": 2950,
       "tokens_seen": 2062721,
-      "train_loss": 0.015270400792360306
+      "train_loss": 0.00014631543308496475
     },
     {
-      "ce_loss": 0.0685923621058464,
+      "ce_loss": 0.00017890054732561111,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 2975,
       "gradient_accumulation_steps": 8,
@@ -1885,14 +1921,14 @@
       "optimizer_step": 371,
       "samples_seen": 2975,
       "tokens_seen": 2080220,
-      "train_loss": 0.0685923621058464
+      "train_loss": 0.00017890054732561111
     },
     {
-      "ce_loss": 0.0036992793902754784,
+      "ce_loss": 0.00013855536235496402,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 3000,
       "gradient_accumulation_steps": 8,
@@ -1900,14 +1936,14 @@
       "optimizer_step": 375,
       "samples_seen": 3000,
       "tokens_seen": 2097600,
-      "train_loss": 0.0036992793902754784
+      "train_loss": 0.00013855536235496402
     },
     {
-      "ce_loss": 0.004115405026823282,
+      "ce_loss": 0.00010941863001789898,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 3025,
       "gradient_accumulation_steps": 8,
@@ -1915,14 +1951,14 @@
       "optimizer_step": 378,
       "samples_seen": 3025,
       "tokens_seen": 2115170,
-      "train_loss": 0.004115405026823282
+      "train_loss": 0.00010941863001789898
     },
     {
-      "ce_loss": 0.010176436975598335,
+      "ce_loss": 0.00015622665523551404,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 3050,
       "gradient_accumulation_steps": 8,
@@ -1930,14 +1966,14 @@
       "optimizer_step": 381,
       "samples_seen": 3050,
       "tokens_seen": 2132318,
-      "train_loss": 0.010176436975598335
+      "train_loss": 0.00015622665523551404
     },
     {
-      "ce_loss": 0.019113026559352875,
+      "ce_loss": 9.812354983296245e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 3075,
       "gradient_accumulation_steps": 8,
@@ -1945,14 +1981,14 @@
       "optimizer_step": 384,
       "samples_seen": 3075,
       "tokens_seen": 2149985,
-      "train_loss": 0.019113026559352875
+      "train_loss": 9.812354983296245e-05
     },
     {
-      "ce_loss": 0.022568410262465477,
+      "ce_loss": 0.0001459633931517601,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 3100,
       "gradient_accumulation_steps": 8,
@@ -1960,14 +1996,14 @@
       "optimizer_step": 387,
       "samples_seen": 3100,
       "tokens_seen": 2167616,
-      "train_loss": 0.022568410262465477
+      "train_loss": 0.0001459633931517601
     },
     {
-      "ce_loss": 0.04383622482419014,
+      "ce_loss": 0.00015654973685741425,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 3125,
       "gradient_accumulation_steps": 8,
@@ -1975,14 +2011,14 @@
       "optimizer_step": 390,
       "samples_seen": 3125,
       "tokens_seen": 2184904,
-      "train_loss": 0.04383622482419014
+      "train_loss": 0.00015654973685741425
     },
     {
-      "ce_loss": 0.002782376017421484,
+      "ce_loss": 0.00016094524471554905,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 3150,
       "gradient_accumulation_steps": 8,
@@ -1990,14 +2026,14 @@
       "optimizer_step": 393,
       "samples_seen": 3150,
       "tokens_seen": 2202300,
-      "train_loss": 0.002782376017421484
+      "train_loss": 0.00016094524471554905
     },
     {
-      "ce_loss": 0.0006575403385795653,
+      "ce_loss": 9.74013892118819e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05869654566049576,
+      "eval_loss": 0.0465200113132596,
       "event": "log",
       "global_step": 3175,
       "gradient_accumulation_steps": 8,
@@ -2005,15 +2041,15 @@
       "optimizer_step": 396,
       "samples_seen": 3175,
       "tokens_seen": 2220090,
-      "train_loss": 0.0006575403385795653
+      "train_loss": 9.74013892118819e-05
     },
     {
       "effective_batch_size": 8,
       "eval_batches": 5,
       "eval_examples": 5,
       "eval_full_dataset": true,
-      "eval_loss": 0.05869654566049576,
-      "eval_loss_mean": 0.027723385021090508,
+      "eval_loss": 0.0465200113132596,
+      "eval_loss_mean": 0.00034449934610165657,
       "global_step": 3200,
       "gradient_accumulation_steps": 8,
       "micro_batch_size": 1,
@@ -2021,14 +2057,14 @@
       "samples_seen": 3200,
       "step": 3200,
       "tokens_seen": 2237440,
-      "train_loss": 0.04791685566306114
+      "train_loss": 8.926272130338475e-05
     },
     {
-      "ce_loss": 0.040283046662807465,
+      "ce_loss": 0.000843580812215805,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3200,
       "gradient_accumulation_steps": 8,
@@ -2036,14 +2072,14 @@
       "optimizer_step": 400,
       "samples_seen": 3200,
       "tokens_seen": 2237440,
-      "train_loss": 0.04791685566306114
+      "train_loss": 8.926272130338475e-05
     },
     {
-      "ce_loss": 0.009267248213291168,
+      "ce_loss": 0.00012484099715948105,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3225,
       "gradient_accumulation_steps": 8,
@@ -2051,14 +2087,14 @@
       "optimizer_step": 403,
       "samples_seen": 3225,
       "tokens_seen": 2255101,
-      "train_loss": 0.009267248213291168
+      "train_loss": 0.00012484099715948105
     },
     {
-      "ce_loss": 0.008943254128098488,
+      "ce_loss": 0.00010801572352647781,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3250,
       "gradient_accumulation_steps": 8,
@@ -2066,14 +2102,14 @@
       "optimizer_step": 406,
       "samples_seen": 3250,
       "tokens_seen": 2272406,
-      "train_loss": 0.008943254128098488
+      "train_loss": 0.00010801572352647781
     },
     {
-      "ce_loss": 0.005968805402517319,
+      "ce_loss": 0.00012936357234138995,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3275,
       "gradient_accumulation_steps": 8,
@@ -2081,14 +2117,14 @@
       "optimizer_step": 409,
       "samples_seen": 3275,
       "tokens_seen": 2289890,
-      "train_loss": 0.005968805402517319
+      "train_loss": 0.00012936357234138995
     },
     {
-      "ce_loss": 0.0024334348272532225,
+      "ce_loss": 9.460037836106494e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3300,
       "gradient_accumulation_steps": 8,
@@ -2096,14 +2132,14 @@
       "optimizer_step": 412,
       "samples_seen": 3300,
       "tokens_seen": 2307812,
-      "train_loss": 0.0024334348272532225
+      "train_loss": 9.460037836106494e-05
     },
     {
-      "ce_loss": 0.001523197628557682,
+      "ce_loss": 0.00012674977187998593,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3325,
       "gradient_accumulation_steps": 8,
@@ -2111,14 +2147,14 @@
       "optimizer_step": 415,
       "samples_seen": 3325,
       "tokens_seen": 2324840,
-      "train_loss": 0.001523197628557682
+      "train_loss": 0.00012674977187998593
     },
     {
-      "ce_loss": 0.0003014705143868923,
+      "ce_loss": 0.00012924046313855797,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3350,
       "gradient_accumulation_steps": 8,
@@ -2126,14 +2162,14 @@
       "optimizer_step": 418,
       "samples_seen": 3350,
       "tokens_seen": 2342365,
-      "train_loss": 0.0003014705143868923
+      "train_loss": 0.00012924046313855797
     },
     {
-      "ce_loss": 0.0034682047553360462,
+      "ce_loss": 0.00010701378778321669,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3375,
       "gradient_accumulation_steps": 8,
@@ -2141,14 +2177,14 @@
       "optimizer_step": 421,
       "samples_seen": 3375,
       "tokens_seen": 2359725,
-      "train_loss": 0.0034682047553360462
+      "train_loss": 0.00010701378778321669
     },
     {
-      "ce_loss": 0.13548697531223297,
+      "ce_loss": 0.00011237437865929678,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3400,
       "gradient_accumulation_steps": 8,
@@ -2156,14 +2192,14 @@
       "optimizer_step": 425,
       "samples_seen": 3400,
       "tokens_seen": 2377280,
-      "train_loss": 0.13548697531223297
+      "train_loss": 0.00011237437865929678
     },
     {
-      "ce_loss": 0.025484761223196983,
+      "ce_loss": 0.00011703225754899904,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3425,
       "gradient_accumulation_steps": 8,
@@ -2171,14 +2207,14 @@
       "optimizer_step": 428,
       "samples_seen": 3425,
       "tokens_seen": 2394534,
-      "train_loss": 0.025484761223196983
+      "train_loss": 0.00011703225754899904
     },
     {
-      "ce_loss": 0.041451048105955124,
+      "ce_loss": 9.135622531175613e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3450,
       "gradient_accumulation_steps": 8,
@@ -2186,14 +2222,14 @@
       "optimizer_step": 431,
       "samples_seen": 3450,
       "tokens_seen": 2412215,
-      "train_loss": 0.041451048105955124
+      "train_loss": 9.135622531175613e-05
     },
     {
-      "ce_loss": 0.01342380978167057,
+      "ce_loss": 7.435440784320235e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3475,
       "gradient_accumulation_steps": 8,
@@ -2201,14 +2237,14 @@
       "optimizer_step": 434,
       "samples_seen": 3475,
       "tokens_seen": 2429816,
-      "train_loss": 0.01342380978167057
+      "train_loss": 7.435440784320235e-05
     },
     {
-      "ce_loss": 0.11869766563177109,
+      "ce_loss": 7.309913780773059e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3500,
       "gradient_accumulation_steps": 8,
@@ -2216,14 +2252,14 @@
       "optimizer_step": 437,
       "samples_seen": 3500,
       "tokens_seen": 2447069,
-      "train_loss": 0.11869766563177109
+      "train_loss": 7.309913780773059e-05
     },
     {
-      "ce_loss": 0.01881486177444458,
+      "ce_loss": 9.615667659090832e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3525,
       "gradient_accumulation_steps": 8,
@@ -2231,14 +2267,14 @@
       "optimizer_step": 440,
       "samples_seen": 3525,
       "tokens_seen": 2464674,
-      "train_loss": 0.01881486177444458
+      "train_loss": 9.615667659090832e-05
     },
     {
-      "ce_loss": 0.03027590550482273,
+      "ce_loss": 8.755558519624174e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3550,
       "gradient_accumulation_steps": 8,
@@ -2246,14 +2282,14 @@
       "optimizer_step": 443,
       "samples_seen": 3550,
       "tokens_seen": 2482351,
-      "train_loss": 0.03027590550482273
+      "train_loss": 8.755558519624174e-05
     },
     {
-      "ce_loss": 0.024436049163341522,
+      "ce_loss": 9.24915075302124e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3575,
       "gradient_accumulation_steps": 8,
@@ -2261,14 +2297,14 @@
       "optimizer_step": 446,
       "samples_seen": 3575,
       "tokens_seen": 2499545,
-      "train_loss": 0.024436049163341522
+      "train_loss": 9.24915075302124e-05
     },
     {
-      "ce_loss": 0.0055463495664298534,
+      "ce_loss": 9.292323375120759e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3600,
       "gradient_accumulation_steps": 8,
@@ -2276,14 +2312,14 @@
       "optimizer_step": 450,
       "samples_seen": 3600,
       "tokens_seen": 2517120,
-      "train_loss": 0.0055463495664298534
+      "train_loss": 9.292323375120759e-05
     },
     {
-      "ce_loss": 0.004586196970194578,
+      "ce_loss": 7.100187212927267e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3625,
       "gradient_accumulation_steps": 8,
@@ -2291,14 +2327,14 @@
       "optimizer_step": 453,
       "samples_seen": 3625,
       "tokens_seen": 2534735,
-      "train_loss": 0.004586196970194578
+      "train_loss": 7.100187212927267e-05
     },
     {
-      "ce_loss": 0.0156671442091465,
+      "ce_loss": 9.076042624656111e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3650,
       "gradient_accumulation_steps": 8,
@@ -2306,14 +2342,14 @@
       "optimizer_step": 456,
       "samples_seen": 3650,
       "tokens_seen": 2552075,
-      "train_loss": 0.0156671442091465
+      "train_loss": 9.076042624656111e-05
     },
     {
-      "ce_loss": 0.004304633941501379,
+      "ce_loss": 8.759928459767252e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3675,
       "gradient_accumulation_steps": 8,
@@ -2321,14 +2357,14 @@
       "optimizer_step": 459,
       "samples_seen": 3675,
       "tokens_seen": 2569414,
-      "train_loss": 0.004304633941501379
+      "train_loss": 8.759928459767252e-05
     },
     {
-      "ce_loss": 0.007639850024133921,
+      "ce_loss": 9.244971442967653e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3700,
       "gradient_accumulation_steps": 8,
@@ -2336,14 +2372,14 @@
       "optimizer_step": 462,
       "samples_seen": 3700,
       "tokens_seen": 2587091,
-      "train_loss": 0.007639850024133921
+      "train_loss": 9.244971442967653e-05
     },
     {
-      "ce_loss": 0.021168630570173264,
+      "ce_loss": 8.164346218109131e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3725,
       "gradient_accumulation_steps": 8,
@@ -2351,14 +2387,14 @@
       "optimizer_step": 465,
       "samples_seen": 3725,
       "tokens_seen": 2604661,
-      "train_loss": 0.021168630570173264
+      "train_loss": 8.164346218109131e-05
     },
     {
-      "ce_loss": 0.014038587920367718,
+      "ce_loss": 6.467223283834755e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3750,
       "gradient_accumulation_steps": 8,
@@ -2366,14 +2402,14 @@
       "optimizer_step": 468,
       "samples_seen": 3750,
       "tokens_seen": 2621955,
-      "train_loss": 0.014038587920367718
+      "train_loss": 6.467223283834755e-05
     },
     {
-      "ce_loss": 0.03274368494749069,
+      "ce_loss": 8.411887392867357e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3775,
       "gradient_accumulation_steps": 8,
@@ -2381,14 +2417,14 @@
       "optimizer_step": 471,
       "samples_seen": 3775,
       "tokens_seen": 2639626,
-      "train_loss": 0.03274368494749069
+      "train_loss": 8.411887392867357e-05
     },
     {
-      "ce_loss": 0.014336440712213516,
+      "ce_loss": 7.88307806942612e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3800,
       "gradient_accumulation_steps": 8,
@@ -2396,14 +2432,14 @@
       "optimizer_step": 475,
       "samples_seen": 3800,
       "tokens_seen": 2656960,
-      "train_loss": 0.014336440712213516
+      "train_loss": 7.88307806942612e-05
     },
     {
-      "ce_loss": 0.0120074562728405,
+      "ce_loss": 8.289988181786612e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3825,
       "gradient_accumulation_steps": 8,
@@ -2411,14 +2447,14 @@
       "optimizer_step": 478,
       "samples_seen": 3825,
       "tokens_seen": 2674495,
-      "train_loss": 0.0120074562728405
+      "train_loss": 8.289988181786612e-05
     },
     {
-      "ce_loss": 0.0057823751121759415,
+      "ce_loss": 6.822347495472059e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3850,
       "gradient_accumulation_steps": 8,
@@ -2426,14 +2462,14 @@
       "optimizer_step": 481,
       "samples_seen": 3850,
       "tokens_seen": 2691976,
-      "train_loss": 0.0057823751121759415
+      "train_loss": 6.822347495472059e-05
     },
     {
-      "ce_loss": 0.08448433130979538,
+      "ce_loss": 8.313171565532684e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3875,
       "gradient_accumulation_steps": 8,
@@ -2441,14 +2477,14 @@
       "optimizer_step": 484,
       "samples_seen": 3875,
       "tokens_seen": 2709365,
-      "train_loss": 0.08448433130979538
+      "train_loss": 8.313171565532684e-05
     },
     {
-      "ce_loss": 0.007825491018593311,
+      "ce_loss": 6.456136907218024e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3900,
       "gradient_accumulation_steps": 8,
@@ -2456,14 +2492,14 @@
       "optimizer_step": 487,
       "samples_seen": 3900,
       "tokens_seen": 2726391,
-      "train_loss": 0.007825491018593311
+      "train_loss": 6.456136907218024e-05
     },
     {
-      "ce_loss": 0.006632017903029919,
+      "ce_loss": 8.694920688867569e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3925,
       "gradient_accumulation_steps": 8,
@@ -2471,14 +2507,14 @@
       "optimizer_step": 490,
       "samples_seen": 3925,
       "tokens_seen": 2744359,
-      "train_loss": 0.006632017903029919
+      "train_loss": 8.694920688867569e-05
     },
     {
-      "ce_loss": 0.019431792199611664,
+      "ce_loss": 7.389449456240982e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3950,
       "gradient_accumulation_steps": 8,
@@ -2486,14 +2522,14 @@
       "optimizer_step": 493,
       "samples_seen": 3950,
       "tokens_seen": 2761925,
-      "train_loss": 0.019431792199611664
+      "train_loss": 7.389449456240982e-05
     },
     {
-      "ce_loss": 0.00576363317668438,
+      "ce_loss": 7.573893526569009e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.027723385021090508,
+      "eval_loss": 0.00034449934610165657,
       "event": "log",
       "global_step": 3975,
       "gradient_accumulation_steps": 8,
@@ -2501,15 +2537,15 @@
       "optimizer_step": 496,
       "samples_seen": 3975,
       "tokens_seen": 2779275,
-      "train_loss": 0.00576363317668438
+      "train_loss": 7.573893526569009e-05
     },
     {
       "effective_batch_size": 8,
       "eval_batches": 5,
       "eval_examples": 5,
       "eval_full_dataset": true,
-      "eval_loss": 0.027723385021090508,
-      "eval_loss_mean": 0.018789045792073012,
+      "eval_loss": 0.00034449934610165657,
+      "eval_loss_mean": 0.00023049947922118008,
       "global_step": 4000,
       "gradient_accumulation_steps": 8,
       "micro_batch_size": 1,
@@ -2517,14 +2553,14 @@
       "samples_seen": 4000,
       "step": 4000,
       "tokens_seen": 2796800,
-      "train_loss": 0.01108784880489111
+      "train_loss": 6.756724178558215e-05
     },
     {
-      "ce_loss": 0.014606799930334091,
+      "ce_loss": 0.0005664955824613571,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4000,
       "gradient_accumulation_steps": 8,
@@ -2532,14 +2568,14 @@
       "optimizer_step": 500,
       "samples_seen": 4000,
       "tokens_seen": 2796800,
-      "train_loss": 0.01108784880489111
+      "train_loss": 6.756724178558215e-05
     },
     {
-      "ce_loss": 0.005846388638019562,
+      "ce_loss": 6.45788386464119e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4025,
       "gradient_accumulation_steps": 8,
@@ -2547,14 +2583,14 @@
       "optimizer_step": 503,
       "samples_seen": 4025,
       "tokens_seen": 2813994,
-      "train_loss": 0.005846388638019562
+      "train_loss": 6.45788386464119e-05
     },
     {
-      "ce_loss": 0.05138971284031868,
+      "ce_loss": 7.476312021026388e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4050,
       "gradient_accumulation_steps": 8,
@@ -2562,14 +2598,14 @@
       "optimizer_step": 506,
       "samples_seen": 4050,
       "tokens_seen": 2831885,
-      "train_loss": 0.05138971284031868
+      "train_loss": 7.476312021026388e-05
     },
     {
-      "ce_loss": 0.07129553705453873,
+      "ce_loss": 7.598792581120506e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4075,
       "gradient_accumulation_steps": 8,
@@ -2577,14 +2613,14 @@
       "optimizer_step": 509,
       "samples_seen": 4075,
       "tokens_seen": 2849094,
-      "train_loss": 0.07129553705453873
+      "train_loss": 7.598792581120506e-05
     },
     {
-      "ce_loss": 0.042719680815935135,
+      "ce_loss": 6.292760372161865e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4100,
       "gradient_accumulation_steps": 8,
@@ -2592,14 +2628,14 @@
       "optimizer_step": 512,
       "samples_seen": 4100,
       "tokens_seen": 2867077,
-      "train_loss": 0.042719680815935135
+      "train_loss": 6.292760372161865e-05
     },
     {
-      "ce_loss": 0.07493099570274353,
+      "ce_loss": 6.287262658588588e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4125,
       "gradient_accumulation_steps": 8,
@@ -2607,14 +2643,14 @@
       "optimizer_step": 515,
       "samples_seen": 4125,
       "tokens_seen": 2884476,
-      "train_loss": 0.07493099570274353
+      "train_loss": 6.287262658588588e-05
     },
     {
-      "ce_loss": 0.023183520883321762,
+      "ce_loss": 6.791017949581146e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4150,
       "gradient_accumulation_steps": 8,
@@ -2622,14 +2658,14 @@
       "optimizer_step": 518,
       "samples_seen": 4150,
       "tokens_seen": 2901851,
-      "train_loss": 0.023183520883321762
+      "train_loss": 6.791017949581146e-05
     },
     {
-      "ce_loss": 0.1443430781364441,
+      "ce_loss": 6.671213486697525e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4175,
       "gradient_accumulation_steps": 8,
@@ -2637,14 +2673,14 @@
       "optimizer_step": 521,
       "samples_seen": 4175,
       "tokens_seen": 2919014,
-      "train_loss": 0.1443430781364441
+      "train_loss": 6.671213486697525e-05
     },
     {
-      "ce_loss": 0.007179534528404474,
+      "ce_loss": 5.452752156998031e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4200,
       "gradient_accumulation_steps": 8,
@@ -2652,14 +2688,14 @@
       "optimizer_step": 525,
       "samples_seen": 4200,
       "tokens_seen": 2936640,
-      "train_loss": 0.007179534528404474
+      "train_loss": 5.452752156998031e-05
     },
     {
-      "ce_loss": 0.011663665995001793,
+      "ce_loss": 6.617776671191677e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4225,
       "gradient_accumulation_steps": 8,
@@ -2667,14 +2703,14 @@
       "optimizer_step": 528,
       "samples_seen": 4225,
       "tokens_seen": 2953792,
-      "train_loss": 0.011663665995001793
+      "train_loss": 6.617776671191677e-05
     },
     {
-      "ce_loss": 0.07194825261831284,
+      "ce_loss": 7.786515925545245e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4250,
       "gradient_accumulation_steps": 8,
@@ -2682,14 +2718,14 @@
       "optimizer_step": 531,
       "samples_seen": 4250,
       "tokens_seen": 2971424,
-      "train_loss": 0.07194825261831284
+      "train_loss": 7.786515925545245e-05
     },
     {
-      "ce_loss": 0.14892558753490448,
+      "ce_loss": 7.489274867111817e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4275,
       "gradient_accumulation_steps": 8,
@@ -2697,14 +2733,14 @@
       "optimizer_step": 534,
       "samples_seen": 4275,
       "tokens_seen": 2989121,
-      "train_loss": 0.14892558753490448
+      "train_loss": 7.489274867111817e-05
     },
     {
-      "ce_loss": 0.004331021104007959,
+      "ce_loss": 5.696177322533913e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4300,
       "gradient_accumulation_steps": 8,
@@ -2712,14 +2748,14 @@
       "optimizer_step": 537,
       "samples_seen": 4300,
       "tokens_seen": 3006389,
-      "train_loss": 0.004331021104007959
+      "train_loss": 5.696177322533913e-05
     },
     {
-      "ce_loss": 0.004061499610543251,
+      "ce_loss": 5.960073758615181e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4325,
       "gradient_accumulation_steps": 8,
@@ -2727,14 +2763,14 @@
       "optimizer_step": 540,
       "samples_seen": 4325,
       "tokens_seen": 3024005,
-      "train_loss": 0.004061499610543251
+      "train_loss": 5.960073758615181e-05
     },
     {
-      "ce_loss": 0.009068801067769527,
+      "ce_loss": 5.425667040981352e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4350,
       "gradient_accumulation_steps": 8,
@@ -2742,14 +2778,14 @@
       "optimizer_step": 543,
       "samples_seen": 4350,
       "tokens_seen": 3041489,
-      "train_loss": 0.009068801067769527
+      "train_loss": 5.425667040981352e-05
     },
     {
-      "ce_loss": 0.012355232611298561,
+      "ce_loss": 7.089972496032715e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4375,
       "gradient_accumulation_steps": 8,
@@ -2757,14 +2793,14 @@
       "optimizer_step": 546,
       "samples_seen": 4375,
       "tokens_seen": 3059016,
-      "train_loss": 0.012355232611298561
+      "train_loss": 7.089972496032715e-05
     },
     {
-      "ce_loss": 0.06229100003838539,
+      "ce_loss": 6.152176501927897e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4400,
       "gradient_accumulation_steps": 8,
@@ -2772,14 +2808,14 @@
       "optimizer_step": 550,
       "samples_seen": 4400,
       "tokens_seen": 3076480,
-      "train_loss": 0.06229100003838539
+      "train_loss": 6.152176501927897e-05
     },
     {
-      "ce_loss": 0.08408189564943314,
+      "ce_loss": 5.155760663910769e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4425,
       "gradient_accumulation_steps": 8,
@@ -2787,14 +2823,14 @@
       "optimizer_step": 553,
       "samples_seen": 4425,
       "tokens_seen": 3093830,
-      "train_loss": 0.08408189564943314
+      "train_loss": 5.155760663910769e-05
     },
     {
-      "ce_loss": 0.11027871072292328,
+      "ce_loss": 7.379738963209093e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4450,
       "gradient_accumulation_steps": 8,
@@ -2802,14 +2838,14 @@
       "optimizer_step": 556,
       "samples_seen": 4450,
       "tokens_seen": 3111525,
-      "train_loss": 0.11027871072292328
+      "train_loss": 7.379738963209093e-05
     },
     {
-      "ce_loss": 0.035360969603061676,
+      "ce_loss": 6.425967148970813e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4475,
       "gradient_accumulation_steps": 8,
@@ -2817,14 +2853,14 @@
       "optimizer_step": 559,
       "samples_seen": 4475,
       "tokens_seen": 3128784,
-      "train_loss": 0.035360969603061676
+      "train_loss": 6.425967148970813e-05
     },
     {
-      "ce_loss": 0.001103564747609198,
+      "ce_loss": 6.172715075081214e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4500,
       "gradient_accumulation_steps": 8,
@@ -2832,14 +2868,14 @@
       "optimizer_step": 562,
       "samples_seen": 4500,
       "tokens_seen": 3146516,
-      "train_loss": 0.001103564747609198
+      "train_loss": 6.172715075081214e-05
     },
     {
-      "ce_loss": 0.0019088794942945242,
+      "ce_loss": 5.3547169954981655e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4525,
       "gradient_accumulation_steps": 8,
@@ -2847,14 +2883,14 @@
       "optimizer_step": 565,
       "samples_seen": 4525,
       "tokens_seen": 3164009,
-      "train_loss": 0.0019088794942945242
+      "train_loss": 5.3547169954981655e-05
     },
     {
-      "ce_loss": 0.004086767323315144,
+      "ce_loss": 5.89955598115921e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4550,
       "gradient_accumulation_steps": 8,
@@ -2862,14 +2898,14 @@
       "optimizer_step": 568,
       "samples_seen": 4550,
       "tokens_seen": 3181636,
-      "train_loss": 0.004086767323315144
+      "train_loss": 5.89955598115921e-05
     },
     {
-      "ce_loss": 0.00036722421646118164,
+      "ce_loss": 4.80389608128462e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4575,
       "gradient_accumulation_steps": 8,
@@ -2877,14 +2913,14 @@
       "optimizer_step": 571,
       "samples_seen": 4575,
       "tokens_seen": 3198568,
-      "train_loss": 0.00036722421646118164
+      "train_loss": 4.80389608128462e-05
     },
     {
-      "ce_loss": 0.0030102061573415995,
+      "ce_loss": 6.292069883784279e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4600,
       "gradient_accumulation_steps": 8,
@@ -2892,14 +2928,14 @@
       "optimizer_step": 575,
       "samples_seen": 4600,
       "tokens_seen": 3216320,
-      "train_loss": 0.0030102061573415995
+      "train_loss": 6.292069883784279e-05
     },
     {
-      "ce_loss": 0.0008304020739160478,
+      "ce_loss": 4.7839097533142194e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4625,
       "gradient_accumulation_steps": 8,
@@ -2907,14 +2943,14 @@
       "optimizer_step": 578,
       "samples_seen": 4625,
       "tokens_seen": 3233920,
-      "train_loss": 0.0008304020739160478
+      "train_loss": 4.7839097533142194e-05
     },
     {
-      "ce_loss": 0.0006834423402324319,
+      "ce_loss": 5.140662324265577e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4650,
       "gradient_accumulation_steps": 8,
@@ -2922,14 +2958,14 @@
       "optimizer_step": 581,
       "samples_seen": 4650,
       "tokens_seen": 3251234,
-      "train_loss": 0.0006834423402324319
+      "train_loss": 5.140662324265577e-05
     },
     {
-      "ce_loss": 0.0006189091363921762,
+      "ce_loss": 5.66268790862523e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4675,
       "gradient_accumulation_steps": 8,
@@ -2937,14 +2973,14 @@
       "optimizer_step": 584,
       "samples_seen": 4675,
       "tokens_seen": 3268771,
-      "train_loss": 0.0006189091363921762
+      "train_loss": 5.66268790862523e-05
     },
     {
-      "ce_loss": 0.00386202079243958,
+      "ce_loss": 4.766809433931485e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4700,
       "gradient_accumulation_steps": 8,
@@ -2952,14 +2988,14 @@
       "optimizer_step": 587,
       "samples_seen": 4700,
       "tokens_seen": 3286143,
-      "train_loss": 0.00386202079243958
+      "train_loss": 4.766809433931485e-05
     },
     {
-      "ce_loss": 0.000519213208463043,
+      "ce_loss": 4.561276364256628e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4725,
       "gradient_accumulation_steps": 8,
@@ -2967,14 +3003,14 @@
       "optimizer_step": 590,
       "samples_seen": 4725,
       "tokens_seen": 3303805,
-      "train_loss": 0.000519213208463043
+      "train_loss": 4.561276364256628e-05
     },
     {
-      "ce_loss": 0.0011127896141260862,
+      "ce_loss": 6.028137431712821e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4750,
       "gradient_accumulation_steps": 8,
@@ -2982,14 +3018,14 @@
       "optimizer_step": 593,
       "samples_seen": 4750,
       "tokens_seen": 3321396,
-      "train_loss": 0.0011127896141260862
+      "train_loss": 6.028137431712821e-05
     },
     {
-      "ce_loss": 0.0007140869274735451,
+      "ce_loss": 5.055125802755356e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.018789045792073012,
+      "eval_loss": 0.00023049947922118008,
       "event": "log",
       "global_step": 4775,
       "gradient_accumulation_steps": 8,
@@ -2997,15 +3033,15 @@
       "optimizer_step": 596,
       "samples_seen": 4775,
       "tokens_seen": 3338253,
-      "train_loss": 0.0007140869274735451
+      "train_loss": 5.055125802755356e-05
     },
     {
       "effective_batch_size": 8,
       "eval_batches": 5,
       "eval_examples": 5,
       "eval_full_dataset": true,
-      "eval_loss": 0.018789045792073012,
-      "eval_loss_mean": 0.05788505282253027,
+      "eval_loss": 0.00023049947922118008,
+      "eval_loss_mean": 0.00017658052529441194,
       "global_step": 4800,
       "gradient_accumulation_steps": 8,
       "micro_batch_size": 1,
@@ -3013,14 +3049,14 @@
       "samples_seen": 4800,
       "step": 4800,
       "tokens_seen": 3356160,
-      "train_loss": 0.0015488616190850735
+      "train_loss": 4.476596586755477e-05
     },
     {
-      "ce_loss": 0.16101449728012085,
+      "ce_loss": 0.00039806589484214783,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 4800,
       "gradient_accumulation_steps": 8,
@@ -3028,14 +3064,14 @@
       "optimizer_step": 600,
       "samples_seen": 4800,
       "tokens_seen": 3356160,
-      "train_loss": 0.0015488616190850735
+      "train_loss": 4.476596586755477e-05
     },
     {
-      "ce_loss": 0.038595739752054214,
+      "ce_loss": 5.289839464239776e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 4825,
       "gradient_accumulation_steps": 8,
@@ -3043,14 +3079,14 @@
       "optimizer_step": 603,
       "samples_seen": 4825,
       "tokens_seen": 3373840,
-      "train_loss": 0.038595739752054214
+      "train_loss": 5.289839464239776e-05
     },
     {
-      "ce_loss": 0.006524658761918545,
+      "ce_loss": 5.797296762466431e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 4850,
       "gradient_accumulation_steps": 8,
@@ -3058,14 +3094,14 @@
       "optimizer_step": 606,
       "samples_seen": 4850,
       "tokens_seen": 3391140,
-      "train_loss": 0.006524658761918545
+      "train_loss": 5.797296762466431e-05
     },
     {
-      "ce_loss": 0.20220035314559937,
+      "ce_loss": 4.613637793227099e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 4875,
       "gradient_accumulation_steps": 8,
@@ -3073,14 +3109,14 @@
       "optimizer_step": 609,
       "samples_seen": 4875,
       "tokens_seen": 3408645,
-      "train_loss": 0.20220035314559937
+      "train_loss": 4.613637793227099e-05
     },
     {
-      "ce_loss": 0.006540384143590927,
+      "ce_loss": 4.501260627876036e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 4900,
       "gradient_accumulation_steps": 8,
@@ -3088,14 +3124,14 @@
       "optimizer_step": 612,
       "samples_seen": 4900,
       "tokens_seen": 3426146,
-      "train_loss": 0.006540384143590927
+      "train_loss": 4.501260627876036e-05
     },
     {
-      "ce_loss": 0.015067854896187782,
+      "ce_loss": 4.4029951823176816e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 4925,
       "gradient_accumulation_steps": 8,
@@ -3103,14 +3139,14 @@
       "optimizer_step": 615,
       "samples_seen": 4925,
       "tokens_seen": 3443560,
-      "train_loss": 0.015067854896187782
+      "train_loss": 4.4029951823176816e-05
     },
     {
-      "ce_loss": 0.09834149479866028,
+      "ce_loss": 4.775635898113251e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 4950,
       "gradient_accumulation_steps": 8,
@@ -3118,14 +3154,14 @@
       "optimizer_step": 618,
       "samples_seen": 4950,
       "tokens_seen": 3461270,
-      "train_loss": 0.09834149479866028
+      "train_loss": 4.775635898113251e-05
     },
     {
-      "ce_loss": 0.08293740451335907,
+      "ce_loss": 4.401124897412956e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 4975,
       "gradient_accumulation_steps": 8,
@@ -3133,14 +3169,14 @@
       "optimizer_step": 621,
       "samples_seen": 4975,
       "tokens_seen": 3478531,
-      "train_loss": 0.08293740451335907
+      "train_loss": 4.401124897412956e-05
     },
     {
-      "ce_loss": 0.10586880892515182,
+      "ce_loss": 5.23589551448822e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5000,
       "gradient_accumulation_steps": 8,
@@ -3148,14 +3184,14 @@
       "optimizer_step": 625,
       "samples_seen": 5000,
       "tokens_seen": 3496000,
-      "train_loss": 0.10586880892515182
+      "train_loss": 5.23589551448822e-05
     },
     {
-      "ce_loss": 0.034530386328697205,
+      "ce_loss": 5.080496339360252e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5025,
       "gradient_accumulation_steps": 8,
@@ -3163,14 +3199,14 @@
       "optimizer_step": 628,
       "samples_seen": 5025,
       "tokens_seen": 3513430,
-      "train_loss": 0.034530386328697205
+      "train_loss": 5.080496339360252e-05
     },
     {
-      "ce_loss": 0.09947766363620758,
+      "ce_loss": 4.230141712469049e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5050,
       "gradient_accumulation_steps": 8,
@@ -3178,14 +3214,14 @@
       "optimizer_step": 631,
       "samples_seen": 5050,
       "tokens_seen": 3530824,
-      "train_loss": 0.09947766363620758
+      "train_loss": 4.230141712469049e-05
     },
     {
-      "ce_loss": 0.018643226474523544,
+      "ce_loss": 4.604220521287061e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5075,
       "gradient_accumulation_steps": 8,
@@ -3193,14 +3229,14 @@
       "optimizer_step": 634,
       "samples_seen": 5075,
       "tokens_seen": 3548390,
-      "train_loss": 0.018643226474523544
+      "train_loss": 4.604220521287061e-05
     },
     {
-      "ce_loss": 0.003621380077674985,
+      "ce_loss": 4.2479612602619454e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5100,
       "gradient_accumulation_steps": 8,
@@ -3208,14 +3244,14 @@
       "optimizer_step": 637,
       "samples_seen": 5100,
       "tokens_seen": 3565904,
-      "train_loss": 0.003621380077674985
+      "train_loss": 4.2479612602619454e-05
     },
     {
-      "ce_loss": 0.07413933426141739,
+      "ce_loss": 5.562383739743382e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5125,
       "gradient_accumulation_steps": 8,
@@ -3223,14 +3259,14 @@
       "optimizer_step": 640,
       "samples_seen": 5125,
       "tokens_seen": 3583264,
-      "train_loss": 0.07413933426141739
+      "train_loss": 5.562383739743382e-05
     },
     {
-      "ce_loss": 0.0034645991399884224,
+      "ce_loss": 5.281264748191461e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5150,
       "gradient_accumulation_steps": 8,
@@ -3238,14 +3274,14 @@
       "optimizer_step": 643,
       "samples_seen": 5150,
       "tokens_seen": 3600608,
-      "train_loss": 0.0034645991399884224
+      "train_loss": 5.281264748191461e-05
     },
     {
-      "ce_loss": 0.0018015796085819602,
+      "ce_loss": 4.106965570827015e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5175,
       "gradient_accumulation_steps": 8,
@@ -3253,14 +3289,14 @@
       "optimizer_step": 646,
       "samples_seen": 5175,
       "tokens_seen": 3618268,
-      "train_loss": 0.0018015796085819602
+      "train_loss": 4.106965570827015e-05
     },
     {
-      "ce_loss": 0.001905493438243866,
+      "ce_loss": 4.7709792852401733e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5200,
       "gradient_accumulation_steps": 8,
@@ -3268,14 +3304,14 @@
       "optimizer_step": 650,
       "samples_seen": 5200,
       "tokens_seen": 3635840,
-      "train_loss": 0.001905493438243866
+      "train_loss": 4.7709792852401733e-05
     },
     {
-      "ce_loss": 0.0027801482938230038,
+      "ce_loss": 5.1528702897485346e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5225,
       "gradient_accumulation_steps": 8,
@@ -3283,14 +3319,14 @@
       "optimizer_step": 653,
       "samples_seen": 5225,
       "tokens_seen": 3653038,
-      "train_loss": 0.0027801482938230038
+      "train_loss": 5.1528702897485346e-05
     },
     {
-      "ce_loss": 0.14286988973617554,
+      "ce_loss": 4.169940802967176e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5250,
       "gradient_accumulation_steps": 8,
@@ -3298,14 +3334,14 @@
       "optimizer_step": 656,
       "samples_seen": 5250,
       "tokens_seen": 3670705,
-      "train_loss": 0.14286988973617554
+      "train_loss": 4.169940802967176e-05
     },
     {
-      "ce_loss": 0.15890511870384216,
+      "ce_loss": 4.049420385854319e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5275,
       "gradient_accumulation_steps": 8,
@@ -3313,14 +3349,14 @@
       "optimizer_step": 659,
       "samples_seen": 5275,
       "tokens_seen": 3688436,
-      "train_loss": 0.15890511870384216
+      "train_loss": 4.049420385854319e-05
     },
     {
-      "ce_loss": 0.002344018081203103,
+      "ce_loss": 4.089125286554918e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5300,
       "gradient_accumulation_steps": 8,
@@ -3328,14 +3364,14 @@
       "optimizer_step": 662,
       "samples_seen": 5300,
       "tokens_seen": 3705925,
-      "train_loss": 0.002344018081203103
+      "train_loss": 4.089125286554918e-05
     },
     {
-      "ce_loss": 0.0061620851047337055,
+      "ce_loss": 5.0828224630095065e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5325,
       "gradient_accumulation_steps": 8,
@@ -3343,14 +3379,14 @@
       "optimizer_step": 665,
       "samples_seen": 5325,
       "tokens_seen": 3723105,
-      "train_loss": 0.0061620851047337055
+      "train_loss": 5.0828224630095065e-05
     },
     {
-      "ce_loss": 0.07272529602050781,
+      "ce_loss": 4.8463232815265656e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5350,
       "gradient_accumulation_steps": 8,
@@ -3358,14 +3394,14 @@
       "optimizer_step": 668,
       "samples_seen": 5350,
       "tokens_seen": 3740782,
-      "train_loss": 0.07272529602050781
+      "train_loss": 4.8463232815265656e-05
     },
     {
-      "ce_loss": 0.01863403059542179,
+      "ce_loss": 4.768557846546173e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5375,
       "gradient_accumulation_steps": 8,
@@ -3373,14 +3409,14 @@
       "optimizer_step": 671,
       "samples_seen": 5375,
       "tokens_seen": 3758206,
-      "train_loss": 0.01863403059542179
+      "train_loss": 4.768557846546173e-05
     },
     {
-      "ce_loss": 0.004340282175689936,
+      "ce_loss": 4.413186616147868e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5400,
       "gradient_accumulation_steps": 8,
@@ -3388,14 +3424,14 @@
       "optimizer_step": 675,
       "samples_seen": 5400,
       "tokens_seen": 3775680,
-      "train_loss": 0.004340282175689936
+      "train_loss": 4.413186616147868e-05
     },
     {
-      "ce_loss": 0.008743132464587688,
+      "ce_loss": 4.957943383487873e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5425,
       "gradient_accumulation_steps": 8,
@@ -3403,14 +3439,14 @@
       "optimizer_step": 678,
       "samples_seen": 5425,
       "tokens_seen": 3792847,
-      "train_loss": 0.008743132464587688
+      "train_loss": 4.957943383487873e-05
     },
     {
-      "ce_loss": 0.012914675287902355,
+      "ce_loss": 4.9367910833097994e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5450,
       "gradient_accumulation_steps": 8,
@@ -3418,14 +3454,14 @@
       "optimizer_step": 681,
       "samples_seen": 5450,
       "tokens_seen": 3810635,
-      "train_loss": 0.012914675287902355
+      "train_loss": 4.9367910833097994e-05
     },
     {
-      "ce_loss": 0.04617537185549736,
+      "ce_loss": 4.6756118535995483e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5475,
       "gradient_accumulation_steps": 8,
@@ -3433,14 +3469,14 @@
       "optimizer_step": 684,
       "samples_seen": 5475,
       "tokens_seen": 3828170,
-      "train_loss": 0.04617537185549736
+      "train_loss": 4.6756118535995483e-05
     },
     {
-      "ce_loss": 0.05344180762767792,
+      "ce_loss": 4.612715565599501e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5500,
       "gradient_accumulation_steps": 8,
@@ -3448,14 +3484,14 @@
       "optimizer_step": 687,
       "samples_seen": 5500,
       "tokens_seen": 3845898,
-      "train_loss": 0.05344180762767792
+      "train_loss": 4.612715565599501e-05
     },
     {
-      "ce_loss": 0.011944928206503391,
+      "ce_loss": 4.494776658248156e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5525,
       "gradient_accumulation_steps": 8,
@@ -3463,14 +3499,14 @@
       "optimizer_step": 690,
       "samples_seen": 5525,
       "tokens_seen": 3862899,
-      "train_loss": 0.011944928206503391
+      "train_loss": 4.494776658248156e-05
     },
     {
-      "ce_loss": 0.042113304138183594,
+      "ce_loss": 5.124974995851517e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5550,
       "gradient_accumulation_steps": 8,
@@ -3478,14 +3514,14 @@
       "optimizer_step": 693,
       "samples_seen": 5550,
       "tokens_seen": 3880560,
-      "train_loss": 0.042113304138183594
+      "train_loss": 5.124974995851517e-05
     },
     {
-      "ce_loss": 0.024225372821092606,
+      "ce_loss": 3.6464065487962216e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.05788505282253027,
+      "eval_loss": 0.00017658052529441194,
       "event": "log",
       "global_step": 5575,
       "gradient_accumulation_steps": 8,
@@ -3493,15 +3529,15 @@
       "optimizer_step": 696,
       "samples_seen": 5575,
       "tokens_seen": 3898231,
-      "train_loss": 0.024225372821092606
+      "train_loss": 3.6464065487962216e-05
     },
     {
       "effective_batch_size": 8,
       "eval_batches": 5,
       "eval_examples": 5,
       "eval_full_dataset": true,
-      "eval_loss": 0.05788505282253027,
-      "eval_loss_mean": 0.03346657678484917,
+      "eval_loss": 0.00017658052529441194,
+      "eval_loss_mean": 0.0001434525227523409,
       "global_step": 5600,
       "gradient_accumulation_steps": 8,
       "micro_batch_size": 1,
@@ -3509,14 +3545,14 @@
       "samples_seen": 5600,
       "step": 5600,
       "tokens_seen": 3915520,
-      "train_loss": 0.032512471079826355
+      "train_loss": 4.463084042072296e-05
     },
     {
-      "ce_loss": 0.07355073094367981,
+      "ce_loss": 0.0003228187561035156,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5600,
       "gradient_accumulation_steps": 8,
@@ -3524,14 +3560,14 @@
       "optimizer_step": 700,
       "samples_seen": 5600,
       "tokens_seen": 3915520,
-      "train_loss": 0.032512471079826355
+      "train_loss": 4.463084042072296e-05
     },
     {
-      "ce_loss": 0.0592302605509758,
+      "ce_loss": 4.0502549381926656e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5625,
       "gradient_accumulation_steps": 8,
@@ -3539,14 +3575,14 @@
       "optimizer_step": 703,
       "samples_seen": 5625,
       "tokens_seen": 3933187,
-      "train_loss": 0.0592302605509758
+      "train_loss": 4.0502549381926656e-05
     },
     {
-      "ce_loss": 0.0018480840371921659,
+      "ce_loss": 5.0410872063366696e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5650,
       "gradient_accumulation_steps": 8,
@@ -3554,14 +3590,14 @@
       "optimizer_step": 706,
       "samples_seen": 5650,
       "tokens_seen": 3950525,
-      "train_loss": 0.0018480840371921659
+      "train_loss": 5.0410872063366696e-05
     },
     {
-      "ce_loss": 0.0011162776499986649,
+      "ce_loss": 4.2848289012908936e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5675,
       "gradient_accumulation_steps": 8,
@@ -3569,14 +3605,14 @@
       "optimizer_step": 709,
       "samples_seen": 5675,
       "tokens_seen": 3968096,
-      "train_loss": 0.0011162776499986649
+      "train_loss": 4.2848289012908936e-05
     },
     {
-      "ce_loss": 0.0011953950161114335,
+      "ce_loss": 3.7382840673672035e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5700,
       "gradient_accumulation_steps": 8,
@@ -3584,14 +3620,14 @@
       "optimizer_step": 712,
       "samples_seen": 5700,
       "tokens_seen": 3985350,
-      "train_loss": 0.0011953950161114335
+      "train_loss": 3.7382840673672035e-05
     },
     {
-      "ce_loss": 0.001895339461043477,
+      "ce_loss": 3.722548353835009e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5725,
       "gradient_accumulation_steps": 8,
@@ -3599,14 +3635,14 @@
       "optimizer_step": 715,
       "samples_seen": 5725,
       "tokens_seen": 4002724,
-      "train_loss": 0.001895339461043477
+      "train_loss": 3.722548353835009e-05
     },
     {
-      "ce_loss": 0.004285838454961777,
+      "ce_loss": 3.5378849133849144e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5750,
       "gradient_accumulation_steps": 8,
@@ -3614,14 +3650,14 @@
       "optimizer_step": 718,
       "samples_seen": 5750,
       "tokens_seen": 4020148,
-      "train_loss": 0.004285838454961777
+      "train_loss": 3.5378849133849144e-05
     },
     {
-      "ce_loss": 0.017737630754709244,
+      "ce_loss": 4.156042996328324e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5775,
       "gradient_accumulation_steps": 8,
@@ -3629,14 +3665,14 @@
       "optimizer_step": 721,
       "samples_seen": 5775,
       "tokens_seen": 4037976,
-      "train_loss": 0.017737630754709244
+      "train_loss": 4.156042996328324e-05
     },
     {
-      "ce_loss": 0.005221269093453884,
+      "ce_loss": 4.6689980081282556e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5800,
       "gradient_accumulation_steps": 8,
@@ -3644,14 +3680,14 @@
       "optimizer_step": 725,
       "samples_seen": 5800,
       "tokens_seen": 4055360,
-      "train_loss": 0.005221269093453884
+      "train_loss": 4.6689980081282556e-05
     },
     {
-      "ce_loss": 0.0013681708369404078,
+      "ce_loss": 4.284499300410971e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5825,
       "gradient_accumulation_steps": 8,
@@ -3659,14 +3695,14 @@
       "optimizer_step": 728,
       "samples_seen": 5825,
       "tokens_seen": 4072891,
-      "train_loss": 0.0013681708369404078
+      "train_loss": 4.284499300410971e-05
     },
     {
-      "ce_loss": 0.04163844510912895,
+      "ce_loss": 3.4992695873370394e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5850,
       "gradient_accumulation_steps": 8,
@@ -3674,14 +3710,14 @@
       "optimizer_step": 731,
       "samples_seen": 5850,
       "tokens_seen": 4090637,
-      "train_loss": 0.04163844510912895
+      "train_loss": 3.4992695873370394e-05
     },
     {
-      "ce_loss": 0.0012487983331084251,
+      "ce_loss": 3.819823177764192e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5875,
       "gradient_accumulation_steps": 8,
@@ -3689,14 +3725,14 @@
       "optimizer_step": 734,
       "samples_seen": 5875,
       "tokens_seen": 4107665,
-      "train_loss": 0.0012487983331084251
+      "train_loss": 3.819823177764192e-05
     },
     {
-      "ce_loss": 0.0006288047879934311,
+      "ce_loss": 3.825407475233078e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5900,
       "gradient_accumulation_steps": 8,
@@ -3704,14 +3740,14 @@
       "optimizer_step": 737,
       "samples_seen": 5900,
       "tokens_seen": 4125492,
-      "train_loss": 0.0006288047879934311
+      "train_loss": 3.825407475233078e-05
     },
     {
-      "ce_loss": 0.0867403894662857,
+      "ce_loss": 3.398451372049749e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5925,
       "gradient_accumulation_steps": 8,
@@ -3719,14 +3755,14 @@
       "optimizer_step": 740,
       "samples_seen": 5925,
       "tokens_seen": 4142659,
-      "train_loss": 0.0867403894662857
+      "train_loss": 3.398451372049749e-05
     },
     {
-      "ce_loss": 0.06278791278600693,
+      "ce_loss": 3.7467889342224225e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5950,
       "gradient_accumulation_steps": 8,
@@ -3734,14 +3770,14 @@
       "optimizer_step": 743,
       "samples_seen": 5950,
       "tokens_seen": 4160365,
-      "train_loss": 0.06278791278600693
+      "train_loss": 3.7467889342224225e-05
     },
     {
-      "ce_loss": 0.007441672030836344,
+      "ce_loss": 4.004487345810048e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 5975,
       "gradient_accumulation_steps": 8,
@@ -3749,14 +3785,14 @@
       "optimizer_step": 746,
       "samples_seen": 5975,
       "tokens_seen": 4177575,
-      "train_loss": 0.007441672030836344
+      "train_loss": 4.004487345810048e-05
     },
     {
-      "ce_loss": 0.08363010734319687,
+      "ce_loss": 3.9395792555296794e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6000,
       "gradient_accumulation_steps": 8,
@@ -3764,14 +3800,14 @@
       "optimizer_step": 750,
       "samples_seen": 6000,
       "tokens_seen": 4195200,
-      "train_loss": 0.08363010734319687
+      "train_loss": 3.9395792555296794e-05
     },
     {
-      "ce_loss": 0.0024442877620458603,
+      "ce_loss": 3.9225444197654724e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6025,
       "gradient_accumulation_steps": 8,
@@ -3779,14 +3815,14 @@
       "optimizer_step": 753,
       "samples_seen": 6025,
       "tokens_seen": 4212252,
-      "train_loss": 0.0024442877620458603
+      "train_loss": 3.9225444197654724e-05
     },
     {
-      "ce_loss": 0.0022636796347796917,
+      "ce_loss": 4.111630187253468e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6050,
       "gradient_accumulation_steps": 8,
@@ -3794,14 +3830,14 @@
       "optimizer_step": 756,
       "samples_seen": 6050,
       "tokens_seen": 4230436,
-      "train_loss": 0.0022636796347796917
+      "train_loss": 4.111630187253468e-05
     },
     {
-      "ce_loss": 0.0012810210464522243,
+      "ce_loss": 3.958432353101671e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6075,
       "gradient_accumulation_steps": 8,
@@ -3809,14 +3845,14 @@
       "optimizer_step": 759,
       "samples_seen": 6075,
       "tokens_seen": 4247493,
-      "train_loss": 0.0012810210464522243
+      "train_loss": 3.958432353101671e-05
     },
     {
-      "ce_loss": 0.0007150482852011919,
+      "ce_loss": 3.378868132131174e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6100,
       "gradient_accumulation_steps": 8,
@@ -3824,14 +3860,14 @@
       "optimizer_step": 762,
       "samples_seen": 6100,
       "tokens_seen": 4265166,
-      "train_loss": 0.0007150482852011919
+      "train_loss": 3.378868132131174e-05
     },
     {
-      "ce_loss": 0.0012686140835285187,
+      "ce_loss": 3.8685277104377747e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6125,
       "gradient_accumulation_steps": 8,
@@ -3839,14 +3875,14 @@
       "optimizer_step": 765,
       "samples_seen": 6125,
       "tokens_seen": 4282605,
-      "train_loss": 0.0012686140835285187
+      "train_loss": 3.8685277104377747e-05
     },
     {
-      "ce_loss": 0.03181735798716545,
+      "ce_loss": 3.592392386053689e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6150,
       "gradient_accumulation_steps": 8,
@@ -3854,14 +3890,14 @@
       "optimizer_step": 768,
       "samples_seen": 6150,
       "tokens_seen": 4299939,
-      "train_loss": 0.03181735798716545
+      "train_loss": 3.592392386053689e-05
     },
     {
-      "ce_loss": 0.0027073826640844345,
+      "ce_loss": 3.603938966989517e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6175,
       "gradient_accumulation_steps": 8,
@@ -3869,14 +3905,14 @@
       "optimizer_step": 771,
       "samples_seen": 6175,
       "tokens_seen": 4317770,
-      "train_loss": 0.0027073826640844345
+      "train_loss": 3.603938966989517e-05
     },
     {
-      "ce_loss": 0.0015892181545495987,
+      "ce_loss": 3.715030470630154e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6200,
       "gradient_accumulation_steps": 8,
@@ -3884,14 +3920,14 @@
       "optimizer_step": 775,
       "samples_seen": 6200,
       "tokens_seen": 4335040,
-      "train_loss": 0.0015892181545495987
+      "train_loss": 3.715030470630154e-05
     },
     {
-      "ce_loss": 0.0009430013597011566,
+      "ce_loss": 4.300754517316818e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6225,
       "gradient_accumulation_steps": 8,
@@ -3899,14 +3935,14 @@
       "optimizer_step": 778,
       "samples_seen": 6225,
       "tokens_seen": 4352723,
-      "train_loss": 0.0009430013597011566
+      "train_loss": 4.300754517316818e-05
     },
     {
-      "ce_loss": 0.029843540862202644,
+      "ce_loss": 3.244054823881015e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6250,
       "gradient_accumulation_steps": 8,
@@ -3914,14 +3950,14 @@
       "optimizer_step": 781,
       "samples_seen": 6250,
       "tokens_seen": 4369933,
-      "train_loss": 0.029843540862202644
+      "train_loss": 3.244054823881015e-05
     },
     {
-      "ce_loss": 0.0004183444834779948,
+      "ce_loss": 3.788998947129585e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6275,
       "gradient_accumulation_steps": 8,
@@ -3929,14 +3965,14 @@
       "optimizer_step": 784,
       "samples_seen": 6275,
       "tokens_seen": 4387515,
-      "train_loss": 0.0004183444834779948
+      "train_loss": 3.788998947129585e-05
     },
     {
-      "ce_loss": 0.00043617747724056244,
+      "ce_loss": 3.8504600524902344e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6300,
       "gradient_accumulation_steps": 8,
@@ -3944,14 +3980,14 @@
       "optimizer_step": 787,
       "samples_seen": 6300,
       "tokens_seen": 4404920,
-      "train_loss": 0.00043617747724056244
+      "train_loss": 3.8504600524902344e-05
     },
     {
-      "ce_loss": 0.07811921834945679,
+      "ce_loss": 4.0630740841152146e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6325,
       "gradient_accumulation_steps": 8,
@@ -3959,14 +3995,14 @@
       "optimizer_step": 790,
       "samples_seen": 6325,
       "tokens_seen": 4422395,
-      "train_loss": 0.07811921834945679
+      "train_loss": 4.0630740841152146e-05
     },
     {
-      "ce_loss": 0.004447676241397858,
+      "ce_loss": 4.1049905121326447e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6350,
       "gradient_accumulation_steps": 8,
@@ -3974,14 +4010,14 @@
       "optimizer_step": 793,
       "samples_seen": 6350,
       "tokens_seen": 4439699,
-      "train_loss": 0.004447676241397858
+      "train_loss": 4.1049905121326447e-05
     },
     {
-      "ce_loss": 0.0011561826104298234,
+      "ce_loss": 3.8151858461787924e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.03346657678484917,
+      "eval_loss": 0.0001434525227523409,
       "event": "log",
       "global_step": 6375,
       "gradient_accumulation_steps": 8,
@@ -3989,15 +4025,15 @@
       "optimizer_step": 796,
       "samples_seen": 6375,
       "tokens_seen": 4457220,
-      "train_loss": 0.0011561826104298234
+      "train_loss": 3.8151858461787924e-05
     },
     {
       "effective_batch_size": 8,
       "eval_batches": 5,
       "eval_examples": 5,
       "eval_full_dataset": true,
-      "eval_loss": 0.03346657678484917,
-      "eval_loss_mean": 0.04376010217238217,
+      "eval_loss": 0.0001434525227523409,
+      "eval_loss_mean": 0.00011974338485742919,
       "global_step": 6400,
       "gradient_accumulation_steps": 8,
       "micro_batch_size": 1,
@@ -4005,14 +4041,14 @@
       "samples_seen": 6400,
       "step": 6400,
       "tokens_seen": 4474880,
-      "train_loss": 0.002797350287437439
+      "train_loss": 3.844127058982849e-05
     },
     {
-      "ce_loss": 0.12552019953727722,
+      "ce_loss": 0.00025667157024145126,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6400,
       "gradient_accumulation_steps": 8,
@@ -4020,14 +4056,14 @@
       "optimizer_step": 800,
       "samples_seen": 6400,
       "tokens_seen": 4474880,
-      "train_loss": 0.002797350287437439
+      "train_loss": 3.844127058982849e-05
     },
     {
-      "ce_loss": 0.12720248103141785,
+      "ce_loss": 3.147207462461665e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6425,
       "gradient_accumulation_steps": 8,
@@ -4035,14 +4071,14 @@
       "optimizer_step": 803,
       "samples_seen": 6425,
       "tokens_seen": 4492632,
-      "train_loss": 0.12720248103141785
+      "train_loss": 3.147207462461665e-05
     },
     {
-      "ce_loss": 0.002068638801574707,
+      "ce_loss": 3.2027961424319074e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6450,
       "gradient_accumulation_steps": 8,
@@ -4050,14 +4086,14 @@
       "optimizer_step": 806,
       "samples_seen": 6450,
       "tokens_seen": 4509895,
-      "train_loss": 0.002068638801574707
+      "train_loss": 3.2027961424319074e-05
     },
     {
-      "ce_loss": 0.09233617782592773,
+      "ce_loss": 3.108238524873741e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6475,
       "gradient_accumulation_steps": 8,
@@ -4065,14 +4101,14 @@
       "optimizer_step": 809,
       "samples_seen": 6475,
       "tokens_seen": 4527330,
-      "train_loss": 0.09233617782592773
+      "train_loss": 3.108238524873741e-05
     },
     {
-      "ce_loss": 0.04772856831550598,
+      "ce_loss": 3.4086406230926514e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6500,
       "gradient_accumulation_steps": 8,
@@ -4080,14 +4116,14 @@
       "optimizer_step": 812,
       "samples_seen": 6500,
       "tokens_seen": 4544936,
-      "train_loss": 0.04772856831550598
+      "train_loss": 3.4086406230926514e-05
     },
     {
-      "ce_loss": 0.0032199490815401077,
+      "ce_loss": 4.174746572971344e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6525,
       "gradient_accumulation_steps": 8,
@@ -4095,14 +4131,14 @@
       "optimizer_step": 815,
       "samples_seen": 6525,
       "tokens_seen": 4562245,
-      "train_loss": 0.0032199490815401077
+      "train_loss": 4.174746572971344e-05
     },
     {
-      "ce_loss": 0.0017373025184497237,
+      "ce_loss": 3.3612250263104215e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6550,
       "gradient_accumulation_steps": 8,
@@ -4110,14 +4146,14 @@
       "optimizer_step": 818,
       "samples_seen": 6550,
       "tokens_seen": 4579654,
-      "train_loss": 0.0017373025184497237
+      "train_loss": 3.3612250263104215e-05
     },
     {
-      "ce_loss": 0.07490071654319763,
+      "ce_loss": 3.810190537478775e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6575,
       "gradient_accumulation_steps": 8,
@@ -4125,14 +4161,14 @@
       "optimizer_step": 821,
       "samples_seen": 6575,
       "tokens_seen": 4597385,
-      "train_loss": 0.07490071654319763
+      "train_loss": 3.810190537478775e-05
     },
     {
-      "ce_loss": 0.07967303693294525,
+      "ce_loss": 3.593869405449368e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6600,
       "gradient_accumulation_steps": 8,
@@ -4140,14 +4176,14 @@
       "optimizer_step": 825,
       "samples_seen": 6600,
       "tokens_seen": 4614720,
-      "train_loss": 0.07967303693294525
+      "train_loss": 3.593869405449368e-05
     },
     {
-      "ce_loss": 0.17808197438716888,
+      "ce_loss": 3.222350278520025e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6625,
       "gradient_accumulation_steps": 8,
@@ -4155,14 +4191,14 @@
       "optimizer_step": 828,
       "samples_seen": 6625,
       "tokens_seen": 4632161,
-      "train_loss": 0.17808197438716888
+      "train_loss": 3.222350278520025e-05
     },
     {
-      "ce_loss": 0.005521326791495085,
+      "ce_loss": 3.8529029552591965e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6650,
       "gradient_accumulation_steps": 8,
@@ -4170,14 +4206,14 @@
       "optimizer_step": 831,
       "samples_seen": 6650,
       "tokens_seen": 4649645,
-      "train_loss": 0.005521326791495085
+      "train_loss": 3.8529029552591965e-05
     },
     {
-      "ce_loss": 0.07729693502187729,
+      "ce_loss": 3.709516749950126e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6675,
       "gradient_accumulation_steps": 8,
@@ -4185,14 +4221,14 @@
       "optimizer_step": 834,
       "samples_seen": 6675,
       "tokens_seen": 4667119,
-      "train_loss": 0.07729693502187729
+      "train_loss": 3.709516749950126e-05
     },
     {
-      "ce_loss": 0.0039807651191949844,
+      "ce_loss": 3.297626972198486e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6700,
       "gradient_accumulation_steps": 8,
@@ -4200,14 +4236,14 @@
       "optimizer_step": 837,
       "samples_seen": 6700,
       "tokens_seen": 4684530,
-      "train_loss": 0.0039807651191949844
+      "train_loss": 3.297626972198486e-05
     },
     {
-      "ce_loss": 0.006688268389552832,
+      "ce_loss": 3.63422223017551e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6725,
       "gradient_accumulation_steps": 8,
@@ -4215,14 +4251,14 @@
       "optimizer_step": 840,
       "samples_seen": 6725,
       "tokens_seen": 4702029,
-      "train_loss": 0.006688268389552832
+      "train_loss": 3.63422223017551e-05
     },
     {
-      "ce_loss": 0.007619982585310936,
+      "ce_loss": 3.4710392355918884e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6750,
       "gradient_accumulation_steps": 8,
@@ -4230,14 +4266,14 @@
       "optimizer_step": 843,
       "samples_seen": 6750,
       "tokens_seen": 4719686,
-      "train_loss": 0.007619982585310936
+      "train_loss": 3.4710392355918884e-05
     },
     {
-      "ce_loss": 0.04954025149345398,
+      "ce_loss": 3.583038778742775e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6775,
       "gradient_accumulation_steps": 8,
@@ -4245,14 +4281,14 @@
       "optimizer_step": 846,
       "samples_seen": 6775,
       "tokens_seen": 4737215,
-      "train_loss": 0.04954025149345398
+      "train_loss": 3.583038778742775e-05
     },
     {
-      "ce_loss": 0.015871314331889153,
+      "ce_loss": 3.84841114282608e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6800,
       "gradient_accumulation_steps": 8,
@@ -4260,14 +4296,14 @@
       "optimizer_step": 850,
       "samples_seen": 6800,
       "tokens_seen": 4754560,
-      "train_loss": 0.015871314331889153
+      "train_loss": 3.84841114282608e-05
     },
     {
-      "ce_loss": 0.038386378437280655,
+      "ce_loss": 3.154195655952208e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6825,
       "gradient_accumulation_steps": 8,
@@ -4275,14 +4311,14 @@
       "optimizer_step": 853,
       "samples_seen": 6825,
       "tokens_seen": 4772156,
-      "train_loss": 0.038386378437280655
+      "train_loss": 3.154195655952208e-05
     },
     {
-      "ce_loss": 0.0107001643627882,
+      "ce_loss": 3.8418613257817924e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6850,
       "gradient_accumulation_steps": 8,
@@ -4290,14 +4326,14 @@
       "optimizer_step": 856,
       "samples_seen": 6850,
       "tokens_seen": 4789439,
-      "train_loss": 0.0107001643627882
+      "train_loss": 3.8418613257817924e-05
     },
     {
-      "ce_loss": 0.01908964291214943,
+      "ce_loss": 3.4595406759763137e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6875,
       "gradient_accumulation_steps": 8,
@@ -4305,14 +4341,14 @@
       "optimizer_step": 859,
       "samples_seen": 6875,
       "tokens_seen": 4806871,
-      "train_loss": 0.01908964291214943
+      "train_loss": 3.4595406759763137e-05
     },
     {
-      "ce_loss": 0.0016637647058814764,
+      "ce_loss": 2.9115677534718998e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6900,
       "gradient_accumulation_steps": 8,
@@ -4320,14 +4356,14 @@
       "optimizer_step": 862,
       "samples_seen": 6900,
       "tokens_seen": 4824516,
-      "train_loss": 0.0016637647058814764
+      "train_loss": 2.9115677534718998e-05
     },
     {
-      "ce_loss": 0.0011923880083486438,
+      "ce_loss": 3.4618573408806697e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6925,
       "gradient_accumulation_steps": 8,
@@ -4335,14 +4371,14 @@
       "optimizer_step": 865,
       "samples_seen": 6925,
       "tokens_seen": 4841910,
-      "train_loss": 0.0011923880083486438
+      "train_loss": 3.4618573408806697e-05
     },
     {
-      "ce_loss": 0.0013061047066003084,
+      "ce_loss": 2.832889549608808e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6950,
       "gradient_accumulation_steps": 8,
@@ -4350,14 +4386,14 @@
       "optimizer_step": 868,
       "samples_seen": 6950,
       "tokens_seen": 4859661,
-      "train_loss": 0.0013061047066003084
+      "train_loss": 2.832889549608808e-05
     },
     {
-      "ce_loss": 0.0012557911686599255,
+      "ce_loss": 3.036141424672678e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 6975,
       "gradient_accumulation_steps": 8,
@@ -4365,14 +4401,14 @@
       "optimizer_step": 871,
       "samples_seen": 6975,
       "tokens_seen": 4876784,
-      "train_loss": 0.0012557911686599255
+      "train_loss": 3.036141424672678e-05
     },
     {
-      "ce_loss": 0.002188971033319831,
+      "ce_loss": 2.887010487029329e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 7000,
       "gradient_accumulation_steps": 8,
@@ -4380,14 +4416,14 @@
       "optimizer_step": 875,
       "samples_seen": 7000,
       "tokens_seen": 4894400,
-      "train_loss": 0.002188971033319831
+      "train_loss": 2.887010487029329e-05
     },
     {
-      "ce_loss": 0.0010377300204709172,
+      "ce_loss": 3.1745843443786725e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 7025,
       "gradient_accumulation_steps": 8,
@@ -4395,14 +4431,14 @@
       "optimizer_step": 878,
       "samples_seen": 7025,
       "tokens_seen": 4911733,
-      "train_loss": 0.0010377300204709172
+      "train_loss": 3.1745843443786725e-05
     },
     {
-      "ce_loss": 0.0010619857348501682,
+      "ce_loss": 3.1682309781899676e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 7050,
       "gradient_accumulation_steps": 8,
@@ -4410,14 +4446,14 @@
       "optimizer_step": 881,
       "samples_seen": 7050,
       "tokens_seen": 4929118,
-      "train_loss": 0.0010619857348501682
+      "train_loss": 3.1682309781899676e-05
     },
     {
-      "ce_loss": 0.03977903723716736,
+      "ce_loss": 3.043043216166552e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 7075,
       "gradient_accumulation_steps": 8,
@@ -4425,14 +4461,14 @@
       "optimizer_step": 884,
       "samples_seen": 7075,
       "tokens_seen": 4946643,
-      "train_loss": 0.03977903723716736
+      "train_loss": 3.043043216166552e-05
     },
     {
-      "ce_loss": 0.06548742949962616,
+      "ce_loss": 2.7067908376920968e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 7100,
       "gradient_accumulation_steps": 8,
@@ -4440,14 +4476,14 @@
       "optimizer_step": 887,
       "samples_seen": 7100,
       "tokens_seen": 4964229,
-      "train_loss": 0.06548742949962616
+      "train_loss": 2.7067908376920968e-05
     },
     {
-      "ce_loss": 0.03505296632647514,
+      "ce_loss": 2.8696060326183215e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 7125,
       "gradient_accumulation_steps": 8,
@@ -4455,14 +4491,14 @@
       "optimizer_step": 890,
       "samples_seen": 7125,
       "tokens_seen": 4981750,
-      "train_loss": 0.03505296632647514
+      "train_loss": 2.8696060326183215e-05
     },
     {
-      "ce_loss": 0.0009096789290197194,
+      "ce_loss": 2.754330671450589e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 7150,
       "gradient_accumulation_steps": 8,
@@ -4470,14 +4506,14 @@
       "optimizer_step": 893,
       "samples_seen": 7150,
       "tokens_seen": 4999411,
-      "train_loss": 0.0009096789290197194
+      "train_loss": 2.754330671450589e-05
     },
     {
-      "ce_loss": 0.0019909609109163284,
+      "ce_loss": 3.3122487366199493e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.04376010217238217,
+      "eval_loss": 0.00011974338485742919,
       "event": "log",
       "global_step": 7175,
       "gradient_accumulation_steps": 8,
@@ -4485,15 +4521,15 @@
       "optimizer_step": 896,
       "samples_seen": 7175,
       "tokens_seen": 5016715,
-      "train_loss": 0.0019909609109163284
+      "train_loss": 3.3122487366199493e-05
     },
     {
       "effective_batch_size": 8,
       "eval_batches": 5,
       "eval_examples": 5,
       "eval_full_dataset": true,
-      "eval_loss": 0.04376010217238217,
-      "eval_loss_mean": 0.01291472438024357,
+      "eval_loss": 0.00011974338485742919,
+      "eval_loss_mean": 0.00010633335041347891,
       "global_step": 7200,
       "gradient_accumulation_steps": 8,
       "micro_batch_size": 1,
@@ -4501,14 +4537,14 @@
       "samples_seen": 7200,
       "step": 7200,
       "tokens_seen": 5034240,
-      "train_loss": 0.0010305708274245262
+      "train_loss": 3.0231662094593048e-05
     },
     {
-      "ce_loss": 0.053873419761657715,
+      "ce_loss": 0.00022156257182359695,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7200,
       "gradient_accumulation_steps": 8,
@@ -4516,14 +4552,14 @@
       "optimizer_step": 900,
       "samples_seen": 7200,
       "tokens_seen": 5034240,
-      "train_loss": 0.0010305708274245262
+      "train_loss": 3.0231662094593048e-05
     },
     {
-      "ce_loss": 0.0015478454297408462,
+      "ce_loss": 2.7395939468988217e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7225,
       "gradient_accumulation_steps": 8,
@@ -4531,14 +4567,14 @@
       "optimizer_step": 903,
       "samples_seen": 7225,
       "tokens_seen": 5051795,
-      "train_loss": 0.0015478454297408462
+      "train_loss": 2.7395939468988217e-05
     },
     {
-      "ce_loss": 0.000386655330657959,
+      "ce_loss": 3.420095890760422e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7250,
       "gradient_accumulation_steps": 8,
@@ -4546,14 +4582,14 @@
       "optimizer_step": 906,
       "samples_seen": 7250,
       "tokens_seen": 5069342,
-      "train_loss": 0.000386655330657959
+      "train_loss": 3.420095890760422e-05
     },
     {
-      "ce_loss": 0.0020372485741972923,
+      "ce_loss": 3.5810284316539764e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7275,
       "gradient_accumulation_steps": 8,
@@ -4561,14 +4597,14 @@
       "optimizer_step": 909,
       "samples_seen": 7275,
       "tokens_seen": 5086696,
-      "train_loss": 0.0020372485741972923
+      "train_loss": 3.5810284316539764e-05
     },
     {
-      "ce_loss": 0.07321856170892715,
+      "ce_loss": 2.9170923880883493e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7300,
       "gradient_accumulation_steps": 8,
@@ -4576,14 +4612,14 @@
       "optimizer_step": 912,
       "samples_seen": 7300,
       "tokens_seen": 5103919,
-      "train_loss": 0.07321856170892715
+      "train_loss": 2.9170923880883493e-05
     },
     {
-      "ce_loss": 0.07278856635093689,
+      "ce_loss": 2.6060795789817348e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7325,
       "gradient_accumulation_steps": 8,
@@ -4591,14 +4627,14 @@
       "optimizer_step": 915,
       "samples_seen": 7325,
       "tokens_seen": 5121725,
-      "train_loss": 0.07278856635093689
+      "train_loss": 2.6060795789817348e-05
     },
     {
-      "ce_loss": 0.0008556938264518976,
+      "ce_loss": 2.630829840200022e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7350,
       "gradient_accumulation_steps": 8,
@@ -4606,14 +4642,14 @@
       "optimizer_step": 918,
       "samples_seen": 7350,
       "tokens_seen": 5139211,
-      "train_loss": 0.0008556938264518976
+      "train_loss": 2.630829840200022e-05
     },
     {
-      "ce_loss": 0.0028941894415766,
+      "ce_loss": 2.629995287861675e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7375,
       "gradient_accumulation_steps": 8,
@@ -4621,14 +4657,14 @@
       "optimizer_step": 921,
       "samples_seen": 7375,
       "tokens_seen": 5156561,
-      "train_loss": 0.0028941894415766
+      "train_loss": 2.629995287861675e-05
     },
     {
-      "ce_loss": 0.0005026459693908691,
+      "ce_loss": 2.7207135644857772e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7400,
       "gradient_accumulation_steps": 8,
@@ -4636,14 +4672,14 @@
       "optimizer_step": 925,
       "samples_seen": 7400,
       "tokens_seen": 5174080,
-      "train_loss": 0.0005026459693908691
+      "train_loss": 2.7207135644857772e-05
     },
     {
-      "ce_loss": 0.1867620050907135,
+      "ce_loss": 2.5841285605565645e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7425,
       "gradient_accumulation_steps": 8,
@@ -4651,14 +4687,14 @@
       "optimizer_step": 928,
       "samples_seen": 7425,
       "tokens_seen": 5191702,
-      "train_loss": 0.1867620050907135
+      "train_loss": 2.5841285605565645e-05
     },
     {
-      "ce_loss": 0.018490225076675415,
+      "ce_loss": 3.249397923354991e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7450,
       "gradient_accumulation_steps": 8,
@@ -4666,14 +4702,14 @@
       "optimizer_step": 931,
       "samples_seen": 7450,
       "tokens_seen": 5209230,
-      "train_loss": 0.018490225076675415
+      "train_loss": 3.249397923354991e-05
     },
     {
-      "ce_loss": 0.0011174753308296204,
+      "ce_loss": 3.034435212612152e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7475,
       "gradient_accumulation_steps": 8,
@@ -4681,14 +4717,14 @@
       "optimizer_step": 934,
       "samples_seen": 7475,
       "tokens_seen": 5226811,
-      "train_loss": 0.0011174753308296204
+      "train_loss": 3.034435212612152e-05
     },
     {
-      "ce_loss": 0.0010447651147842407,
+      "ce_loss": 2.8843991458415985e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7500,
       "gradient_accumulation_steps": 8,
@@ -4696,14 +4732,14 @@
       "optimizer_step": 937,
       "samples_seen": 7500,
       "tokens_seen": 5243810,
-      "train_loss": 0.0010447651147842407
+      "train_loss": 2.8843991458415985e-05
     },
     {
-      "ce_loss": 0.0007132254540920258,
+      "ce_loss": 3.076251596212387e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7525,
       "gradient_accumulation_steps": 8,
@@ -4711,14 +4747,14 @@
       "optimizer_step": 940,
       "samples_seen": 7525,
       "tokens_seen": 5261469,
-      "train_loss": 0.0007132254540920258
+      "train_loss": 3.076251596212387e-05
     },
     {
-      "ce_loss": 0.00023895502090454102,
+      "ce_loss": 2.6950836399919353e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7550,
       "gradient_accumulation_steps": 8,
@@ -4726,14 +4762,14 @@
       "optimizer_step": 943,
       "samples_seen": 7550,
       "tokens_seen": 5279040,
-      "train_loss": 0.00023895502090454102
+      "train_loss": 2.6950836399919353e-05
     },
     {
-      "ce_loss": 0.06225234642624855,
+      "ce_loss": 3.1714032957097515e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7575,
       "gradient_accumulation_steps": 8,
@@ -4741,14 +4777,14 @@
       "optimizer_step": 946,
       "samples_seen": 7575,
       "tokens_seen": 5296351,
-      "train_loss": 0.06225234642624855
+      "train_loss": 3.1714032957097515e-05
     },
     {
-      "ce_loss": 0.00024717807536944747,
+      "ce_loss": 2.5525092496536672e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7600,
       "gradient_accumulation_steps": 8,
@@ -4756,14 +4792,14 @@
       "optimizer_step": 950,
       "samples_seen": 7600,
       "tokens_seen": 5313920,
-      "train_loss": 0.00024717807536944747
+      "train_loss": 2.5525092496536672e-05
     },
     {
-      "ce_loss": 0.001742712571285665,
+      "ce_loss": 3.055682827834971e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7625,
       "gradient_accumulation_steps": 8,
@@ -4771,14 +4807,14 @@
       "optimizer_step": 953,
       "samples_seen": 7625,
       "tokens_seen": 5331481,
-      "train_loss": 0.001742712571285665
+      "train_loss": 3.055682827834971e-05
     },
     {
-      "ce_loss": 0.0015916824340820312,
+      "ce_loss": 2.8583921448444016e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7650,
       "gradient_accumulation_steps": 8,
@@ -4786,14 +4822,14 @@
       "optimizer_step": 956,
       "samples_seen": 7650,
       "tokens_seen": 5348785,
-      "train_loss": 0.0015916824340820312
+      "train_loss": 2.8583921448444016e-05
     },
     {
-      "ce_loss": 0.0018556835129857063,
+      "ce_loss": 2.9295682907104492e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7675,
       "gradient_accumulation_steps": 8,
@@ -4801,14 +4837,14 @@
       "optimizer_step": 959,
       "samples_seen": 7675,
       "tokens_seen": 5366265,
-      "train_loss": 0.0018556835129857063
+      "train_loss": 2.9295682907104492e-05
     },
     {
-      "ce_loss": 0.0014306354569271207,
+      "ce_loss": 2.6057958166347817e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7700,
       "gradient_accumulation_steps": 8,
@@ -4816,14 +4852,14 @@
       "optimizer_step": 962,
       "samples_seen": 7700,
       "tokens_seen": 5383799,
-      "train_loss": 0.0014306354569271207
+      "train_loss": 2.6057958166347817e-05
     },
     {
-      "ce_loss": 0.04241637885570526,
+      "ce_loss": 3.011617809534073e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7725,
       "gradient_accumulation_steps": 8,
@@ -4831,14 +4867,14 @@
       "optimizer_step": 965,
       "samples_seen": 7725,
       "tokens_seen": 5401224,
-      "train_loss": 0.04241637885570526
+      "train_loss": 3.011617809534073e-05
     },
     {
-      "ce_loss": 0.04928277060389519,
+      "ce_loss": 3.055373235838488e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7750,
       "gradient_accumulation_steps": 8,
@@ -4846,14 +4882,14 @@
       "optimizer_step": 968,
       "samples_seen": 7750,
       "tokens_seen": 5419036,
-      "train_loss": 0.04928277060389519
+      "train_loss": 3.055373235838488e-05
     },
     {
-      "ce_loss": 0.0618974007666111,
+      "ce_loss": 2.7524307370185852e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7775,
       "gradient_accumulation_steps": 8,
@@ -4861,14 +4897,14 @@
       "optimizer_step": 971,
       "samples_seen": 7775,
       "tokens_seen": 5436310,
-      "train_loss": 0.0618974007666111
+      "train_loss": 2.7524307370185852e-05
     },
     {
-      "ce_loss": 0.0010910092387348413,
+      "ce_loss": 3.256270065321587e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7800,
       "gradient_accumulation_steps": 8,
@@ -4876,14 +4912,14 @@
       "optimizer_step": 975,
       "samples_seen": 7800,
       "tokens_seen": 5453760,
-      "train_loss": 0.0010910092387348413
+      "train_loss": 3.256270065321587e-05
     },
     {
-      "ce_loss": 0.0008169330540113151,
+      "ce_loss": 2.4631106498418376e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7825,
       "gradient_accumulation_steps": 8,
@@ -4891,14 +4927,14 @@
       "optimizer_step": 978,
       "samples_seen": 7825,
       "tokens_seen": 5471516,
-      "train_loss": 0.0008169330540113151
+      "train_loss": 2.4631106498418376e-05
     },
     {
-      "ce_loss": 0.0065241288393735886,
+      "ce_loss": 2.531051723053679e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7850,
       "gradient_accumulation_steps": 8,
@@ -4906,14 +4942,14 @@
       "optimizer_step": 981,
       "samples_seen": 7850,
       "tokens_seen": 5488660,
-      "train_loss": 0.0065241288393735886
+      "train_loss": 2.531051723053679e-05
     },
     {
-      "ce_loss": 0.0035508442670106888,
+      "ce_loss": 2.5746739993337542e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7875,
       "gradient_accumulation_steps": 8,
@@ -4921,14 +4957,14 @@
       "optimizer_step": 984,
       "samples_seen": 7875,
       "tokens_seen": 5506241,
-      "train_loss": 0.0035508442670106888
+      "train_loss": 2.5746739993337542e-05
     },
     {
-      "ce_loss": 0.0009055614355020225,
+      "ce_loss": 2.4428860342595726e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7900,
       "gradient_accumulation_steps": 8,
@@ -4936,14 +4972,14 @@
       "optimizer_step": 987,
       "samples_seen": 7900,
       "tokens_seen": 5523426,
-      "train_loss": 0.0009055614355020225
+      "train_loss": 2.4428860342595726e-05
     },
     {
-      "ce_loss": 0.002864066744223237,
+      "ce_loss": 2.9388022085186094e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7925,
       "gradient_accumulation_steps": 8,
@@ -4951,14 +4987,14 @@
       "optimizer_step": 990,
       "samples_seen": 7925,
       "tokens_seen": 5541120,
-      "train_loss": 0.002864066744223237
+      "train_loss": 2.9388022085186094e-05
     },
     {
-      "ce_loss": 0.004772727377712727,
+      "ce_loss": 2.9335729777812958e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7950,
       "gradient_accumulation_steps": 8,
@@ -4966,14 +5002,14 @@
       "optimizer_step": 993,
       "samples_seen": 7950,
       "tokens_seen": 5558503,
-      "train_loss": 0.004772727377712727
+      "train_loss": 2.9335729777812958e-05
     },
     {
-      "ce_loss": 0.017864534631371498,
+      "ce_loss": 2.8379079594742507e-05,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.01291472438024357,
+      "eval_loss": 0.00010633335041347891,
       "event": "log",
       "global_step": 7975,
       "gradient_accumulation_steps": 8,
@@ -4981,15 +5017,15 @@
       "optimizer_step": 996,
       "samples_seen": 7975,
       "tokens_seen": 5576075,
-      "train_loss": 0.017864534631371498
+      "train_loss": 2.8379079594742507e-05
     },
     {
       "effective_batch_size": 8,
       "eval_batches": 5,
       "eval_examples": 5,
       "eval_full_dataset": true,
-      "eval_loss": 0.01291472438024357,
-      "eval_loss_mean": 0.044044743198901413,
+      "eval_loss": 0.00010633335041347891,
+      "eval_loss_mean": 9.042929959832691e-05,
       "global_step": 8000,
       "gradient_accumulation_steps": 8,
       "micro_batch_size": 1,
@@ -4997,14 +5033,14 @@
       "samples_seen": 8000,
       "step": 8000,
       "tokens_seen": 5593600,
-      "train_loss": 0.019528690725564957
+      "train_loss": 2.544008384575136e-05
     },
     {
-      "ce_loss": 0.17766058444976807,
+      "ce_loss": 0.00018876977264881134,
       "distillation_enabled": false,
       "distillation_loss": null,
       "effective_batch_size": 8,
-      "eval_loss": 0.044044743198901413,
+      "eval_loss": 9.042929959832691e-05,
       "event": "log",
       "global_step": 8000,
       "gradient_accumulation_steps": 8,
@@ -5012,7 +5048,7 @@
       "optimizer_step": 1000,
       "samples_seen": 8000,
       "tokens_seen": 5593600,
-      "train_loss": 0.019528690725564957
+      "train_loss": 2.544008384575136e-05
     }
   ],
   "optimizer_step": 1000,

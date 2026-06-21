@@ -78,13 +78,12 @@ These reports do not prove MoP superiority. The measured result is more careful:
   result: seeded epoch reshuffling, full eval loss, best-checkpoint generation,
   bug-category-balanced samples, per-category failures, raw/XML ground-truth
   controls, and prompt/target truncation statistics.
-- The first Goal 50 run passed every protocol/control check but failed the
-  learning gate: train and held-out XML completion, syntax, verifier, and exact
-  match were all `0%` despite `0.0129` best eval loss. This points to a
-  teacher-forced-loss/autoregressive-generation mismatch, not a broken verifier.
-- The audit then found that generation inserted EOS after the prompt while
-  training did not. That prompt-boundary mismatch is fixed and regression
-  tested; the learning gate must be rerun before the full comparison.
+- The initial Goal 50 run passed every protocol/control check but failed all
+  generation-quality gates because generation inserted EOS after the prompt
+  while training did not.
+- After that boundary fix, the rerun reached `100%` train and held-out XML
+  completion, syntax, verifier, and exact match, with `0.0000904` best eval
+  loss. The memorization gate now passes and Phase C is allowed.
 - The framework can measure the tradeoff and preserve the evidence.
 
 ## Current Implementation Focus
@@ -109,12 +108,10 @@ The current code adds the pieces needed for a more serious next comparison:
 - internal routed low-rank deltas,
 - comparison and acceptance-gate reports.
 
-The next run should diagnose the failed Goal 50 memorization gate. Do not scale
-to 1B or run the full comparison until train generation passes the XML, syntax,
-verifier, and exact-match thresholds. The immediate evidence is that low
-teacher-forced loss did not translate into valid autoregressive output framing.
-The generation EOS-boundary fix is now the next measured rerun, not permission
-to bypass the failed gate.
+The next run is the full Goal 50 100M comparison. The memorization gate now
+passes, but 1B remains blocked until the full comparison demonstrates nonzero
+held-out verifier/exact-match quality and retains the measured cached-training
+efficiency advantage.
 
 The Goal 49 Colab notebook automates that comparison and creates a downloadable
 lightweight report. For cached profiles, full-model generation happens after

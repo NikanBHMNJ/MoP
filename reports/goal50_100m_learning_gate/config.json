@@ -10,7 +10,7 @@
   "compile_model": false,
   "corpus_path": null,
   "d_model": 768,
-  "dataset_ref": "goal50_100m_learning_gate@20260621T185702Z-coding-bugfix-efficiency-0244a8ef",
+  "dataset_ref": "goal50_100m_learning_gate@20260621T192035Z-coding-bugfix-efficiency-18e3d008",
   "dataset_split": null,
   "dataset_split_id": "split-seed42-train80-eval10-test10-by-bug-type",
   "deterministic": false,

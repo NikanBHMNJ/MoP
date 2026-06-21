@@ -434,8 +434,17 @@ Post-report root cause and fix:
 - greedy generation incorrectly began from `BOS + prompt + EOS`,
 - generation now begins from `BOS + prompt`, matching the trained target
   boundary,
-- the failed report remains valid pre-fix evidence and the learning gate must be
-  rerun before Phase C is allowed.
+- the failed report remains available in Git history as pre-fix evidence.
+
+Measured corrected rerun outcome:
+
+- all protocol and ground-truth controls passed again,
+- train and held-out XML completion, syntax, verifier, and exact match reached
+  `100%`,
+- best eval loss reached `0.0000904`,
+- the memorization gate now passes and Phase C is allowed,
+- 1B remains blocked until the full 100M comparison passes its quality and
+  efficiency gates.
 
 #### Phase C - Full 100M Quality Comparison
 
