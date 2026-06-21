@@ -106,7 +106,8 @@ gated on its quality and efficiency evidence.
 
 After a passing gate, use
 `notebooks/colab_l4_goal50_100m_quality_comparison.ipynb` for the full 100M
-comparison. Configure `TARGET_EVAL_LOSS` before running it. The notebook uses
+comparison. Its shared target is predeclared as `TARGET_EVAL_LOSS=0.85`, based
+on the Goal 49 Dense best loss of `0.8022`. The notebook uses
 2,000 optimizer updates per enabled profile, 10,000 balanced verified lessons,
 full held-out loss, a five-category stratified generation subset, and an
 `acceptance_gates.json` claim boundary.

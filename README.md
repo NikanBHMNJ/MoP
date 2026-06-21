@@ -219,7 +219,8 @@ After that gate passes, run
 100M Dense, full-MoP, warm sparse, cached adapter, and cached tail-LoRA profiles
 on 10,000 balanced verified lessons for 2,000 optimizer updates each. It writes
 `acceptance_gates.json` and refuses to start without a passing memorization gate
-and a preconfigured shared target eval loss.
+and a preconfigured shared target eval loss. The committed target is `0.85`,
+declared before all runs from the Goal 49 Dense `0.8022` baseline evidence.
 
 ## Quickstart
 

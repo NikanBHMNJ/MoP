@@ -30,7 +30,7 @@ cells[1]["source"] = lines(
 
 First run `colab_l4_goal50_100m_learning_gate.ipynb`. Keep its passing `learning_gate.json` available in the same Colab session or upload it when prompted below.
 
-Set `TARGET_EVAL_LOSS` from a completed baseline calibration before training. The notebook refuses to run without this shared target because baseline time-to-target cannot be reconstructed afterward.
+The shared `TARGET_EVAL_LOSS=0.85` is predeclared from the Goal 49 Dense best eval loss (`0.8022`) with a small relaxation. Every profile receives it before training, so baseline and sparse time-to-target remain comparable.
 """
 )
 cells[2]["source"] = lines(
@@ -56,8 +56,9 @@ TRAIN_SHUFFLE_SEED = 42
 QUALITY_FORMAT = "fixed_code_xml"
 ADAPTER_BOTTLENECK = 128
 
-# Required: set this from a prior Dense/MoP Full baseline calibration.
-TARGET_EVAL_LOSS = None
+# Predeclared before all runs from Goal 49 Dense best eval loss (0.8022).
+TARGET_EVAL_LOSS = 0.85
+TARGET_EVAL_LOSS_SOURCE = "predeclared_goal49_dense_best_eval_0.8022_relaxed_to_0.85"
 TARGET_EVAL_LOSS_WAS_CONFIGURED = TARGET_EVAL_LOSS is not None
 
 CACHE_TEACHER_TOP_K = 16
@@ -111,7 +112,7 @@ if REQUIRE_MEMORIZATION_GATE:
 
 if TARGET_EVAL_LOSS is None:
     raise ValueError(
-        "Set TARGET_EVAL_LOSS from a completed baseline calibration before training."
+        "Keep TARGET_EVAL_LOSS configured before training any comparison profile."
     )
 """
 cells[5]["source"] = lines(setup_source)
@@ -165,7 +166,8 @@ config_source = config_source.replace(
     '            "train_shuffle_seed": TRAIN_SHUFFLE_SEED,\n'
     '            "optimizer_updates_requested": OPTIMIZER_UPDATES,\n'
     '            "microsteps_requested": MAX_STEPS,\n'
-    '            "eval_full_dataset": True,\n',
+    '            "eval_full_dataset": True,\n'
+    '            "target_eval_loss_source": TARGET_EVAL_LOSS_SOURCE,\n',
 )
 config_source = config_source.replace(
     '"dense", "configs/jobs/100m_dense_extended_efficiency.json", include_target=False',
@@ -211,6 +213,7 @@ report_source = report_source.replace(
 report_source = report_source.replace(
     '        "target_was_auto_derived": not TARGET_EVAL_LOSS_WAS_CONFIGURED,\n',
     '        "target_was_auto_derived": False,\n'
+    '        "target_eval_loss_source": TARGET_EVAL_LOSS_SOURCE,\n'
     '        "optimizer_updates": OPTIMIZER_UPDATES,\n'
     '        "microsteps": MAX_STEPS,\n'
     '        "gradient_accumulation_steps": GRADIENT_ACCUMULATION_STEPS,\n'
@@ -308,7 +311,7 @@ summary_source = summary_source.replace(
 )
 summary_source = summary_source.replace(
     "- Quantization: none\n",
-    "- Quantization: none\n- Optimizer updates per profile: `{OPTIMIZER_UPDATES}`\n- Full held-out loss evaluation: `True`\n- Generation subset: `{GENERATION_EVAL_EXAMPLES}`, stratified across five bug types\n- Acceptance gates: `{'PASS' if acceptance['passed'] else 'FAIL'}`\n",
+    "- Quantization: none\n- Target source: `{TARGET_EVAL_LOSS_SOURCE}`\n- Optimizer updates per profile: `{OPTIMIZER_UPDATES}`\n- Full held-out loss evaluation: `True`\n- Generation subset: `{GENERATION_EVAL_EXAMPLES}`, stratified across five bug types\n- Acceptance gates: `{'PASS' if acceptance['passed'] else 'FAIL'}`\n",
 )
 summary_source = summary_source.replace(
     "Each `runs/<profile>/generation_eval.json` contains generated samples and verifier outcomes.",
