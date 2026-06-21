@@ -1,0 +1,206 @@
+{
+  "files": [
+    {
+      "bytes": 2042,
+      "path": "README.md",
+      "sha256": "dbef3d8f111867d31b32139380dd7302f41a18424f10f86462a31f8e1e8dacbc"
+    },
+    {
+      "bytes": 3351,
+      "path": "comparison.csv",
+      "sha256": "5da2c7d7a4d999ae6c9919a690f49c56132fdad61a0c71a07efb55bea55eb36c"
+    },
+    {
+      "bytes": 10641,
+      "path": "comparison.json",
+      "sha256": "6711cdfb0652f5e5e752b3e8d76f24f104a108a22dfe4d110a1dc2a3739344f4"
+    },
+    {
+      "bytes": 682,
+      "path": "experiment_settings.json",
+      "sha256": "5a9e0df77c9344c998b8bf3dbb005b9d936b9a2a3a6375c6ba544070ebfa0530"
+    },
+    {
+      "bytes": 1873,
+      "path": "run_manifest.json",
+      "sha256": "77861dbf28e9449b4a096119839b5b926389b868926110f2837c4469aadca76b"
+    },
+    {
+      "bytes": 4075,
+      "path": "runs/cached_warm_adapter_norm_head_128/config.json",
+      "sha256": "b889271907c574f59ead34ced2e43bc58d3d49dd1a5c6318197fb0878e79c788"
+    },
+    {
+      "bytes": 27895,
+      "path": "runs/cached_warm_adapter_norm_head_128/generation_eval.json",
+      "sha256": "b3fb9e87e08fc547736dd2656f1d408e1d19283cd776f561ef5a501ad6c64fce"
+    },
+    {
+      "bytes": 59394,
+      "path": "runs/cached_warm_adapter_norm_head_128/gpu_training_result.json",
+      "sha256": "275d2cfee28249f8004f4df7fc6b2d93c59753869fc20ff44dcea5b5030c791e"
+    },
+    {
+      "bytes": 568,
+      "path": "runs/cached_warm_adapter_norm_head_128/memory_estimate.json",
+      "sha256": "f83263a49711756ae25158f2e25a253516f8f4f5a51f49856c725326b63db562"
+    },
+    {
+      "bytes": 13457,
+      "path": "runs/cached_warm_adapter_norm_head_128/metrics.json",
+      "sha256": "3c561e5e372d022f67a4cb68429362b4f092748b66df4f780caa951aaf744d87"
+    },
+    {
+      "bytes": 616,
+      "path": "runs/cached_warm_adapter_norm_head_128/runtime.json",
+      "sha256": "4d1f371b89df89c6d8663afb0a79675103708dc4630a11d2fdc4b8f53da22b93"
+    },
+    {
+      "bytes": 35987,
+      "path": "runs/cached_warm_adapter_norm_head_128/state.json",
+      "sha256": "75d0351199ed8755ae9ca55d596e688e806a7fdedfa7758dd7aa4a4844dafcc9"
+    },
+    {
+      "bytes": 4039,
+      "path": "runs/cached_warm_lora_rank8/config.json",
+      "sha256": "dd0f01f803e105c9debbe5023431ce956ad8c13943fdee3598e6f88311c965ba"
+    },
+    {
+      "bytes": 27879,
+      "path": "runs/cached_warm_lora_rank8/generation_eval.json",
+      "sha256": "fd1d0cafed46eae81a36bc96f3719225797466bbf44d5ede3e46e206a21526ea"
+    },
+    {
+      "bytes": 59732,
+      "path": "runs/cached_warm_lora_rank8/gpu_training_result.json",
+      "sha256": "16abf5d1d275eba81547d14b39e281cdeb0054bfdcbc850296c8f3ed8af75dbb"
+    },
+    {
+      "bytes": 568,
+      "path": "runs/cached_warm_lora_rank8/memory_estimate.json",
+      "sha256": "a6b78a79f9a1a24aaab9da7f0b9b20c0f716cd90b055ab99d184ad4c971ffe7a"
+    },
+    {
+      "bytes": 13930,
+      "path": "runs/cached_warm_lora_rank8/metrics.json",
+      "sha256": "be149b3247928ea31e3ae7dc437b2cb295aeb47cf364bb44deb6df7046b316cf"
+    },
+    {
+      "bytes": 616,
+      "path": "runs/cached_warm_lora_rank8/runtime.json",
+      "sha256": "4d1f371b89df89c6d8663afb0a79675103708dc4630a11d2fdc4b8f53da22b93"
+    },
+    {
+      "bytes": 35948,
+      "path": "runs/cached_warm_lora_rank8/state.json",
+      "sha256": "1de64a381cf7ee24ae176eaa2510572645aeb2d61df129a209d243849d00dd36"
+    },
+    {
+      "bytes": 3406,
+      "path": "runs/dense/config.json",
+      "sha256": "fa99a4e6fbce608367d1d678298e3212d3d6ae2410af0fda3913a28e879b6efd"
+    },
+    {
+      "bytes": 20491,
+      "path": "runs/dense/generation_eval.json",
+      "sha256": "fe43dac9886ba6f6613bf3a594061fc214432748fb8e890d331086e0af6e7c47"
+    },
+    {
+      "bytes": 52561,
+      "path": "runs/dense/gpu_training_result.json",
+      "sha256": "d2a83d0daf1137c81ff516bfd3e5cd613cee49a3dc4582635077704769961fd5"
+    },
+    {
+      "bytes": 569,
+      "path": "runs/dense/memory_estimate.json",
+      "sha256": "8dd391ce38911cd31f20eaca938c1cf782bf58db8f2ce132607b8aac1c486920"
+    },
+    {
+      "bytes": 9197,
+      "path": "runs/dense/metrics.json",
+      "sha256": "cf4bf55f6067f6d0031d47cae66d573d6f2c1c7ded34231909b2533168338e59"
+    },
+    {
+      "bytes": 616,
+      "path": "runs/dense/runtime.json",
+      "sha256": "4d1f371b89df89c6d8663afb0a79675103708dc4630a11d2fdc4b8f53da22b93"
+    },
+    {
+      "bytes": 34665,
+      "path": "runs/dense/state.json",
+      "sha256": "112b701366125ab13937f9053063108ab0f8ddad62de9e795eca5845a21ade2c"
+    },
+    {
+      "bytes": 3576,
+      "path": "runs/mop_full/config.json",
+      "sha256": "164c94aedb40da6eae07ee887ff552206c15ae453806cbc38d18ae50a1a0f71d"
+    },
+    {
+      "bytes": 28479,
+      "path": "runs/mop_full/generation_eval.json",
+      "sha256": "217e3cbc35c5476ff2f8a85df2a29126ab398c9e5cb7f18f0b05f4f6a6c7e47e"
+    },
+    {
+      "bytes": 55588,
+      "path": "runs/mop_full/gpu_training_result.json",
+      "sha256": "8fb27e4066a6734230c66566757648b7f52a532c8efb086046aaf1c804e9e801"
+    },
+    {
+      "bytes": 569,
+      "path": "runs/mop_full/memory_estimate.json",
+      "sha256": "8dd391ce38911cd31f20eaca938c1cf782bf58db8f2ce132607b8aac1c486920"
+    },
+    {
+      "bytes": 11817,
+      "path": "runs/mop_full/metrics.json",
+      "sha256": "cd757a0e497d3b539879caf4d457b11e7256cb12f294ec44d80fc1cf1ac72055"
+    },
+    {
+      "bytes": 616,
+      "path": "runs/mop_full/runtime.json",
+      "sha256": "4d1f371b89df89c6d8663afb0a79675103708dc4630a11d2fdc4b8f53da22b93"
+    },
+    {
+      "bytes": 34690,
+      "path": "runs/mop_full/state.json",
+      "sha256": "831771812c75a5307127eb8061c952196cc6c8ac32b4a9b8c9338779d5486135"
+    },
+    {
+      "bytes": 3949,
+      "path": "runs/warm_adapter_norm_head_128/config.json",
+      "sha256": "87818b1f2490bf34ca83feb05053ce57104bcc94fd63a17a18f086d7ff067718"
+    },
+    {
+      "bytes": 13835,
+      "path": "runs/warm_adapter_norm_head_128/generation_eval.json",
+      "sha256": "1b9fad4b912b3399da77f446cde9e67fe92a4e2bd7b7068622c3f121102dd034"
+    },
+    {
+      "bytes": 57740,
+      "path": "runs/warm_adapter_norm_head_128/gpu_training_result.json",
+      "sha256": "daa8b0bd4232f4e0529c200ceb8decd37d426d47198e8b322d80eb3bece61767"
+    },
+    {
+      "bytes": 568,
+      "path": "runs/warm_adapter_norm_head_128/memory_estimate.json",
+      "sha256": "f83263a49711756ae25158f2e25a253516f8f4f5a51f49856c725326b63db562"
+    },
+    {
+      "bytes": 12445,
+      "path": "runs/warm_adapter_norm_head_128/metrics.json",
+      "sha256": "06cdb123be4914fd09422610c92639fd7cff67faf405f2f3a4977c65e3801d97"
+    },
+    {
+      "bytes": 616,
+      "path": "runs/warm_adapter_norm_head_128/runtime.json",
+      "sha256": "4d1f371b89df89c6d8663afb0a79675103708dc4630a11d2fdc4b8f53da22b93"
+    },
+    {
+      "bytes": 35573,
+      "path": "runs/warm_adapter_norm_head_128/state.json",
+      "sha256": "222a228c58907846e9dca7b8bdce5c4bd7e060a56aa69356996c4794d7a0c868"
+    }
+  ],
+  "forbidden_model_files_detected": false,
+  "report_id": "goal49_verified_code_quality_efficiency"
+}

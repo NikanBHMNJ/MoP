@@ -1,0 +1,470 @@
+{
+  "measurement_scope": "post_training_quality_eval",
+  "results": [
+    {
+      "candidate_code": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "lesson_id": "coding-debugging-missing-return-003",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "lesson_id": "coding-debugging-missing-return-011",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "lesson_id": "coding-debugging-missing-return-048",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "lesson_id": "coding-debugging-missing-return-057",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "lesson_id": "coding-debugging-missing-return-065",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "lesson_id": "coding-debugging-missing-return-067",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "lesson_id": "coding-debugging-missing-return-073",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "/f  n n   1\n<fal_val_ctodetoral_1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</ 1\n      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "lesson_id": "coding-debugging-missing-return-093",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>\n",
+      "lesson_id": "coding-debugging-missing-return-112",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>\n",
+      "lesson_id": "coding-debugging-missing-return-117",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>\n",
+      "lesson_id": "coding-debugging-missing-return-141",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>\n",
+      "lesson_id": "coding-debugging-missing-return-146",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>\n",
+      "lesson_id": "coding-debugging-missing-return-156",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>\n",
+      "lesson_id": "coding-debugging-missing-return-161",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>\n",
+      "lesson_id": "coding-debugging-missing-return-167",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "f  n n   1\n<forn     n    n n  1\n    n 1\n<f  n   n fin  n  1\n       n)\n n     1ettue>n n       return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n 1\n</_l_ctuetue>\n n    n n n n 1\nd_cture>ed_ctured_ctue>\n",
+      "lesson_id": "coding-debugging-missing-return-175",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "runtime_error",
+      "generated_text": "  return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "lesson_id": "coding-debugging-off-by-one-016",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "runtime_error",
+      "generated_text": "  return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "lesson_id": "coding-debugging-off-by-one-017",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "runtime_error",
+      "generated_text": "  return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "lesson_id": "coding-debugging-off-by-one-024",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "runtime_error",
+      "generated_text": "  return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "lesson_id": "coding-debugging-off-by-one-034",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "runtime_error",
+      "generated_text": "  return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "lesson_id": "coding-debugging-off-by-one-052",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "runtime_error",
+      "generated_text": "  return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "lesson_id": "coding-debugging-off-by-one-057",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "runtime_error",
+      "generated_text": "  return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "lesson_id": "coding-debugging-off-by-one-069",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "runtime_error",
+      "generated_text": "  return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "lesson_id": "coding-debugging-off-by-one-071",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "runtime_error",
+      "generated_text": "  return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "lesson_id": "coding-debugging-off-by-one-073",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "runtime_error",
+      "generated_text": "  return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "lesson_id": "coding-debugging-off-by-one-074",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "runtime_error",
+      "generated_text": "  return 1\n       1\n<//f  n ctorial_value_(n n n 1)\n</f      n 1\nrn n   n 1\n</fin      1\n<fixetuct\n n n  n       1\n n   n n n      n n n  n 1\n    n 1etued_ctod_val_(n  1\n<fixed_(n n  1\n  n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n</fifixetuetode>",
+      "lesson_id": "coding-debugging-off-by-one-076",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "n n 19(mue>\n<fin 1\n<//f  n ctorial_value_(n n n 1)\n</f      n n  1\n n  n 1\n</fin      n n n n  n n n n  n     1n 1\n   1\n 1\n<f   n n n n  1e>\n    n 1etued_ctorede>\nd_ctue>etued_ctored_(n n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n 1\nd_ctueturetue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "n n 19(mue>\n<fin 1\n<//f  n ctorial_value_(n n n 1)\n</f      n n  1\n n  n 1\n</fin      n n n n  n n n n  n     1n 1\n   1\n 1\n<f   n n n n  1e>\n    n 1etued_ctorede>\nd_ctue>etued_ctored_(n n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n 1\nd_ctueturetue>",
+      "lesson_id": "coding-debugging-off-by-one-122",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "n n 19(mue>\n<fin 1\n<//f  n ctorial_value_(n n n 1)\n</f      n n  1\n n  n 1\n</fin      n n n n  n n n n  n     1n 1\n   1\n 1\n<f   n n n n  1e>\n    n 1etued_ctorede>\nd_ctue>etued_ctored_(n n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n 1\nd_ctueturetue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "n n 19(mue>\n<fin 1\n<//f  n ctorial_value_(n n n 1)\n</f      n n  1\n n  n 1\n</fin      n n n n  n n n n  n     1n 1\n   1\n 1\n<f   n n n n  1e>\n    n 1etued_ctorede>\nd_ctue>etued_ctored_(n n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n 1\nd_ctueturetue>",
+      "lesson_id": "coding-debugging-off-by-one-123",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "n n 19(mue>\n<fin 1\n<//f  n ctorial_value_(n n n 1)\n</f      n n  1\n n  n 1\n</fin      n n n n  n n n n  n     1n 1\n   1\n 1\n<f   n n n n  1e>\n    n 1etued_ctorede>\nd_ctue>etued_ctored_(n n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n 1\nd_ctueturetue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "n n 19(mue>\n<fin 1\n<//f  n ctorial_value_(n n n 1)\n</f      n n  1\n n  n 1\n</fin      n n n n  n n n n  n     1n 1\n   1\n 1\n<f   n n n n  1e>\n    n 1etued_ctorede>\nd_ctue>etued_ctored_(n n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n 1\nd_ctueturetue>",
+      "lesson_id": "coding-debugging-off-by-one-132",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "n n 19(mue>\n<fin 1\n<//f  n ctorial_value_(n n n 1)\n</f      n n  1\n n  n 1\n</fin      n n n n  n n n n  n     1n 1\n   1\n 1\n<f   n n n n  1e>\n    n 1etued_ctorede>\nd_ctue>etued_ctored_(n n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n 1\nd_ctueturetue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "n n 19(mue>\n<fin 1\n<//f  n ctorial_value_(n n n 1)\n</f      n n  1\n n  n 1\n</fin      n n n n  n n n n  n     1n 1\n   1\n 1\n<f   n n n n  1e>\n    n 1etued_ctorede>\nd_ctue>etued_ctored_(n n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n 1\nd_ctueturetue>",
+      "lesson_id": "coding-debugging-off-by-one-188",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    },
+    {
+      "candidate_code": "n n 19(mue>\n<fin 1\n<//f  n ctorial_value_(n n n 1)\n</f      n n  1\n n  n 1\n</fin      n n n n  n n n n  n     1n 1\n   1\n 1\n<f   n n n n  1e>\n    n 1etued_ctorede>\nd_ctue>etued_ctored_(n n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n 1\nd_ctueturetue>",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "generated_text": "n n 19(mue>\n<fin 1\n<//f  n ctorial_value_(n n n 1)\n</f      n n  1\n n  n 1\n</fin      n n n n  n n n n  n     1n 1\n   1\n 1\n<f   n n n n  1e>\n    n 1etued_ctorede>\nd_ctue>etued_ctored_(n n n  n n 1\n</fixed_ctod_ctuede>\n</fixed_ctue>e_ctue>\n 1\nd_ctueturetue>",
+      "lesson_id": "coding-debugging-off-by-one-190",
+      "passed": false,
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false
+    }
+  ],
+  "summary": {
+    "gen_compile_pass_count": 11,
+    "gen_compile_pass_rate": 0.34375,
+    "gen_eval_examples": 32,
+    "gen_exact_match_count": 0,
+    "gen_exact_match_rate": 0.0,
+    "gen_failures_by_type": {
+      "runtime_error": 11,
+      "syntax_error": 21
+    },
+    "gen_pass_count": 0,
+    "gen_pass_rate": 0.0,
+    "gen_syntax_pass_count": 11,
+    "gen_syntax_pass_rate": 0.34375,
+    "gen_verifier_pass_count": 0,
+    "gen_verifier_pass_rate": 0.0
+  }
+}

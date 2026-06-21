@@ -1,0 +1,23 @@
+{
+  "allow_tf32": true,
+  "amp_enabled": true,
+  "compile_model": false,
+  "cuda_available": true,
+  "cuda_device_count": 1,
+  "deterministic": false,
+  "device_available": true,
+  "device_type": "cuda",
+  "gpu_name": "NVIDIA L4",
+  "requested_device": "cuda:0",
+  "requested_precision": "bf16",
+  "selected_device": "cuda:0",
+  "selected_precision": "bf16",
+  "torch_available": true,
+  "torch_dtype_name": "torch.bfloat16",
+  "torch_version": "2.11.0+cu128",
+  "warnings": [
+    "CUDA device is available.",
+    "Enabled torch.backends.cuda.matmul.allow_tf32.",
+    "Enabled torch.backends.cudnn.allow_tf32."
+  ]
+}

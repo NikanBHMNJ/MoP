@@ -105,6 +105,33 @@ quality is not proven in this report, and `target_eval_loss` was not configured,
 so treat it as evidence that the cached sparse efficiency path works rather
 than proof of same-quality sparse superiority.
 
+The Goal 49 verified code-quality L4 report is available under:
+
+`reports/goal49_verified_code_quality_efficiency/`
+
+It uses one fixed `fixed_code_xml` code-repair split and compares Dense, MoP
+Full, Warm Adapter/Norm/Head 128, Cached Adapter/Norm/Head 128, and Cached
+Tail-Only LoRA Rank 8. No quantization was used.
+
+| Profile | Best eval loss | Tokens/sec | Peak reserved VRAM | Trainable ratio | Checkpoint | Syntax pass | Verifier pass |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Dense | 0.8022 | 9,346.82 | 1.8652 GB | 1.0000 | 987.15 MB | 25.00% | 0.00% |
+| MoP Full | 0.9046 | 8,603.26 | 1.9707 GB | 1.0000 | 1,055.61 MB | 34.38% | 0.00% |
+| Warm Adapter/Norm/Head 128 | 0.6206 | 40,153.43 | 1.5723 GB | 0.0085 | 7.66 MB | 0.00% | 0.00% |
+| Cached Adapter/Norm/Head 128 | 0.4685 | 87,518.63 | 0.0605 GB | 0.0085 | 7.66 MB | 50.00% | 0.00% |
+| Cached Tail-Only LoRA Rank 8 | 0.4980 | 71,133.54 | 0.0820 GB | 0.0089 | 8.05 MB | 50.00% | 0.00% |
+
+Compared with Dense, Cached Adapter/Norm/Head 128 measured about `9.36x`
+higher throughput, `30.83x` lower peak reserved VRAM, `37.23x` lower peak
+allocated VRAM, and a `128.79x` smaller checkpoint. Its best eval loss was also
+lower. Cached Tail-Only LoRA Rank 8 retained similar gains.
+
+This is a strong cached-training efficiency result, but not an output-quality
+win yet. Across 32 generated examples per profile, both cached students reached
+`50%` syntax pass while exact match and verifier pass remained `0%` for every
+profile. The target loss was derived after the baseline runs, so baseline
+time-to-target values are unavailable and must not be inferred.
+
 ## Current Research Direction
 
 Goal 49 extends the warm sparse path toward better loss efficiency without
@@ -261,6 +288,7 @@ cached sparse runs.
 - [Goal 46 GPU efficiency report](reports/goal46_gpu_efficiency/README.md)
 - [v0.46.0 L4 warm sparse comparison report](reports/v0_46_0_l4_warm_sparse_comparison/README.md)
 - [Goal 48 code cached-sparse L4 report](reports/goal48_code_cached_sparse_efficiency/README.md)
+- [Goal 49 verified code-quality L4 report](reports/goal49_verified_code_quality_efficiency/README.md)
 - [Known limitations](docs/known_limitations.md)
 
 ## Validation

@@ -27,6 +27,7 @@ and tested before it has proven a GPU efficiency result.
 - [Goal 46 GPU efficiency report](../reports/goal46_gpu_efficiency/README.md)
 - [v0.46.0 L4 warm sparse comparison report](../reports/v0_46_0_l4_warm_sparse_comparison/README.md)
 - [Goal 48 code cached-sparse L4 report](../reports/goal48_code_cached_sparse_efficiency/README.md)
+- [Goal 49 verified code-quality L4 report](../reports/goal49_verified_code_quality_efficiency/README.md)
 - [GPU runtime limitations](gpu_runtime_limitations.md)
 - [Serious jobs checklist](serious_jobs_checklist.md)
 - [Colab 100M training notebook](colab_training.md)
@@ -42,9 +43,10 @@ and tested before it has proven a GPU efficiency result.
 ## Current Evidence
 
 The repository GPU evidence includes the Goal 46 report, the v0.46.0 L4 warm
-sparse TinyStories comparison, and the Goal 48 code cached-sparse L4 report.
-Together they show that MoP-Forge can measure Dense, MoP Full, adapter-only,
-warm sparse, and cached sparse runs on Colab/L4 hardware.
+sparse TinyStories comparison, the Goal 48 code cached-sparse report, and the
+Goal 49 verified code-quality report. Together they show that MoP-Forge can
+measure Dense, MoP Full, adapter-only, warm sparse, and cached sparse runs on
+Colab/L4 hardware.
 
 These reports do not prove MoP superiority. The measured result is more careful:
 
@@ -56,6 +58,19 @@ These reports do not prove MoP superiority. The measured result is more careful:
 - Goal 48 cached sparse code training was much faster and used much less peak
   reserved VRAM than Dense in the measured cached-tail phase, but generated-code
   quality and time-to-target-loss were not proven in that report.
+- Goal 49 Cached Adapter/Norm/Head 128 measured `87,518.63` tokens/sec and
+  `0.0605 GB` peak reserved VRAM versus Dense at `9,346.82` tokens/sec and
+  `1.8652 GB`. Its checkpoint was `7.66 MB` versus `987.15 MB`, and its best
+  eval loss was `0.4685` versus `0.8022`.
+- Goal 49 Cached Tail-Only LoRA Rank 8 measured `71,133.54` tokens/sec,
+  `0.0820 GB` peak reserved VRAM, an `8.05 MB` checkpoint, and `0.4980` best
+  eval loss.
+- Both Goal 49 cached profiles reached `50%` syntax pass on 32 samples, but all
+  profiles remained at `0%` exact match and verifier pass. This validates the
+  efficiency path, not useful generated-code quality.
+- Goal 49 derived the target loss after baseline training, so only student
+  time-to-target values are present; no baseline time-to-target comparison is
+  claimed.
 - The framework can measure the tradeoff and preserve the evidence.
 
 ## Current Implementation Focus

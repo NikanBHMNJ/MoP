@@ -1,0 +1,463 @@
+{
+  "best_eval_loss": 0.49795158207416534,
+  "data": {
+    "cache_format": "mopforge_activation_cache_v1",
+    "cache_metadata": {
+      "config_sha256": "ff48147c1c7788b22756ce232d7d4078ff101f8bbe38afb47b7586a35f675008",
+      "distillation_ready": true,
+      "dtype": "bf16",
+      "eval_records": 100,
+      "manifest_path": "outputs/goal49_verified_code_quality_efficiency_teacher_topk_cache_manifest.json",
+      "manifest_sha256": "07193066b62fa76f14d443c44a80b3c17c78748e66e33861a8f4f1d54d00a581",
+      "records_per_shard": 256,
+      "run_id": "20260621T050109Z-goal49-verified-code-quality-efficiency-teacher-cache-source-60cc6193",
+      "shard_count": 5,
+      "shard_dir": "goal49_verified_code_quality_efficiency_teacher_topk_cache_manifest_shards",
+      "sharded": true,
+      "source_checkpoint": "gpu_runs/20260621T045600Z-goal49-verified-code-quality-efficiency-mop-full-907b3e5a/checkpoints/checkpoint-best-eval.pt",
+      "source_checkpoint_sha256": "64cda9a73ffd7c3ba67d2640f7233c61b0d2c6d323ff2b87ca0486ce63426313",
+      "source_config": "configs/jobs/colab_l4_goal49_quality/teacher_cache_source.json",
+      "teacher_loss_ready": true,
+      "teacher_top_k": 16,
+      "train_records": 800
+    },
+    "eval_examples": 100,
+    "hard_example_replay": {
+      "enabled": true,
+      "hard_example_count": 639,
+      "loss_threshold": 1.5,
+      "multiplier": 2,
+      "replayed_example_count": 639
+    },
+    "kind": "activation_cache",
+    "original_train_examples": 800,
+    "record_count": 1539,
+    "sharded": true,
+    "source_path": "outputs/goal49_verified_code_quality_efficiency_teacher_topk_cache_manifest.json",
+    "train_examples": 1439
+  },
+  "effective_batch_size": 8,
+  "efficiency": {
+    "activation_cache_enabled": true,
+    "active_adapter_density": 0.6666666666666666,
+    "active_expert_count": null,
+    "active_module_density": 0.6666666666666666,
+    "active_param_estimate": 91605120,
+    "active_param_ratio": 0.9749,
+    "active_trainable_param_estimate": 839040,
+    "active_trainable_param_ratio": 0.0089,
+    "cached_backbone_offloaded_param_count": 93129216,
+    "cached_hidden_steps_per_sec": 101.2762,
+    "checkpoint_size_mb": 8.045,
+    "distillation_enabled": true,
+    "distillation_temperature": 2.0,
+    "distillation_top_k": 16,
+    "distillation_weight": 0.2,
+    "estimated_active_flop_ratio": 0.9748517627059078,
+    "estimated_backward_flop_ratio": 0.008928972779914102,
+    "expert_compute_ratio": null,
+    "expert_count": null,
+    "final_allocated_gb": 0.0257,
+    "final_reserved_gb": 0.0566,
+    "frozen_params": 93129216,
+    "frozen_prefix": {
+      "internal_lora_enabled": false,
+      "lora_delta_enabled": true,
+      "lora_tail_only": true,
+      "tail_from_hidden": true
+    },
+    "generated_condition_density": 2.0,
+    "hard_example_count": 639,
+    "hard_example_replay_enabled": true,
+    "hard_example_replay_multiplier": 2,
+    "hard_replayed_example_count": 639,
+    "original_token_equivalent_tokens_per_sec": 71133.5373,
+    "peak_allocated_gb": 0.0516,
+    "peak_reserved_gb": 0.082,
+    "routed_module_params": 4726272,
+    "samples_per_sec": 101.2762,
+    "samples_to_target_loss": 100,
+    "shared_compute_ratio": null,
+    "shared_frozen_params": 86039808,
+    "step_time_sec": 0.0419,
+    "target_eval_loss": 0.8423,
+    "target_eval_loss_reached": true,
+    "target_eval_loss_value": 0.49795158207416534,
+    "target_final_allocated_gb": 0.028,
+    "target_final_reserved_gb": 0.0625,
+    "target_peak_allocated_gb": 0.0473,
+    "target_peak_reserved_gb": 0.0625,
+    "time_to_target_loss_sec": 1.397,
+    "tokens_per_sec": 71133.5373,
+    "tokens_to_target_loss": 64944,
+    "total_params": 93968256,
+    "total_train_time_sec": 14.811,
+    "trainable_param_ratio": 0.008928972779914102,
+    "trainable_params": 839040
+  },
+  "evals_without_improvement": 14,
+  "finite": true,
+  "generation_eval": {
+    "artifact_path": "gpu_runs/20260621T050409Z-goal49-verified-code-quality-efficiency-cached-warm-lora-rank8-6b20499d/generation_eval.json",
+    "enabled": true,
+    "examples": 32,
+    "gen_compile_pass_count": 16,
+    "gen_compile_pass_rate": 0.5,
+    "gen_eval_examples": 32,
+    "gen_exact_match_count": 0,
+    "gen_exact_match_rate": 0.0,
+    "gen_failures_by_type": {
+      "runtime_error": 16,
+      "syntax_error": 16
+    },
+    "gen_pass_count": 0,
+    "gen_pass_rate": 0.0,
+    "gen_syntax_pass_count": 16,
+    "gen_syntax_pass_rate": 0.5,
+    "gen_verifier_pass_count": 0,
+    "gen_verifier_pass_rate": 0.0,
+    "measurement_scope": "post_training_full_model_quality_eval"
+  },
+  "global_steps": 1500,
+  "gradient_accumulation_steps": 8,
+  "latest_eval_loss": 0.7997661530971527,
+  "latest_train_loss": 0.9634833931922913,
+  "memory_snapshots": [
+    {
+      "allocated_gb": 0.028,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.0473,
+      "peak_reserved_gb": 0.0625,
+      "reserved_gb": 0.0625,
+      "selected_device": "cuda:0",
+      "step": 100
+    },
+    {
+      "allocated_gb": 0.028,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.0473,
+      "peak_reserved_gb": 0.0625,
+      "reserved_gb": 0.0625,
+      "selected_device": "cuda:0",
+      "step": 100
+    },
+    {
+      "allocated_gb": 0.0281,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.0515,
+      "peak_reserved_gb": 0.082,
+      "reserved_gb": 0.082,
+      "selected_device": "cuda:0",
+      "step": 500
+    },
+    {
+      "allocated_gb": 0.0257,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.0516,
+      "peak_reserved_gb": 0.082,
+      "reserved_gb": 0.082,
+      "selected_device": "cuda:0",
+      "step": 1000
+    },
+    {
+      "allocated_gb": 0.0257,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.0516,
+      "peak_reserved_gb": 0.082,
+      "reserved_gb": 0.082,
+      "selected_device": "cuda:0",
+      "step": 1500
+    }
+  ],
+  "micro_batch_size": 1,
+  "model": {
+    "activation_checkpointing": {
+      "applied_block_count": 12,
+      "candidate_block_count": 12,
+      "enabled": true,
+      "policy": "auto",
+      "warnings": []
+    },
+    "active_adapter_density": 0.6666666666666666,
+    "active_expert_count": null,
+    "active_module_density": 0.6666666666666666,
+    "active_param_estimate": 91605120,
+    "active_trainable_param_estimate": 839040,
+    "architecture": {
+      "active_experts": 1,
+      "always_include_core": false,
+      "d_model": 768,
+      "dataset_ref": null,
+      "expert_count": null,
+      "fast_adapter_bottleneck_dim": 128,
+      "fast_adapter_names": [
+        "coding",
+        "debugging",
+        "repair"
+      ],
+      "generated_condition_dim": 16,
+      "generated_condition_names": null,
+      "generated_rank": 4,
+      "generated_type": "low_rank_adapter",
+      "intended_scale": "small_gpu",
+      "lora_rank": 8,
+      "lora_tail_only": true,
+      "lora_target_modules": [
+        "coding",
+        "debugging",
+        "repair"
+      ],
+      "max_seq_len": 1024,
+      "metadata": {},
+      "model_type": "mop_oracle",
+      "module_names": [
+        "coding",
+        "debugging",
+        "repair"
+      ],
+      "mop_block_type": "post_core_mlp",
+      "n_heads": 12,
+      "n_layers": 12,
+      "name": "goal49_verified_code_quality_efficiency_cached_warm_lora_rank8",
+      "router_enabled": false,
+      "router_type": null,
+      "routing_granularity": "example",
+      "shared_depth_ratio": 1.0,
+      "tokenizer_ref": null,
+      "use_fast_adapters": true,
+      "use_generated_params": false,
+      "use_lora_deltas": true,
+      "vocab_size": null
+    },
+    "cached_training_backbone_offload": {
+      "cuda_empty_cache_after_offload": true,
+      "enabled": true,
+      "note": "Only modules unused by forward_from_hidden are offloaded.",
+      "offloaded_modules": [
+        {
+          "name": "token_embedding",
+          "param_count": 198912
+        },
+        {
+          "name": "position_embedding",
+          "param_count": 786432
+        },
+        {
+          "name": "shared_blocks",
+          "param_count": 85054464
+        },
+        {
+          "name": "routed_blocks",
+          "param_count": 0
+        },
+        {
+          "name": "module_bank",
+          "param_count": 7089408
+        }
+      ],
+      "offloaded_param_count": 93129216,
+      "selected_device": "cuda:0",
+      "skipped_modules": [],
+      "skipped_param_count": 0
+    },
+    "distillation": {
+      "batch_has_teacher_topk": true,
+      "cache_distillation_ready": true,
+      "cache_teacher_top_k": 16,
+      "configured_top_k": 16,
+      "enabled": true,
+      "temperature": 2.0,
+      "weight": 0.2
+    },
+    "efficient_attention": {
+      "requested": "auto",
+      "selected": "torch_sdpa",
+      "warnings": []
+    },
+    "estimated_active_flop_ratio": 0.9748517627059078,
+    "estimated_backward_flop_ratio": 0.008928972779914102,
+    "expert_compute_ratio": null,
+    "expert_count": null,
+    "frozen_prefix": {
+      "internal_lora_enabled": false,
+      "lora_delta_enabled": true,
+      "lora_tail_only": true,
+      "tail_from_hidden": true
+    },
+    "generated_condition_density": 2.0,
+    "hard_example_replay": {
+      "enabled": true,
+      "hard_example_count": 639,
+      "loss_threshold": 1.5,
+      "multiplier": 2,
+      "replayed_example_count": 639
+    },
+    "parameter_counts": {
+      "frozen": 93129216,
+      "total": 93968256,
+      "trainable": 839040
+    },
+    "parameter_group_summaries": [
+      {
+        "frozen_params": 0,
+        "name": "adapter:coding",
+        "total_params": 199040,
+        "trainable_params": 199040
+      },
+      {
+        "frozen_params": 0,
+        "name": "adapter:debugging",
+        "total_params": 199040,
+        "trainable_params": 199040
+      },
+      {
+        "frozen_params": 0,
+        "name": "adapter:repair",
+        "total_params": 199040,
+        "trainable_params": 199040
+      },
+      {
+        "frozen_params": 985344,
+        "name": "embeddings",
+        "total_params": 985344,
+        "trainable_params": 0
+      },
+      {
+        "frozen_params": 0,
+        "name": "lm_head",
+        "total_params": 198912,
+        "trainable_params": 198912
+      },
+      {
+        "frozen_params": 0,
+        "name": "lora_delta:coding",
+        "total_params": 13824,
+        "trainable_params": 13824
+      },
+      {
+        "frozen_params": 0,
+        "name": "lora_delta:debugging",
+        "total_params": 13824,
+        "trainable_params": 13824
+      },
+      {
+        "frozen_params": 0,
+        "name": "lora_delta:repair",
+        "total_params": 13824,
+        "trainable_params": 13824
+      },
+      {
+        "frozen_params": 2363136,
+        "name": "module:coding",
+        "total_params": 2363136,
+        "trainable_params": 0
+      },
+      {
+        "frozen_params": 2363136,
+        "name": "module:debugging",
+        "total_params": 2363136,
+        "trainable_params": 0
+      },
+      {
+        "frozen_params": 2363136,
+        "name": "module:repair",
+        "total_params": 2363136,
+        "trainable_params": 0
+      },
+      {
+        "frozen_params": 0,
+        "name": "norm",
+        "total_params": 1536,
+        "trainable_params": 1536
+      },
+      {
+        "frozen_params": 85054464,
+        "name": "shared_core",
+        "total_params": 85054464,
+        "trainable_params": 0
+      }
+    ],
+    "resume": {
+      "base_checkpoint": {
+        "metadata": {
+          "model_load_strict": false,
+          "model_loaded_key_count": 185,
+          "model_missing_key_count": 12,
+          "model_skipped_key_count": 0,
+          "model_skipped_keys": [],
+          "model_unexpected_key_count": 0,
+          "restored": [
+            "model"
+          ],
+          "skipped": [],
+          "warm_start_adaptation": {
+            "adapted": false
+          }
+        },
+        "path": "gpu_runs/20260621T045600Z-goal49-verified-code-quality-efficiency-mop-full-907b3e5a/checkpoints/checkpoint-best-eval.pt"
+      },
+      "checkpoint_path": "gpu_runs/20260621T050014Z-goal49-verified-code-quality-efficiency-warm-adapter-norm-head-128-cfb2a582/checkpoints/checkpoint-best-eval.pt",
+      "model_load_strict": false,
+      "model_loaded_key_count": 21,
+      "model_missing_key_count": 176,
+      "model_skipped_key_count": 0,
+      "model_skipped_keys": [],
+      "model_unexpected_key_count": 0,
+      "restored": [
+        "trainable_model_state"
+      ],
+      "resume_model_only": true,
+      "skipped": [],
+      "warm_start_adaptation": {
+        "adapted": false
+      }
+    },
+    "routed_module_params": 4726272,
+    "routing_mode": "oracle",
+    "shared_compute_ratio": null,
+    "shared_frozen_params": 86039808,
+    "trainable_param_ratio": 0.008928972779914102
+  },
+  "optimizer_steps": 188,
+  "runtime": {
+    "allow_tf32": true,
+    "amp_enabled": true,
+    "compile_model": false,
+    "cuda_available": true,
+    "cuda_device_count": 1,
+    "deterministic": false,
+    "device_available": true,
+    "device_type": "cuda",
+    "gpu_name": "NVIDIA L4",
+    "requested_device": "cuda:0",
+    "requested_precision": "bf16",
+    "selected_device": "cuda:0",
+    "selected_precision": "bf16",
+    "torch_available": true,
+    "torch_dtype_name": "torch.bfloat16",
+    "torch_version": "2.11.0+cu128",
+    "warnings": [
+      "CUDA device is available.",
+      "Enabled torch.backends.cuda.matmul.allow_tf32.",
+      "Enabled torch.backends.cudnn.allow_tf32."
+    ]
+  },
+  "samples_seen": 1500,
+  "scaler": {
+    "device_type": "cuda",
+    "enabled": false,
+    "selected_precision": "bf16",
+    "state": {}
+  },
+  "status": "completed",
+  "stop_reason": null,
+  "stopped_early": false,
+  "target_eval_loss": 0.8423,
+  "target_eval_loss_reached": true,
+  "target_eval_loss_samples_seen": 100,
+  "target_eval_loss_step": 100,
+  "target_eval_loss_time_sec": 1.397,
+  "target_eval_loss_tokens_seen": 64944,
+  "target_eval_loss_value": 0.49795158207416534,
+  "tokens_seen": 1053558
+}
