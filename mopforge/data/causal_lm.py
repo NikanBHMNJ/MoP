@@ -90,6 +90,40 @@ class LessonCausalLMDataset:
             "skill": lesson.skill,
         }
 
+    def sequence_length_statistics(self) -> dict[str, Any]:
+        """Measure prompt/target lengths before right truncation."""
+
+        bos_count = int(
+            get_tokenizer_special_token_id(self.tokenizer, "bos_token_id") is not None
+        )
+        eos_count = int(
+            get_tokenizer_special_token_id(self.tokenizer, "eos_token_id") is not None
+        )
+        prompt_lengths: list[int] = []
+        target_lengths: list[int] = []
+        sequence_lengths: list[int] = []
+        for lesson in self.lessons:
+            formatted = format_lesson_for_causal_lm(lesson)
+            prompt_length = bos_count + len(
+                self.tokenizer.encode(str(formatted["prompt"]), add_special_tokens=False)
+            )
+            target_length = len(
+                self.tokenizer.encode(str(formatted["target"]), add_special_tokens=False)
+            ) + eos_count
+            prompt_lengths.append(prompt_length)
+            target_lengths.append(target_length)
+            sequence_lengths.append(prompt_length + target_length)
+        truncated = sum(length > self.max_length for length in sequence_lengths)
+        return {
+            "examples": len(sequence_lengths),
+            "max_seq_len": self.max_length,
+            "truncated_examples": truncated,
+            "truncated_rate": truncated / len(sequence_lengths) if sequence_lengths else 0.0,
+            "max_original_sequence_tokens": max(sequence_lengths, default=0),
+            "max_prompt_tokens": max(prompt_lengths, default=0),
+            "max_target_tokens": max(target_lengths, default=0),
+        }
+
     def _truncate(
         self,
         input_ids: list[int],

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -64,6 +65,12 @@ def test_gpu_config_sparse_efficiency_fields_roundtrip() -> None:
         hard_example_replay_multiplier=2,
         target_eval_loss=3.25,
         save_best_eval_checkpoint=True,
+        eval_full_dataset=True,
+        shuffle_train=True,
+        train_shuffle_seed=99,
+        generation_eval_use_best_checkpoint=True,
+        generation_eval_include_train=True,
+        generation_eval_stratify_by="bug_type",
     )
 
     loaded = GPUTrainingConfig.from_dict(config.to_dict())
@@ -88,6 +95,12 @@ def test_gpu_config_sparse_efficiency_fields_roundtrip() -> None:
     assert loaded.hard_example_replay_multiplier == 2
     assert loaded.target_eval_loss == 3.25
     assert loaded.save_best_eval_checkpoint is True
+    assert loaded.eval_full_dataset is True
+    assert loaded.shuffle_train is True
+    assert loaded.train_shuffle_seed == 99
+    assert loaded.generation_eval_use_best_checkpoint is True
+    assert loaded.generation_eval_include_train is True
+    assert loaded.generation_eval_stratify_by == "bug_type"
 
 
 def test_adapters_norm_head_policy_trains_sparse_tail_only() -> None:
@@ -275,6 +288,8 @@ def test_activation_cache_can_train_sparse_tail(tmp_path: Path) -> None:
             run_generation_eval=True,
             generation_eval_examples=1,
             generation_max_new_tokens=4,
+            generation_eval_include_train=True,
+            generation_eval_stratify_by="bug_type",
         )
     ).train()
     assert cached.status == "completed"
@@ -289,7 +304,18 @@ def test_activation_cache_can_train_sparse_tail(tmp_path: Path) -> None:
     assert cached.metrics["generation_eval"]["measurement_scope"] == (
         "post_training_full_model_quality_eval"
     )
+    assert cached.metrics["generation_eval"]["checkpoint_source"] == "best_eval"
+    assert cached.metrics["generation_eval"]["checkpoint_path"] == cached.artifacts[
+        "best_checkpoint_path"
+    ]
+    assert cached.metrics["generation_eval"]["ground_truth_controls_passed"] is True
     assert Path(cached.artifacts["generation_eval_json"]).exists()
+    assert Path(cached.artifacts["ground_truth_controls_json"]).exists()
+    generation_payload = json.loads(
+        Path(cached.artifacts["generation_eval_json"]).read_text(encoding="utf-8")
+    )
+    assert set(generation_payload["splits"]) == {"eval", "train"}
+    assert generation_payload["selection"]["stratify_by"] == "bug_type"
     payload = torch.load(cached.artifacts["latest_checkpoint_path"], map_location="cpu", weights_only=False)
     assert payload["metadata"]["activation_cache_path"] == str(cache_path)
     assert payload["activation_cache_metadata"]["teacher_top_k"] == 4
@@ -896,6 +922,33 @@ def test_prepare_efficiency_dataset_can_write_verified_fixed_code_targets(tmp_pa
     assert str(formatted["target"]).startswith("<fixed_code>\n")
 
 
+def test_prepare_efficiency_dataset_can_stratify_by_bug_type(tmp_path: Path) -> None:
+    result = prepare_efficiency_dataset(
+        source_path=tmp_path / "balanced_lessons.jsonl",
+        dataset_root=tmp_path / "datasets",
+        dataset_id="goal50_balanced_quality",
+        count_per_category=10,
+        verify=False,
+        split_seed=42,
+        stratify_by="bug_type",
+    )
+
+    category_counts = {}
+    for split_name, path in result["split_paths"].items():
+        lessons = LessonStore(path).load_all()
+        counts = {}
+        for lesson in lessons:
+            bug_type = lesson.metadata["bug_type"]
+            counts[bug_type] = counts.get(bug_type, 0) + 1
+        category_counts[split_name] = counts
+
+    assert result["stratify_by"] == "bug_type"
+    assert result["split_id"].endswith("-by-bug-type")
+    assert set(category_counts["train"].values()) == {8}
+    assert set(category_counts["eval"].values()) == {1}
+    assert set(category_counts["test"].values()) == {1}
+
+
 def test_prepare_efficiency_dataset_cli(tmp_path: Path) -> None:
     source = tmp_path / "cli_lessons.jsonl"
     root = tmp_path / "datasets"
@@ -915,6 +968,8 @@ def test_prepare_efficiency_dataset_cli(tmp_path: Path) -> None:
             "--no-verify",
             "--quality-format",
             "fixed_code_xml",
+            "--stratify-by",
+            "bug_type",
         ]
     )
 

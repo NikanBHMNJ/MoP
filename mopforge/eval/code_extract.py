@@ -35,3 +35,11 @@ def extract_python_code(text: str) -> str:
     if matches:
         return matches[0].group("code").strip()
     return stripped
+
+
+def has_complete_fixed_code_block(text: str) -> bool:
+    """Return whether text contains a complete fixed-code XML block."""
+
+    if not isinstance(text, str):
+        raise TypeError("text must be a string.")
+    return _FIXED_CODE_RE.search(text) is not None

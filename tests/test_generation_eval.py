@@ -7,8 +7,10 @@ import json
 from mopforge.builders import generate_coding_bugfix_lessons
 from mopforge.eval import (
     evaluate_candidate_text_for_lesson,
+    evaluate_ground_truth_controls,
     evaluate_generated_code_for_lesson,
     extract_python_code,
+    select_generation_eval_lessons,
     summarize_generation_results,
     write_generation_eval_results,
 )
@@ -138,6 +140,30 @@ def test_verifier_integration_passes_when_candidate_matches_expected_output() ->
     assert result["exit_code"] == 0
 
 
+def test_generation_selection_balances_all_bug_categories() -> None:
+    lessons = generate_coding_bugfix_lessons(count_per_category=3, verify=False)
+
+    selected = select_generation_eval_lessons(
+        lessons,
+        max_lessons=5,
+        stratify_by="bug_type",
+    )
+
+    assert len(selected) == 5
+    assert len({lesson.metadata["bug_type"] for lesson in selected}) == 5
+
+
+def test_ground_truth_controls_pass_raw_and_fixed_code_xml() -> None:
+    lessons = generate_coding_bugfix_lessons(count_per_category=1, verify=False)
+
+    controls = evaluate_ground_truth_controls(lessons)
+
+    assert controls["passed"] is True
+    assert controls["examples"] == 5
+    assert controls["raw"]["summary"]["gen_verifier_pass_rate"] == 1.0
+    assert controls["fixed_code_xml"]["summary"]["gen_fixed_code_complete_rate"] == 1.0
+
+
 def test_fixed_code_block_extraction_supports_quality_framing() -> None:
     lesson = generate_coding_bugfix_lessons(count_per_category=1, verify=False)[0]
     generated_text = f"notes ignored\n<fixed_code>\n{lesson.expected_output}\n</fixed_code>"
@@ -148,6 +174,7 @@ def test_fixed_code_block_extraction_supports_quality_framing() -> None:
     assert result["candidate_code"] == lesson.expected_output.strip()
     assert result["passed"] is True
     assert result["exact_match"] is True
+    assert result["fixed_code_block_complete"] is True
 
 
 def test_generation_eval_writer_outputs_valid_json(tmp_path) -> None:
@@ -174,3 +201,28 @@ def test_generation_summary_separates_exact_and_verifier_pass_rates() -> None:
     assert summary["gen_exact_match_rate"] == 1 / 3
     assert summary["gen_syntax_pass_rate"] == 2 / 3
     assert summary["gen_compile_pass_rate"] == 2 / 3
+
+
+def test_generation_summary_reports_complete_xml_and_per_category() -> None:
+    summary = summarize_generation_results(
+        [
+            {
+                "passed": True,
+                "exact_match": True,
+                "fixed_code_block_complete": True,
+                "failure_type": None,
+                "bug_type": "missing_return",
+            },
+            {
+                "passed": False,
+                "exact_match": False,
+                "fixed_code_block_complete": False,
+                "failure_type": "runtime_error",
+                "bug_type": "off_by_one",
+            },
+        ]
+    )
+
+    assert summary["gen_fixed_code_complete_rate"] == 0.5
+    assert set(summary["per_category"]) == {"missing_return", "off_by_one"}
+    assert summary["per_category"]["missing_return"]["gen_verifier_pass_rate"] == 1.0

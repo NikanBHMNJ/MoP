@@ -68,6 +68,25 @@ def test_gradient_accumulation_changes_optimizer_step_count(tmp_path):
     assert result.metrics["effective_batch_size"] == 2
 
 
+def test_trainer_records_real_epoch_boundaries(tmp_path):
+    result = GPUTrainer(_config(tmp_path, max_steps=6, save_every_steps=6)).train()
+
+    assert result.metrics["train_epoch"] >= 2
+    assert result.metrics["shuffle_train"] is True
+    assert result.metrics["train_shuffle_seed"] == 42
+
+
+def test_full_eval_consumes_entire_eval_loader(tmp_path):
+    trainer = GPUTrainer(_config(tmp_path, eval_full_dataset=True, eval_batches=1))
+    trainer.setup()
+
+    metrics = trainer.evaluate()
+
+    assert metrics["eval_examples"] == trainer.data_metadata["eval_examples"]
+    assert metrics["eval_batches"] == len(trainer.eval_loader)
+    assert metrics["eval_full_dataset"] is True
+
+
 def test_amp_scaler_disabled_on_cpu_and_metadata_recorded(tmp_path):
     result = GPUTrainer(_config(tmp_path, precision="fp16", enable_amp=True)).train()
     assert result.metrics["scaler"]["enabled"] is False

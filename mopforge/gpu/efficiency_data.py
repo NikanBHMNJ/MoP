@@ -30,6 +30,7 @@ def prepare_efficiency_dataset(
     test_ratio: float = 0.1,
     overwrite: bool = False,
     quality_format: str = "raw",
+    stratify_by: str | None = None,
 ) -> dict[str, Any]:
     """Generate, register, split, and materialize a serious lesson dataset."""
 
@@ -85,6 +86,7 @@ def prepare_efficiency_dataset(
         eval=eval_ratio,
         test=test_ratio,
         seed=split_seed,
+        stratify_by=stratify_by,
     )
     version_dir = Path(manifest.metadata["version_dir"])
     materialized_dir = version_dir / "materialized"
@@ -114,6 +116,7 @@ def prepare_efficiency_dataset(
         "quality_format": quality_format,
         "split_id": split.split_id,
         "split_seed": split.seed,
+        "stratify_by": stratify_by,
         "split_counts": dict(split.counts),
         "split_paths": split_paths,
     }

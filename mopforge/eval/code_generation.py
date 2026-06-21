@@ -7,7 +7,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Any, Iterable
 
-from mopforge.eval.code_extract import extract_python_code
+from mopforge.eval.code_extract import extract_python_code, has_complete_fixed_code_block
 from mopforge.formatting import format_lesson_prompt
 from mopforge.generation import generate_greedy
 from mopforge.kts import KnowledgeLesson
@@ -27,8 +27,12 @@ def evaluate_candidate_text_for_lesson(
         "lesson_id": lesson.id,
         "generated_text": generated_text,
         "candidate_code": candidate_code,
+        "fixed_code_block_complete": has_complete_fixed_code_block(generated_text),
         "exact_match": candidate_code.strip() == lesson.expected_output.strip(),
         "target_modules": list(lesson.target_modules),
+        "domain": lesson.domain,
+        "skill": lesson.skill,
+        "bug_type": lesson.metadata.get("bug_type") or lesson.subskill,
     }
     if not isinstance(test_code, str) or not test_code.strip():
         return {
@@ -37,6 +41,9 @@ def evaluate_candidate_text_for_lesson(
             "failure_type": "missing_tests",
             "exit_code": None,
             "timeout": False,
+            "verifier_stdout": "",
+            "verifier_stderr": "",
+            "verifier_duration_ms": None,
         }
 
     result = verify_python_solution(candidate_code, test_code)
@@ -46,6 +53,9 @@ def evaluate_candidate_text_for_lesson(
         "failure_type": None if result.passed else result.error_type,
         "exit_code": result.exit_code,
         "timeout": result.timeout,
+        "verifier_stdout": result.stdout,
+        "verifier_stderr": result.stderr,
+        "verifier_duration_ms": result.duration_ms,
     }
 
 
@@ -112,11 +122,29 @@ def evaluate_generated_code(
 def summarize_generation_results(results: list[dict[str, Any]]) -> dict[str, Any]:
     """Return small pass/failure metrics for generated-code results."""
 
+    summary = _summarize_generation_results(results)
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for result in results:
+        category = str(result.get("bug_type") or "unknown")
+        grouped.setdefault(category, []).append(result)
+    summary["per_category"] = {
+        category: _summarize_generation_results(items)
+        for category, items in sorted(grouped.items())
+    }
+    return summary
+
+
+def _summarize_generation_results(results: list[dict[str, Any]]) -> dict[str, Any]:
+    """Return non-recursive generation summary metrics."""
+
     failures = Counter(
         result.get("failure_type") or "passed" for result in results
     )
     pass_count = sum(1 for result in results if result.get("passed"))
     exact_match_count = sum(1 for result in results if result.get("exact_match"))
+    complete_fixed_code_count = sum(
+        1 for result in results if result.get("fixed_code_block_complete")
+    )
     total = len(results)
     syntax_failure_count = int(failures.get("syntax_error", 0))
     syntax_pass_count = max(0, total - syntax_failure_count)
@@ -128,11 +156,88 @@ def summarize_generation_results(results: list[dict[str, Any]]) -> dict[str, Any
         "gen_verifier_pass_rate": pass_count / total if total else 0.0,
         "gen_exact_match_count": exact_match_count,
         "gen_exact_match_rate": exact_match_count / total if total else 0.0,
+        "gen_fixed_code_complete_count": complete_fixed_code_count,
+        "gen_fixed_code_complete_rate": (
+            complete_fixed_code_count / total if total else 0.0
+        ),
         "gen_syntax_pass_count": syntax_pass_count,
         "gen_syntax_pass_rate": syntax_pass_count / total if total else 0.0,
         "gen_compile_pass_count": syntax_pass_count,
         "gen_compile_pass_rate": syntax_pass_count / total if total else 0.0,
         "gen_failures_by_type": dict(sorted(failures.items())),
+    }
+
+
+def select_generation_eval_lessons(
+    lessons: Iterable[KnowledgeLesson],
+    *,
+    max_lessons: int,
+    stratify_by: str | None = None,
+) -> list[KnowledgeLesson]:
+    """Select a deterministic, optionally balanced generation-eval subset."""
+
+    values = list(lessons)
+    if type(max_lessons) is not int or max_lessons < 0:
+        raise ValueError("max_lessons must be a non-negative integer.")
+    if stratify_by not in {None, "bug_type", "domain", "skill"}:
+        raise ValueError("stratify_by must be bug_type, domain, skill, or None.")
+    if max_lessons >= len(values):
+        return values
+    if stratify_by is None:
+        return values[:max_lessons]
+
+    groups: dict[str, list[KnowledgeLesson]] = {}
+    for lesson in values:
+        if stratify_by == "bug_type":
+            key = str(lesson.metadata.get("bug_type") or lesson.subskill or "unknown")
+        else:
+            key = str(getattr(lesson, stratify_by) or "unknown")
+        groups.setdefault(key, []).append(lesson)
+    selected: list[KnowledgeLesson] = []
+    positions = {key: 0 for key in groups}
+    while len(selected) < max_lessons:
+        added = False
+        for key in sorted(groups):
+            position = positions[key]
+            if position >= len(groups[key]):
+                continue
+            selected.append(groups[key][position])
+            positions[key] += 1
+            added = True
+            if len(selected) >= max_lessons:
+                break
+        if not added:
+            break
+    return selected
+
+
+def evaluate_ground_truth_controls(
+    lessons: Iterable[KnowledgeLesson],
+) -> dict[str, Any]:
+    """Verify raw and fixed-code framed ground-truth targets."""
+
+    values = list(lessons)
+    raw_results = [
+        evaluate_candidate_text_for_lesson(lesson.expected_output, lesson)
+        for lesson in values
+    ]
+    fixed_results = [
+        evaluate_candidate_text_for_lesson(
+            f"<fixed_code>\n{lesson.expected_output.rstrip()}\n</fixed_code>",
+            lesson,
+        )
+        for lesson in values
+    ]
+    raw_summary = summarize_generation_results(raw_results)
+    fixed_summary = summarize_generation_results(fixed_results)
+    return {
+        "examples": len(values),
+        "passed": bool(
+            raw_summary["gen_verifier_pass_count"] == len(values)
+            and fixed_summary["gen_verifier_pass_count"] == len(values)
+        ),
+        "raw": {"summary": raw_summary, "results": raw_results},
+        "fixed_code_xml": {"summary": fixed_summary, "results": fixed_results},
     }
 
 

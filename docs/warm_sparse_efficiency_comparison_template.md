@@ -35,9 +35,12 @@ efficiency gates both pass.
 | Dataset ref |  |
 | Split ID |  |
 | Split seed | `42` |
+| Split stratification | `bug_type` for code-quality runs |
+| Train shuffle seed | `42` |
 | Quality format | `raw` or `fixed_code_xml` |
 | Target eval loss |  |
-| Max steps | `2000` |
+| Microsteps |  |
+| Optimizer updates |  |
 | Gradient accumulation | `8` |
 | Micro batch size | `1` |
 | Max sequence length | `1024` |
@@ -62,7 +65,7 @@ efficiency gates both pass.
 ## Commands
 
 ```powershell
-mopforge gpu prepare-efficiency-data --count-per-category 100 --split-seed 42 --quality-format fixed_code_xml
+mopforge gpu prepare-efficiency-data --count-per-category 100 --split-seed 42 --stratify-by bug_type --quality-format fixed_code_xml
 
 mopforge gpu train configs/jobs/100m_dense_extended_efficiency.json
 mopforge gpu train configs/jobs/100m_mop_full_extended_efficiency.json
@@ -116,6 +119,11 @@ Record the gate result here:
 | Hard-example replay | cached run records replay threshold and count |  |  |
 | Trainable ratio | improves named target axis |  |  |
 | Checkpoint size | improves named target axis |  |  |
+| Full held-out eval | every eval lesson measured |  |  |
+| Best-checkpoint generation | checkpoint path and step recorded |  |  |
+| Ground-truth controls | raw and XML verifier pass are 100% |  |  |
+| Category coverage | all five bug categories reported |  |  |
+| Target truncation | zero, or explicitly justified |  |  |
 
 Same-quality sparse efficiency requires both quality and efficiency evidence.
 Any `3x` to `50x` claim must name the exact axis: peak VRAM, trainable
@@ -130,6 +138,11 @@ Use `lora_tail_only=true` for cached LoRA comparisons. This places LoRA after
 the cached boundary; ordinary routed LoRA remains inside transformer blocks and
 is not a valid frozen-backbone cached-tail profile. Cached-run generation is a
 post-training quality evaluation and must not be counted as cached-tail VRAM.
+
+For the 100M learning diagnostic, use
+`notebooks/colab_l4_goal50_100m_learning_gate.ipynb` before filling this full
+comparison. Do not interpret microsteps as optimizer updates, and do not scale
+to 1B when the memorization gate fails.
 
 ## Interpretation
 

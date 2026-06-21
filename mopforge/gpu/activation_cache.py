@@ -53,6 +53,8 @@ def build_cached_activation_dataloaders(
     micro_batch_size: int,
     num_workers: int = 0,
     pin_memory: bool = False,
+    shuffle_train: bool = True,
+    shuffle_seed: int = 42,
     hard_example_replay_enabled: bool = False,
     hard_example_replay_loss_threshold: float | None = None,
     hard_example_replay_multiplier: int = 1,
@@ -70,13 +72,19 @@ def build_cached_activation_dataloaders(
     eval_ds = CachedActivationDataset(path, split="eval")
     loader_kwargs = {
         "batch_size": micro_batch_size,
-        "shuffle": False,
         "num_workers": num_workers,
         "pin_memory": pin_memory,
         "collate_fn": collate_cached_activations,
     }
-    train_loader = torch.utils.data.DataLoader(train_ds, **loader_kwargs)
-    eval_loader = torch.utils.data.DataLoader(eval_ds, **loader_kwargs)
+    generator = torch.Generator()
+    generator.manual_seed(int(shuffle_seed))
+    train_loader = torch.utils.data.DataLoader(
+        train_ds,
+        shuffle=shuffle_train,
+        generator=generator if shuffle_train else None,
+        **loader_kwargs,
+    )
+    eval_loader = torch.utils.data.DataLoader(eval_ds, shuffle=False, **loader_kwargs)
     metadata = {
         "kind": "activation_cache",
         "source_path": str(Path(path)),
@@ -87,6 +95,8 @@ def build_cached_activation_dataloaders(
         "record_count": len(train_ds) + len(eval_ds),
         "original_train_examples": len(train_ds.original_records),
         "hard_example_replay": dict(train_ds.replay_metadata),
+        "shuffle_train": bool(shuffle_train),
+        "shuffle_seed": int(shuffle_seed),
         "cache_metadata": dict(train_ds.payload.get("metadata") or {}),
     }
     return train_loader, eval_loader, metadata

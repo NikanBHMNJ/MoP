@@ -43,8 +43,11 @@ class GPUTrainingConfig:
     gradient_accumulation_steps: int = 1
     eval_every_steps: int = 50
     eval_batches: int = 2
+    eval_full_dataset: bool = False
     save_every_steps: int = 100
     log_every_steps: int = 10
+    shuffle_train: bool = True
+    train_shuffle_seed: int = 42
 
     learning_rate: float = 3e-4
     weight_decay: float = 0.01
@@ -125,6 +128,9 @@ class GPUTrainingConfig:
     run_generation_eval: bool = False
     generation_eval_examples: int = 2
     generation_max_new_tokens: int = 32
+    generation_eval_use_best_checkpoint: bool = True
+    generation_eval_include_train: bool = False
+    generation_eval_stratify_by: str | None = None
 
     metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -152,6 +158,8 @@ class GPUTrainingConfig:
             _positive_int(getattr(self, field_name), field_name)
         if self.d_model % self.n_heads != 0:
             raise ValueError("d_model must be divisible by n_heads.")
+        if type(self.train_shuffle_seed) is not int:
+            raise ValueError("train_shuffle_seed must be an integer.")
         if self.learning_rate <= 0:
             raise ValueError("learning_rate must be positive.")
         if self.weight_decay < 0:
@@ -225,6 +233,10 @@ class GPUTrainingConfig:
             raise ValueError("generated_rank must be a positive integer.")
         if self.generated_type not in {"low_rank_adapter", "scale_shift"}:
             raise ValueError("generated_type must be low_rank_adapter or scale_shift.")
+        if self.generation_eval_stratify_by not in {None, "bug_type", "domain", "skill"}:
+            raise ValueError(
+                "generation_eval_stratify_by must be bug_type, domain, skill, or None."
+            )
         for field_name in ("max_train_examples", "max_eval_examples", "prefetch_factor", "empty_cache_every_steps"):
             value = getattr(self, field_name)
             if value is not None and (type(value) is not int or value <= 0):
@@ -254,7 +266,11 @@ class GPUTrainingConfig:
             "hard_example_replay_enabled",
             "pin_memory",
             "run_generation_eval",
+            "generation_eval_use_best_checkpoint",
+            "generation_eval_include_train",
             "early_stopping_enabled",
+            "eval_full_dataset",
+            "shuffle_train",
         ):
             if not isinstance(getattr(self, field_name), bool):
                 raise ValueError(f"{field_name} must be a boolean.")
@@ -317,6 +333,8 @@ class GPUTrainingConfig:
 class GPUTrainingState:
     global_step: int = 0
     optimizer_step: int = 0
+    train_epoch: int = 0
+    train_batches_in_epoch: int = 0
     samples_seen: int = 0
     tokens_seen: int = 0
     latest_train_loss: float | None = None
@@ -347,6 +365,8 @@ class GPUTrainingState:
         return cls(
             global_step=int(data.get("global_step", 0)),
             optimizer_step=int(data.get("optimizer_step", 0)),
+            train_epoch=int(data.get("train_epoch", 0)),
+            train_batches_in_epoch=int(data.get("train_batches_in_epoch", 0)),
             samples_seen=int(data.get("samples_seen", 0)),
             tokens_seen=int(data.get("tokens_seen", 0)),
             latest_train_loss=data.get("latest_train_loss"),

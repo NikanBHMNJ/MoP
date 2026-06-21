@@ -69,8 +69,9 @@ but frame verified repair targets as narrow XML blocks:
 
 ```bash
 mopforge gpu prepare-efficiency-data \
-  --count-per-category 100 \
+  --count-per-category 10 \
   --split-seed 42 \
+  --stratify-by bug_type \
   --quality-format fixed_code_xml
 ```
 
@@ -89,3 +90,18 @@ allowing the frozen backbone to remain off CUDA during sparse training.
 Cached runs now restore the full model only after training to generate and
 verify code samples. Those samples are written to `generation_eval.json`; the
 restoration occurs after cached-tail VRAM metrics are captured.
+
+Before a 1B quality run, execute
+`notebooks/colab_l4_goal50_100m_learning_gate.ipynb`. Its config uses full
+held-out loss evaluation, deterministic epoch reshuffling, 1,000 optimizer
+updates, generation from the best eval-loss checkpoint, all five bug
+categories, and raw/XML ground-truth controls. The generated report records
+microsteps and optimizer updates separately and blocks scaling when the
+memorization thresholds fail.
+
+After a passing gate, use
+`notebooks/colab_l4_goal50_100m_quality_comparison.ipynb` for the full 100M
+comparison. Configure `TARGET_EVAL_LOSS` before running it. The notebook uses
+2,000 optimizer updates per enabled profile, 10,000 balanced verified lessons,
+full held-out loss, a five-category stratified generation subset, and an
+`acceptance_gates.json` claim boundary.

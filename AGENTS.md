@@ -281,7 +281,7 @@ Large models become broader code generators with sparse MoP specialization.
 Both use the same training, caching, verification, and reporting framework.
 ```
 
-### Next Quality Experiment
+### Goal 49 Quality Experiment - Completed
 
 Run the next code report with:
 
@@ -308,6 +308,155 @@ closing the syntax/verifier quality gap on narrow code repair tasks.
 Do not claim that a small cached sparse student is a general code generator
 unless generated samples, syntax pass rate, verifier pass rate, and task success
 prove it.
+
+Measured Goal 49 outcome:
+
+- cached Adapter/Norm/Head 128 and cached tail-only LoRA Rank 8 preserved the
+  major throughput, VRAM, trainable-ratio, and checkpoint advantages,
+- both cached profiles reached 50% syntax pass on 32 generated samples,
+- exact match and verifier pass remained 0% for every profile,
+- the report therefore validates cached-tail efficiency, not useful generated
+  code quality.
+
+### Goal 50 - Evaluation Integrity And 100M Learning Gate
+
+Do not scale this experiment to 1B yet. First prove that the 100M pipeline can
+learn and generate executable solutions for the narrow verified repair tasks.
+
+The Goal 49 audit found:
+
+- 1,000 total lessons: 800 train, 100 eval, and 100 test,
+- 1,500 microsteps produced only 188 optimizer updates,
+- cached hard replay expanded the train loader to 1,439 records, so the cached
+  runs completed only about one replay-expanded pass,
+- all profiles evaluated loss on only two examples because `eval_batches=2`,
+- generation used the final in-memory weights instead of restoring the best
+  eval-loss checkpoint,
+- training used `shuffle=False` and loaded records in five category-grouped
+  blocks,
+- the first 32 generation examples covered only missing-return and off-by-one
+  tasks, not all five categories,
+- all 1,000 prompt/target pairs fit within sequence length 1,024 and all targets
+  fit within the 256-token generation budget,
+- all 100 held-out ground-truth solutions passed exact match and the verifier in
+  both raw and `<fixed_code>` framing.
+
+This means the extraction/verifier core is functioning. The primary blockers
+are evaluation integrity, too few effective optimizer updates, category-ordered
+training, limited data diversity, and autoregressive byte-level generation.
+Model capacity remains a hypothesis, not the first conclusion.
+
+#### Phase A - Correct The Experiment Protocol
+
+Before another quality report:
+
+1. Shuffle the train loader every epoch with a recorded deterministic seed.
+2. Preserve fixed train/eval/test membership while avoiding source-order
+   category blocks.
+3. Evaluate loss over all 100 held-out eval lessons, or record an explicitly
+   justified larger eval subset. Never derive best loss from two examples.
+4. Restore the best eval-loss checkpoint before generated-code evaluation.
+5. Record the exact checkpoint path and step used for every quality result.
+6. Evaluate all 100 held-out lessons for the diagnostic run. If a subset is
+   required later, stratify it across all five bug categories.
+7. Report per-category counts and metrics for XML completion, syntax, exact
+   match, verifier pass, and failure type.
+8. Keep ground-truth raw/XML verifier controls in every report. These controls
+   must remain 100% passing.
+9. Report both microsteps and optimizer updates prominently.
+10. Keep generation limits and truncation statistics in experiment settings so
+    a target can never be silently truncated.
+
+Implemented repository support:
+
+- `GPUTrainer` now advances real DataLoader epochs instead of cycling one fixed
+  iterator, and records epoch, shuffle policy, and shuffle seed,
+- quality configs can evaluate the full held-out loader,
+- generated-code evaluation can restore and record the best eval checkpoint,
+  evaluate train and held-out splits, and select a deterministic stratified
+  subset,
+- generation artifacts include complete-XML and per-category quality metrics,
+- every GPU quality evaluation writes raw/XML ground-truth controls,
+- lesson data metadata records pre-truncation prompt, target, and sequence
+  lengths,
+- fixed dataset splits can stratify on `bug_type`,
+- `notebooks/colab_l4_goal50_100m_learning_gate.ipynb` implements the Phase B
+  L4 diagnostic and report gate.
+- `notebooks/colab_l4_goal50_100m_quality_comparison.ipynb` implements the gated
+  Phase C Dense/MoP/warm/cached 100M comparison and writes explicit
+  quality-plus-efficiency acceptance gates.
+
+#### Phase B - 100M Memorization Diagnostic
+
+Run a deliberately small learning test before another full comparison:
+
+- 50 verified lessons total,
+- 10 lessons from each of the five bug categories,
+- a separate balanced held-out set,
+- seeded shuffling,
+- 1,000 to 2,000 optimizer updates, not microsteps,
+- full train and held-out generation from the best checkpoint,
+- no quantization.
+
+Memorization acceptance gates:
+
+- ground-truth verifier control: 100%,
+- complete `<fixed_code>` output rate: at least 95% on train,
+- train syntax pass: at least 95%,
+- train verifier pass: at least 95%,
+- train exact match: at least 90%,
+- metrics include all five categories and the checkpoint used.
+
+Interpretation rules:
+
+- If train verifier remains low, the training/generation pipeline is still
+  defective or materially undertrained. Do not blame data generalization or
+  model size.
+- If train verifier passes but held-out verifier remains low, expand and
+  diversify verified training data.
+- If train and held-out quality improve but plateau after protocol and data
+  fixes, model capacity becomes a credible blocker.
+
+#### Phase C - Full 100M Quality Comparison
+
+Proceed only after the memorization gate passes.
+
+Use:
+
+- at least 10,000 verified repair/completion lessons,
+- balanced categories and a fixed leakage-checked split,
+- at least 2,000 optimizer updates,
+- seeded epoch shuffling,
+- full held-out loss evaluation,
+- early stopping and generation from the best checkpoint,
+- Dense, MoP Full, Warm Adapter/Norm/Head 128, Cached Adapter/Norm/Head 128,
+  and Cached Tail-Only LoRA Rank 8,
+- the same tokenizer, sequence length, batch policy, eval cadence, and
+  generation budget for every profile.
+
+Minimum quality gate before scaling:
+
+- ground-truth verifier controls remain 100%,
+- complete output framing is at least 90%,
+- held-out syntax pass is at least 80%,
+- held-out verifier pass is at least 20% and materially better than Goal 49,
+- exact match is nonzero,
+- cached profiles retain a measured efficiency advantage,
+- no broad code-generation claim is made from these narrow repair tasks.
+
+#### 1B Scaling Gate
+
+A 1B run may begin only after:
+
+1. the 100M memorization diagnostic passes,
+2. the full 100M run demonstrates nonzero held-out verifier and exact-match
+   quality,
+3. evaluation uses the best checkpoint and all categories,
+4. the larger dataset and split are reproducible,
+5. a short 1B L4 memory/throughput probe stays within the measured VRAM budget.
+
+Until those gates pass, a 1B run would make the same unresolved experiment more
+expensive rather than proving model-scale quality.
 
 ## Target Profiles
 

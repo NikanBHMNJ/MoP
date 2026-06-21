@@ -42,10 +42,19 @@ MoP-Forge currently includes:
 - Module-routed low-rank deltas for attention Q/K/V, attention output, and FFN
   up/down projections.
 - Fixed-split coding dataset preparation for fair dense-vs-sparse comparisons.
+- Optional `bug_type`-stratified fixed splits and deterministic train-loader
+  reshuffling at real epoch boundaries, with the seed and epoch counters saved
+  in run metadata.
+- Full held-out loss evaluation for quality runs, including the exact number of
+  batches and examples used for every evaluation.
 - Generated-code evaluation metrics, including exact match and verifier pass
   rate, with extraction support for `<fixed_code>...</fixed_code>` outputs.
-  Cached runs restore the full model only after training for quality evaluation
-  and save generated samples to `generation_eval.json`.
+  Quality evaluation can restore the best eval-loss checkpoint, balance samples
+  by bug category, evaluate train and held-out splits separately, and save the
+  checkpoint path, complete-XML rate, per-category failures, and generated
+  samples to `generation_eval.json`.
+- Automatic raw/XML ground-truth verifier controls and pre-truncation
+  prompt/target/sequence-length statistics for code-quality reports.
 - JSON/CSV GPU run comparison and sparse-efficiency acceptance gates.
 
 ## Latest Evidence
@@ -134,8 +143,20 @@ time-to-target values are unavailable and must not be inferred.
 
 ## Current Research Direction
 
-Goal 49 extends the warm sparse path toward better loss efficiency without
-giving up the efficiency story:
+Goal 50 first tests whether the 100M pipeline can learn its narrow verified
+repair contract before spending an L4 session on a 1B model. The protocol now:
+
+- separates microsteps from optimizer updates,
+- reshuffles the train set deterministically at every real epoch,
+- evaluates held-out loss over the complete eval split,
+- generates from the saved best eval-loss checkpoint,
+- balances diagnostic generation across all five bug categories,
+- reports complete XML, syntax, verifier, exact-match, and failure metrics per
+  category,
+- verifies raw and XML ground-truth controls,
+- records truncation statistics and the generation budget.
+
+The cached sparse direction remains in place:
 
 - Warm-start sparse runs from a learned dense or full-MoP checkpoint instead of
   training adapters on a random frozen base.
@@ -162,10 +183,23 @@ This work is implemented and tested. The first L4 warm sparse report is
 available under `reports/v0_46_0_l4_warm_sparse_comparison/`, but broader claims
 still need longer runs, repeated seeds, and task-specific quality checks.
 
-The runnable Goal 49 experiment is
+The prior full quality comparison is
 `notebooks/colab_l4_goal49_verified_code_quality_report.ipynb`. It builds a
 downloadable lightweight report with comparison JSON/CSV, run metadata, and
 generated-code samples while excluding caches and model weights.
+
+The next runnable diagnostic is
+`notebooks/colab_l4_goal50_100m_learning_gate.ipynb`. It trains the balanced
+50-lesson 100M Dense memorization test for 1,000 optimizer updates, evaluates
+full train and held-out generation from the best checkpoint, and emits an
+explicit pass/fail report. A failed gate blocks the 1B run.
+
+After that gate passes, run
+`notebooks/colab_l4_goal50_100m_quality_comparison.ipynb`. It compares the five
+100M Dense, full-MoP, warm sparse, cached adapter, and cached tail-LoRA profiles
+on 10,000 balanced verified lessons for 2,000 optimizer updates each. It writes
+`acceptance_gates.json` and refuses to start without a passing memorization gate
+and a preconfigured shared target eval loss.
 
 ## Quickstart
 
@@ -228,8 +262,9 @@ fixed-code targets:
 
 ```bash
 mopforge gpu prepare-efficiency-data \
-  --count-per-category 100 \
+  --count-per-category 10 \
   --split-seed 42 \
+  --stratify-by bug_type \
   --quality-format fixed_code_xml
 ```
 

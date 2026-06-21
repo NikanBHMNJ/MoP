@@ -112,8 +112,15 @@ def create_dataset_split(
     _validate_ratios(train, eval, test)
     if type(seed) is not int:
         raise ValueError("seed must be an integer.")
-    if stratify_by is not None and stratify_by not in {"skill", "domain", "target_module"}:
-        raise ValueError("stratify_by must be skill, domain, target_module, or None.")
+    if stratify_by is not None and stratify_by not in {
+        "skill",
+        "domain",
+        "target_module",
+        "bug_type",
+    }:
+        raise ValueError(
+            "stratify_by must be skill, domain, target_module, bug_type, or None."
+        )
     records = _load_records(manifest)
     indexed = list(enumerate(records))
     rng = random.Random(seed)
@@ -282,6 +289,11 @@ def _record_id(record: dict[str, Any]) -> str:
 def _stratify_value(record: dict[str, Any], stratify_by: str) -> str:
     if stratify_by in {"skill", "domain"}:
         return str(record.get(stratify_by) or "none")
+    if stratify_by == "bug_type":
+        metadata = record.get("metadata")
+        if isinstance(metadata, dict) and metadata.get("bug_type"):
+            return str(metadata["bug_type"])
+        return str(record.get("subskill") or "none")
     modules = record.get("target_modules")
     if isinstance(modules, list) and modules:
         return str(modules[0])

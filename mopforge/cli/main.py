@@ -247,6 +247,11 @@ def _build_parser() -> argparse.ArgumentParser:
     gpu_data.add_argument("--eval-ratio", type=float, default=0.1)
     gpu_data.add_argument("--test-ratio", type=float, default=0.1)
     gpu_data.add_argument(
+        "--stratify-by",
+        choices=["bug_type", "domain", "skill", "target_module"],
+        help="preserve category representation across fixed split buckets",
+    )
+    gpu_data.add_argument(
         "--quality-format",
         choices=["raw", "fixed_code_xml"],
         default="raw",
@@ -1000,12 +1005,14 @@ def _cmd_gpu_prepare_efficiency_data(args) -> int:
         test_ratio=args.test_ratio,
         overwrite=args.overwrite,
         quality_format=args.quality_format,
+        stratify_by=args.stratify_by,
     )
     print(f"dataset_ref={result['dataset_ref']}")
     print(f"record_count={result['record_count']}")
     print(f"verified_count={result['verified_count']}")
     print(f"quality_format={result['quality_format']}")
     print(f"split_id={result['split_id']}")
+    print(f"stratify_by={result['stratify_by']}")
     print(f"split_counts={json.dumps(result['split_counts'], sort_keys=True)}")
     print(f"summary_path={result['summary_path']}")
     return 0

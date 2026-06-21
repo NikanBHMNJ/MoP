@@ -31,6 +31,8 @@ class GPUDataConfig:
     streaming: bool = False
     shuffle_buffer_size: int = 0
     seed: int = 42
+    shuffle_train: bool = True
+    shuffle_seed: int = 42
     max_examples: int | None = None
 
     def __post_init__(self) -> None:
@@ -44,6 +46,10 @@ class GPUDataConfig:
             raise ValueError("shuffle_buffer_size must be a non-negative integer.")
         if type(self.seed) is not int:
             raise ValueError("seed must be an integer.")
+        if not isinstance(self.shuffle_train, bool):
+            raise ValueError("shuffle_train must be a boolean.")
+        if type(self.shuffle_seed) is not int:
+            raise ValueError("shuffle_seed must be an integer.")
         if self.max_examples is not None and (type(self.max_examples) is not int or self.max_examples <= 0):
             raise ValueError("max_examples must be a positive integer or None.")
 
@@ -94,23 +100,34 @@ def build_gpu_dataloaders(
         eval_ds = CorpusCausalLMDataset(eval_records, tokenizer, max_seq_len=config.max_seq_len)
         collator = CorpusCausalLMCollator(tokenizer)
         kind = "corpus"
+        sequence_length_statistics = None
     else:
         train_lessons, eval_lessons, lesson_metadata = load_gpu_lesson_splits(config)
         train_ds = LessonCausalLMDataset(train_lessons, tokenizer, max_length=config.max_seq_len)
         eval_ds = LessonCausalLMDataset(eval_lessons, tokenizer, max_length=config.max_seq_len)
         collator = CausalLMCollator(tokenizer)
         kind = "lessons"
+        sequence_length_statistics = {
+            "train": train_ds.sequence_length_statistics(),
+            "eval": eval_ds.sequence_length_statistics(),
+        }
     loader_kwargs = {
         "batch_size": config.micro_batch_size,
-        "shuffle": False,
         "num_workers": config.num_workers,
         "pin_memory": pin_memory,
         "collate_fn": collator,
     }
     if prefetch_factor is not None:
         loader_kwargs["prefetch_factor"] = prefetch_factor
-    train_loader = torch.utils.data.DataLoader(train_ds, **loader_kwargs)
-    eval_loader = torch.utils.data.DataLoader(eval_ds, **loader_kwargs)
+    train_generator = torch.Generator()
+    train_generator.manual_seed(int(config.shuffle_seed))
+    train_loader = torch.utils.data.DataLoader(
+        train_ds,
+        shuffle=config.shuffle_train,
+        generator=train_generator if config.shuffle_train else None,
+        **loader_kwargs,
+    )
+    eval_loader = torch.utils.data.DataLoader(eval_ds, shuffle=False, **loader_kwargs)
     metadata = {
         "kind": kind,
         "train_examples": len(train_ds),
@@ -121,9 +138,12 @@ def build_gpu_dataloaders(
         "num_workers": config.num_workers,
         "pin_memory": pin_memory,
         "streaming": config.streaming,
+        "shuffle_train": config.shuffle_train,
+        "shuffle_seed": config.shuffle_seed,
         "dataset_ref": config.dataset_ref,
         "dataset_split": config.dataset_split,
         "dataset_split_id": config.dataset_split_id,
+        "sequence_length_statistics": sequence_length_statistics,
         **({} if config.corpus_path else lesson_metadata),
     }
     return train_loader, eval_loader, metadata

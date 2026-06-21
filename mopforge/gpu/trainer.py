@@ -5,8 +5,8 @@ from __future__ import annotations
 import json
 import math
 import time
+from collections import Counter
 from datetime import datetime, timezone
-from itertools import cycle
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -38,7 +38,12 @@ from mopforge.models import (
     build_tiny_model_from_architecture,
     condition_names_from_target_modules,
 )
-from mopforge.eval import evaluate_generated_code_for_lesson, summarize_generation_results
+from mopforge.eval import (
+    evaluate_ground_truth_controls,
+    evaluate_generated_code_for_lesson,
+    select_generation_eval_lessons,
+    summarize_generation_results,
+)
 from mopforge.runtime import (
     RuntimeConfig,
     apply_runtime_determinism,
@@ -89,6 +94,7 @@ class GPUTrainer:
         self._train_finished_at: float | None = None
         self._step_times: list[float] = []
         self._last_loss_metadata: dict[str, Any] = {}
+        self._latest_eval_metrics: dict[str, Any] = {}
         self._setup_done = False
 
     def setup(self) -> None:
@@ -160,6 +166,8 @@ class GPUTrainer:
             pin_memory=self.config.pin_memory,
             streaming=bool(self.config.metadata.get("streaming", False)),
             seed=int(self.config.metadata.get("seed", 42)),
+            shuffle_train=self.config.shuffle_train,
+            shuffle_seed=self.config.train_shuffle_seed,
             max_examples=_max_examples(self.config),
         )
         self._data_config = data_config
@@ -170,6 +178,8 @@ class GPUTrainer:
                 micro_batch_size=self.config.micro_batch_size,
                 num_workers=self.config.num_workers,
                 pin_memory=pin_memory,
+                shuffle_train=self.config.shuffle_train,
+                shuffle_seed=self.config.train_shuffle_seed,
                 hard_example_replay_enabled=self.config.hard_example_replay_enabled,
                 hard_example_replay_loss_threshold=self.config.hard_example_replay_loss_threshold,
                 hard_example_replay_multiplier=self.config.hard_example_replay_multiplier,
@@ -180,7 +190,7 @@ class GPUTrainer:
                 self.tokenizer,
                 self.runtime,
             )
-        self._train_iter = cycle(self.train_loader)
+        self._train_iter = iter(self.train_loader)
 
         if self.config.resume_from_checkpoint:
             self.load_checkpoint(self.config.resume_from_checkpoint)
@@ -206,7 +216,10 @@ class GPUTrainer:
         try:
             while self.state.global_step < self.config.max_steps:
                 step_started_at = time.perf_counter()
-                batch = move_batch_to_device(next(self._train_iter), self.runtime.device_info.selected)
+                batch = move_batch_to_device(
+                    self._next_train_batch(),
+                    self.runtime.device_info.selected,
+                )
                 loss = self._forward_loss(batch, include_distillation=True)
                 scaled_loss = loss / float(self.config.gradient_accumulation_steps)
                 self.scaler.scale(scaled_loss).backward()
@@ -283,27 +296,47 @@ class GPUTrainer:
         if not self._setup_done:
             self.setup()
         losses: list[float] = []
+        examples = 0
         self.model.eval()
         try:
             import torch
 
             with torch.no_grad():
                 for index, batch in enumerate(self.eval_loader):
-                    if index >= self.config.eval_batches:
+                    if not self.config.eval_full_dataset and index >= self.config.eval_batches:
                         break
                     batch = move_batch_to_device(batch, self.runtime.device_info.selected)
                     loss = self._forward_loss(batch, include_distillation=False)
                     losses.append(float(loss.detach().float().cpu().item()))
+                    examples += _batch_size(batch)
         finally:
             self.model.train()
         mean_loss = sum(losses) / len(losses) if losses else None
         metrics = {
             "eval_loss_mean": mean_loss,
             "eval_batches": len(losses),
+            "eval_examples": examples,
+            "eval_full_dataset": bool(self.config.eval_full_dataset),
             "step": self.state.global_step,
         }
+        self._latest_eval_metrics = dict(metrics)
         self._append_metrics(metrics)
         return metrics
+
+    def _next_train_batch(self):
+        if self._train_iter is None:
+            self._train_iter = iter(self.train_loader)
+        if self.state.train_epoch <= 0:
+            self.state.train_epoch = 1
+        try:
+            batch = next(self._train_iter)
+        except StopIteration:
+            self.state.train_epoch += 1
+            self.state.train_batches_in_epoch = 0
+            self._train_iter = iter(self.train_loader)
+            batch = next(self._train_iter)
+        self.state.train_batches_in_epoch += 1
+        return batch
 
     def save_checkpoint(
         self,
@@ -664,11 +697,16 @@ class GPUTrainer:
             "finite": finite,
             "global_steps": self.state.global_step,
             "optimizer_steps": self.state.optimizer_step,
+            "train_epoch": self.state.train_epoch,
+            "train_batches_in_epoch": self.state.train_batches_in_epoch,
             "samples_seen": self.state.samples_seen,
             "tokens_seen": self.state.tokens_seen,
             "latest_train_loss": self.state.latest_train_loss,
             "latest_eval_loss": self.state.latest_eval_loss,
             "best_eval_loss": self.state.best_eval_loss,
+            "latest_eval_batches": self._latest_eval_metrics.get("eval_batches"),
+            "latest_eval_examples": self._latest_eval_metrics.get("eval_examples"),
+            "eval_full_dataset": self.config.eval_full_dataset,
             "evals_without_improvement": self.state.evals_without_improvement,
             "target_eval_loss": self.config.target_eval_loss,
             "target_eval_loss_reached": self.state.target_eval_loss_reached,
@@ -682,6 +720,8 @@ class GPUTrainer:
             "micro_batch_size": self.config.micro_batch_size,
             "gradient_accumulation_steps": self.config.gradient_accumulation_steps,
             "effective_batch_size": self.config.effective_batch_size,
+            "shuffle_train": self.config.shuffle_train,
+            "train_shuffle_seed": self.config.train_shuffle_seed,
             "runtime": dict(self.runtime_meta),
             "scaler": self.scaler.state_dict() if self.scaler is not None else {},
             "data": dict(self.data_metadata),
@@ -749,7 +789,7 @@ class GPUTrainer:
                 }
             }
         try:
-            _, eval_lessons, _ = load_gpu_lesson_splits(self._data_config)
+            train_lessons, eval_lessons, _ = load_gpu_lesson_splits(self._data_config)
         except Exception as exc:
             return {
                 "generation_eval": {
@@ -760,46 +800,52 @@ class GPUTrainer:
         cached_training = bool(self.config.activation_cache_path)
         if cached_training:
             self.model = move_model_to_runtime(self.model, self.runtime)
+        try:
+            checkpoint = self._restore_generation_eval_checkpoint()
+        except Exception as exc:
+            if cached_training and self.config.offload_frozen_backbone_for_cache:
+                offload_cached_frozen_backbone(self.model, runtime=self.runtime)
+                self._empty_cache()
+            return {
+                "generation_eval": {
+                    "enabled": False,
+                    "error": f"best-checkpoint restore failed: {exc}",
+                    "checkpoint_source": "restore_failed",
+                }
+            }
         previous_mode = self.model.training
         self.model.eval()
-        results = []
+        selected_eval = select_generation_eval_lessons(
+            eval_lessons,
+            max_lessons=self.config.generation_eval_examples,
+            stratify_by=self.config.generation_eval_stratify_by,
+        )
+        selected_by_split = {"eval": selected_eval}
+        if self.config.generation_eval_include_train:
+            selected_by_split["train"] = select_generation_eval_lessons(
+                train_lessons,
+                max_lessons=self.config.generation_eval_examples,
+                stratify_by=self.config.generation_eval_stratify_by,
+            )
+        results_by_split: dict[str, list[dict[str, Any]]] = {}
         try:
-            for lesson in eval_lessons[: self.config.generation_eval_examples]:
-                target_modules = list(lesson.target_modules)
-                active_modules = (
-                    target_modules
-                    if self.config.model_type in {"mop_oracle", "mop_learned_router", "baseline_moe"}
-                    else None
-                )
-                active_adapters = (
-                    adapter_names_from_target_modules(target_modules)
-                    if self.config.use_fast_adapters
-                    else None
-                )
-                active_conditions = (
-                    condition_names_from_target_modules(target_modules)
-                    if self.config.use_generated_params
-                    else None
-                )
-                results.append(
-                    evaluate_generated_code_for_lesson(
-                        self.model,
-                        self.tokenizer,
-                        lesson,
-                        max_new_tokens=self.config.generation_max_new_tokens,
-                        device=str(self.runtime.device_info.selected),
-                        active_modules=active_modules,
-                        active_adapters=active_adapters,
-                        active_conditions=active_conditions,
-                    )
-                )
+            for split_name, lessons in selected_by_split.items():
+                results_by_split[split_name] = self._generate_for_lessons(lessons)
         finally:
             if previous_mode:
                 self.model.train()
             if cached_training and self.config.offload_frozen_backbone_for_cache:
                 offload_cached_frozen_backbone(self.model, runtime=self.runtime)
                 self._empty_cache()
-        summary = summarize_generation_results(results)
+        summaries = {
+            split_name: summarize_generation_results(results)
+            for split_name, results in results_by_split.items()
+        }
+        results = results_by_split["eval"]
+        summary = summaries["eval"]
+        ground_truth_controls = evaluate_ground_truth_controls(eval_lessons)
+        controls_path = self.output_dir / "ground_truth_controls.json"
+        _write_json(controls_path, ground_truth_controls)
         generation_path = self.output_dir / "generation_eval.json"
         measurement_scope = (
             "post_training_full_model_quality_eval"
@@ -810,20 +856,129 @@ class GPUTrainer:
             generation_path,
             {
                 "measurement_scope": measurement_scope,
+                "checkpoint": checkpoint,
+                "selection": {
+                    "stratify_by": self.config.generation_eval_stratify_by,
+                    "requested_examples_per_split": self.config.generation_eval_examples,
+                    "max_new_tokens": self.config.generation_max_new_tokens,
+                    "selected_categories": {
+                        split_name: dict(
+                            sorted(
+                                Counter(
+                                    str(lesson.metadata.get("bug_type") or lesson.subskill or "unknown")
+                                    for lesson in lessons
+                                ).items()
+                            )
+                        )
+                        for split_name, lessons in selected_by_split.items()
+                    },
+                },
                 "summary": summary,
                 "results": results,
+                "splits": {
+                    split_name: {
+                        "summary": summaries[split_name],
+                        "results": split_results,
+                    }
+                    for split_name, split_results in results_by_split.items()
+                },
+                "ground_truth_controls": {
+                    "passed": ground_truth_controls["passed"],
+                    "examples": ground_truth_controls["examples"],
+                    "artifact_path": str(controls_path),
+                },
             },
         )
         self.artifacts["generation_eval_json"] = str(generation_path)
+        self.artifacts["ground_truth_controls_json"] = str(controls_path)
         return {
             "generation_eval": {
                 "enabled": True,
                 "examples": len(results),
                 "measurement_scope": measurement_scope,
                 "artifact_path": str(generation_path),
+                "checkpoint_source": checkpoint["source"],
+                "checkpoint_path": checkpoint.get("path"),
+                "checkpoint_global_step": checkpoint.get("global_step"),
+                "stratify_by": self.config.generation_eval_stratify_by,
+                "split_summaries": summaries,
+                "ground_truth_controls_passed": ground_truth_controls["passed"],
+                "ground_truth_controls_examples": ground_truth_controls["examples"],
+                "ground_truth_controls_path": str(controls_path),
                 **summary,
             }
         }
+
+    def _restore_generation_eval_checkpoint(self) -> dict[str, Any]:
+        """Restore the best eval weights without changing final trainer state."""
+
+        path = self.state.best_checkpoint_path
+        if not self.config.generation_eval_use_best_checkpoint or not path:
+            return {
+                "source": "final",
+                "path": self.state.latest_checkpoint_path,
+                "global_step": self.state.global_step,
+                "reason": (
+                    "best_checkpoint_disabled"
+                    if not self.config.generation_eval_use_best_checkpoint
+                    else "best_checkpoint_unavailable"
+                ),
+            }
+        payload = load_gpu_checkpoint(path, map_location="cpu")
+        restored = restore_gpu_checkpoint(
+            payload,
+            model=self.model,
+            optimizer=None,
+            scheduler=None,
+            scaler=None,
+            restore_rng=False,
+            restore_optimizer=False,
+            restore_scheduler=False,
+            restore_scaler=False,
+            strict_model=False,
+        )
+        checkpoint_state = dict(payload.get("trainer_state") or {})
+        return {
+            "source": "best_eval",
+            "path": str(path),
+            "global_step": checkpoint_state.get("global_step"),
+            "optimizer_step": checkpoint_state.get("optimizer_step"),
+            "best_eval_loss": checkpoint_state.get("best_eval_loss"),
+            "restore": restored,
+        }
+
+    def _generate_for_lessons(self, lessons) -> list[dict[str, Any]]:
+        results = []
+        for lesson in lessons:
+            target_modules = list(lesson.target_modules)
+            active_modules = (
+                target_modules
+                if self.config.model_type in {"mop_oracle", "mop_learned_router", "baseline_moe"}
+                else None
+            )
+            active_adapters = (
+                adapter_names_from_target_modules(target_modules)
+                if self.config.use_fast_adapters
+                else None
+            )
+            active_conditions = (
+                condition_names_from_target_modules(target_modules)
+                if self.config.use_generated_params
+                else None
+            )
+            results.append(
+                evaluate_generated_code_for_lesson(
+                    self.model,
+                    self.tokenizer,
+                    lesson,
+                    max_new_tokens=self.config.generation_max_new_tokens,
+                    device=str(self.runtime.device_info.selected),
+                    active_modules=active_modules,
+                    active_adapters=active_adapters,
+                    active_conditions=active_conditions,
+                )
+            )
+        return results
 
     def _efficiency_metrics(self) -> dict[str, Any]:
         params = dict(self.model_metadata.get("parameter_counts") or {})

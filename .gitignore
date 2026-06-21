@@ -35,6 +35,8 @@ pytest_tmp/
 !/notebooks/colab_l4_v046_efficiency_comparison.ipynb
 !/notebooks/colab_l4_goal48_code_cached_sparse_report.ipynb
 !/notebooks/colab_l4_goal49_verified_code_quality_report.ipynb
+!/notebooks/colab_l4_goal50_100m_learning_gate.ipynb
+!/notebooks/colab_l4_goal50_100m_quality_comparison.ipynb
 
 # Local registries and generated data
 /data/*.jsonl

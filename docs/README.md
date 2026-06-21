@@ -21,6 +21,8 @@ and tested before it has proven a GPU efficiency result.
 - [Colab L4 TinyStories v0.46.0 efficiency comparison notebook](../notebooks/colab_l4_v046_efficiency_comparison.ipynb)
 - [Colab L4 Goal 48 code cached-sparse report notebook](../notebooks/colab_l4_goal48_code_cached_sparse_report.ipynb)
 - [Colab L4 Goal 49 verified-code quality report notebook](../notebooks/colab_l4_goal49_verified_code_quality_report.ipynb)
+- [Colab L4 Goal 50 100M learning-gate notebook](../notebooks/colab_l4_goal50_100m_learning_gate.ipynb)
+- [Colab L4 Goal 50 full 100M quality comparison notebook](../notebooks/colab_l4_goal50_100m_quality_comparison.ipynb)
 - [GPU job profiles](gpu_job_profiles.md)
 - [GPU efficiency benchmarking](gpu_efficiency_benchmarking.md)
 - [Warm sparse GPU efficiency comparison template](warm_sparse_efficiency_comparison_template.md)
@@ -71,6 +73,10 @@ These reports do not prove MoP superiority. The measured result is more careful:
 - Goal 49 derived the target loss after baseline training, so only student
   time-to-target values are present; no baseline time-to-target comparison is
   claimed.
+- Goal 50 adds the experiment-integrity path needed to diagnose that quality
+  result: seeded epoch reshuffling, full eval loss, best-checkpoint generation,
+  bug-category-balanced samples, per-category failures, raw/XML ground-truth
+  controls, and prompt/target truncation statistics.
 - The framework can measure the tradeoff and preserve the evidence.
 
 ## Current Implementation Focus
@@ -87,19 +93,30 @@ The current code adds the pieces needed for a more serious next comparison:
 - verified fixed-code XML target framing for small code-repair quality runs,
 - best eval-loss checkpoint and time/tokens-to-target-loss reporting,
 - fixed train/eval/test splits,
-- generated-code quality metrics and per-run generated sample artifacts,
+- optional bug-type-stratified fixed splits and seeded epoch reshuffling,
+- full held-out eval and best-checkpoint generated-code evaluation,
+- train/held-out per-category quality metrics, ground-truth controls, and
+  pre-truncation sequence-length statistics,
 - routed FFN expert execution,
 - internal routed low-rank deltas,
 - comparison and acceptance-gate reports.
 
-The next report should repeat the fixed code-dataset comparison with a configured
-shared `target_eval_loss`, hard-example replay when justified by teacher-loss
-metadata, `--quality-format fixed_code_xml` for narrow repair/completion
-targets, and generated-code quality checks that can support or reject a
-same-quality efficiency claim. Run longer GPU experiments before turning these
-capabilities into broad performance claims.
+The next run should execute the Goal 50 100M memorization gate. Do not scale to
+1B unless train generation passes the XML, syntax, verifier, and exact-match
+thresholds and all five categories are represented. After that gate passes,
+repeat the full fixed code-dataset comparison with at least 10,000 balanced
+verified lessons and at least 2,000 optimizer updates.
 
 The Goal 49 Colab notebook automates that comparison and creates a downloadable
 lightweight report. For cached profiles, full-model generation happens after
 the cached-tail VRAM metrics are captured, so quality evaluation does not
 inflate the reported sparse-training memory peak.
+
+The Goal 50 notebook creates a separate lightweight diagnostic report with the
+exact best checkpoint, microstep and optimizer-update counts, full train/eval
+generation, per-category evidence, and ground-truth controls.
+
+Once that diagnostic passes, the full Goal 50 100M comparison notebook runs
+Dense, MoP Full, Warm Adapter/Norm/Head 128, Cached Adapter/Norm/Head 128, and
+Cached Tail-Only LoRA Rank 8 on a 10,000-lesson balanced split. It enforces a
+shared target loss and writes explicit quality-plus-efficiency acceptance gates.
