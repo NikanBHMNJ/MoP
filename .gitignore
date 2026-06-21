@@ -23,6 +23,8 @@ pytest_tmp/
 !/reports/goal48_code_cached_sparse_efficiency/**
 !/reports/goal49_verified_code_quality_efficiency/
 !/reports/goal49_verified_code_quality_efficiency/**
+!/reports/goal50_100m_learning_gate/
+!/reports/goal50_100m_learning_gate/**
 /benchmarks/
 /experiments/
 /ablations/

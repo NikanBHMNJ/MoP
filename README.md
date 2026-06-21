@@ -141,6 +141,24 @@ win yet. Across 32 generated examples per profile, both cached students reached
 profile. The target loss was derived after the baseline runs, so baseline
 time-to-target values are unavailable and must not be inferred.
 
+The Goal 50 100M memorization-gate report is available under:
+
+`reports/goal50_100m_learning_gate/`
+
+The protocol checks worked: all five categories were represented, full eval was
+used, raw/XML ground-truth controls passed, no examples were truncated, 1,000
+optimizer updates completed, and generation restored the best checkpoint.
+However, the gate failed. Train and held-out XML completion, syntax pass,
+verifier pass, and exact match were all `0%`, despite best eval loss reaching
+`0.0129`. This isolates a teacher-forced-loss versus autoregressive-generation
+failure; the full comparison and 1B run remain blocked.
+
+The post-report audit found a concrete boundary mismatch: training encoded
+`BOS + prompt + target`, while greedy generation encoded
+`BOS + prompt + EOS` before predicting the target. Greedy generation now uses
+the same BOS-only prompt boundary as training. This report remains the honest
+pre-fix result; rerun the learning gate before unblocking Phase C.
+
 ## Current Research Direction
 
 Goal 50 first tests whether the 100M pipeline can learn its narrow verified
@@ -188,11 +206,12 @@ The prior full quality comparison is
 downloadable lightweight report with comparison JSON/CSV, run metadata, and
 generated-code samples while excluding caches and model weights.
 
-The next runnable diagnostic is
+The completed diagnostic is
 `notebooks/colab_l4_goal50_100m_learning_gate.ipynb`. It trains the balanced
 50-lesson 100M Dense memorization test for 1,000 optimizer updates, evaluates
 full train and held-out generation from the best checkpoint, and emits an
-explicit pass/fail report. A failed gate blocks the 1B run.
+explicit pass/fail report. The first measured run failed that gate, so the 1B
+run and full 100M comparison must not proceed unchanged.
 
 After that gate passes, run
 `notebooks/colab_l4_goal50_100m_quality_comparison.ipynb`. It compares the five

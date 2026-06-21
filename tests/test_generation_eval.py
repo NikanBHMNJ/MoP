@@ -49,6 +49,43 @@ def test_generate_greedy_dense_returns_string_if_torch_installed() -> None:
     assert isinstance(generated, str)
 
 
+def test_generate_greedy_matches_training_prompt_boundary() -> None:
+    if TinyCausalTransformer is None:
+        assert TinyCausalTransformer is None
+        return
+
+    import torch
+
+    tokenizer = ByteTokenizer()
+
+    class RecordingModel(torch.nn.Module):
+        max_seq_len = 32
+
+        def __init__(self) -> None:
+            super().__init__()
+            self.seen_input_ids = None
+
+        def forward(self, *, input_ids, attention_mask, **kwargs):
+            self.seen_input_ids = input_ids.detach().cpu().tolist()[0]
+            logits = torch.zeros(
+                (1, input_ids.shape[1], tokenizer.vocab_size),
+                device=input_ids.device,
+            )
+            logits[0, -1, tokenizer.eos_token_id] = 1.0
+            return {"logits": logits}
+
+    model = RecordingModel()
+
+    generated = generate_greedy(model, tokenizer, "abc", max_new_tokens=1)
+
+    assert generated == ""
+    assert model.seen_input_ids == [
+        tokenizer.bos_token_id,
+        *tokenizer.encode("abc", add_special_tokens=False),
+    ]
+    assert tokenizer.eos_token_id not in model.seen_input_ids
+
+
 def test_generate_greedy_mop_returns_string_if_torch_installed() -> None:
     if TinyMoPCausalTransformer is None:
         assert TinyMoPCausalTransformer is None

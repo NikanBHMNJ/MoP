@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
+from mopforge.tokenization import (
+    get_tokenizer_pad_token_id,
+    get_tokenizer_special_token_id,
+)
+
 
 def generate_greedy(
     model: Any,
@@ -38,7 +43,13 @@ def generate_greedy(
     model = model.to(target_device)
     model.eval()
 
-    token_ids = tokenizer.encode(prompt, add_special_tokens=True)
+    token_ids: list[int] = []
+    bos_token_id = get_tokenizer_special_token_id(tokenizer, "bos_token_id")
+    if bos_token_id is not None:
+        token_ids.append(bos_token_id)
+    token_ids.extend(tokenizer.encode(prompt, add_special_tokens=False))
+    if not token_ids:
+        token_ids.append(get_tokenizer_pad_token_id(tokenizer))
     max_seq_len = int(getattr(model, "max_seq_len", len(token_ids) + max_new_tokens))
     max_seq_len = max(1, max_seq_len)
     generated_ids: list[int] = []

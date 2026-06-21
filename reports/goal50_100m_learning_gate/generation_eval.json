@@ -1,0 +1,1440 @@
+{
+  "checkpoint": {
+    "best_eval_loss": 0.01291472438024357,
+    "global_step": 7200,
+    "optimizer_step": 900,
+    "path": "gpu_runs/20260621T185710Z-goal50-100m-learning-gate-98e2f072/checkpoints/checkpoint-best-eval.pt",
+    "restore": {
+      "model_load_strict": false,
+      "model_loaded_key_count": 149,
+      "model_missing_key_count": 0,
+      "model_skipped_key_count": 0,
+      "model_skipped_keys": [],
+      "model_unexpected_key_count": 0,
+      "restored": [
+        "model"
+      ],
+      "skipped": []
+    },
+    "source": "best_eval"
+  },
+  "ground_truth_controls": {
+    "artifact_path": "gpu_runs/20260621T185710Z-goal50-100m-learning-gate-98e2f072/ground_truth_controls.json",
+    "examples": 5,
+    "passed": true
+  },
+  "measurement_scope": "post_training_quality_eval",
+  "results": [
+    {
+      "bug_type": "missing return",
+      "candidate_code": "s_06(s):\n<>\ndef add_order_totals_06(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>",
+      "domain": "coding",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "fixed_code_block_complete": false,
+      "generated_text": "s_06(s):\n<>\ndef add_order_totals_06(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>\n",
+      "lesson_id": "coding-debugging-missing-return-006",
+      "passed": false,
+      "skill": "debugging",
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false,
+      "verifier_duration_ms": 56.604,
+      "verifier_stderr": "  File \"/tmp/mopforge_verify_f22904fm/candidate_with_tests.py\", line 1\n    s_06(s):\n           ^\nSyntaxError: invalid syntax\n",
+      "verifier_stdout": ""
+    },
+    {
+      "bug_type": "off-by-one loop/index bug",
+      "candidate_code": "es(val   1\n     sum_all_values_03(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>",
+      "domain": "coding",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "fixed_code_block_complete": false,
+      "generated_text": "es(val   1\n     sum_all_values_03(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>\n",
+      "lesson_id": "coding-debugging-off-by-one-003",
+      "passed": false,
+      "skill": "debugging",
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false,
+      "verifier_duration_ms": 57.21,
+      "verifier_stderr": "  File \"/tmp/mopforge_verify_u3toq8h4/candidate_with_tests.py\", line 1\n    es(val   1\n      ^\nSyntaxError: '(' was never closed\n",
+      "verifier_stdout": ""
+    },
+    {
+      "bug_type": "wrong comparison operator",
+      "candidate_code": "des_add_order_toeeets_minimum_score_05(score, minimum):\n    return score >= minimum\n</fixed_code>",
+      "domain": "coding",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "fixed_code_block_complete": false,
+      "generated_text": "des_add_order_toeeets_minimum_score_05(score, minimum):\n    return score >= minimum\n</fixed_code>\n",
+      "lesson_id": "coding-debugging-wrong-comparison-005",
+      "passed": false,
+      "skill": "debugging",
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false,
+      "verifier_duration_ms": 58.989,
+      "verifier_stderr": "  File \"/tmp/mopforge_verify_bym2b9jv/candidate_with_tests.py\", line 1\n    des_add_order_toeeets_minimum_score_05(score, minimum):\n                                                          ^\nSyntaxError: invalid syntax\n",
+      "verifier_stdout": ""
+    },
+    {
+      "bug_type": "wrong accumulator initialization",
+      "candidate_code": "</ed_code>\ndef multiply_values_05(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>",
+      "domain": "coding",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "fixed_code_block_complete": false,
+      "generated_text": "\n</ed_code>\ndef multiply_values_05(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>\n",
+      "lesson_id": "coding-debugging-wrong-accumulator-init-005",
+      "passed": false,
+      "skill": "debugging",
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false,
+      "verifier_duration_ms": 56.111,
+      "verifier_stderr": "  File \"/tmp/mopforge_verify_zy1xwzcv/candidate_with_tests.py\", line 1\n    </ed_code>\n    ^\nSyntaxError: invalid syntax\n",
+      "verifier_stdout": ""
+    },
+    {
+      "bug_type": "incorrect base case in recursion",
+      "candidate_code": "mixed_code>\ndef factorial_value_00(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_08(n - 1)\n</fixed_code>",
+      "domain": "coding",
+      "exact_match": false,
+      "exit_code": 1,
+      "failure_type": "syntax_error",
+      "fixed_code_block_complete": false,
+      "generated_text": "mixed_code>\ndef factorial_value_00(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_08(n - 1)\n</fixed_code>\n",
+      "lesson_id": "coding-debugging-bad-recursion-base-case-000",
+      "passed": false,
+      "skill": "debugging",
+      "target_modules": [
+        "coding",
+        "debugging"
+      ],
+      "timeout": false,
+      "verifier_duration_ms": 55.821,
+      "verifier_stderr": "  File \"/tmp/mopforge_verify_2m7r04_x/candidate_with_tests.py\", line 1\n    mixed_code>\n               ^\nSyntaxError: invalid syntax\n",
+      "verifier_stdout": ""
+    }
+  ],
+  "selection": {
+    "max_new_tokens": 256,
+    "requested_examples_per_split": 50,
+    "selected_categories": {
+      "eval": {
+        "incorrect base case in recursion": 1,
+        "missing return": 1,
+        "off-by-one loop/index bug": 1,
+        "wrong accumulator initialization": 1,
+        "wrong comparison operator": 1
+      },
+      "train": {
+        "incorrect base case in recursion": 8,
+        "missing return": 8,
+        "off-by-one loop/index bug": 8,
+        "wrong accumulator initialization": 8,
+        "wrong comparison operator": 8
+      }
+    },
+    "stratify_by": "bug_type"
+  },
+  "splits": {
+    "eval": {
+      "results": [
+        {
+          "bug_type": "missing return",
+          "candidate_code": "s_06(s):\n<>\ndef add_order_totals_06(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "s_06(s):\n<>\ndef add_order_totals_06(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-missing-return-006",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.604,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_f22904fm/candidate_with_tests.py\", line 1\n    s_06(s):\n           ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "off-by-one loop/index bug",
+          "candidate_code": "es(val   1\n     sum_all_values_03(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "es(val   1\n     sum_all_values_03(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-off-by-one-003",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 57.21,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_u3toq8h4/candidate_with_tests.py\", line 1\n    es(val   1\n      ^\nSyntaxError: '(' was never closed\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong comparison operator",
+          "candidate_code": "des_add_order_toeeets_minimum_score_05(score, minimum):\n    return score >= minimum\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "des_add_order_toeeets_minimum_score_05(score, minimum):\n    return score >= minimum\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-comparison-005",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 58.989,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_bym2b9jv/candidate_with_tests.py\", line 1\n    des_add_order_toeeets_minimum_score_05(score, minimum):\n                                                          ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong accumulator initialization",
+          "candidate_code": "</ed_code>\ndef multiply_values_05(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "\n</ed_code>\ndef multiply_values_05(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-accumulator-init-005",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.111,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_zy1xwzcv/candidate_with_tests.py\", line 1\n    </ed_code>\n    ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "incorrect base case in recursion",
+          "candidate_code": "mixed_code>\ndef factorial_value_00(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_08(n - 1)\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "mixed_code>\ndef factorial_value_00(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_08(n - 1)\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-bad-recursion-base-case-000",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 55.821,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_2m7r04_x/candidate_with_tests.py\", line 1\n    mixed_code>\n               ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        }
+      ],
+      "summary": {
+        "gen_compile_pass_count": 0,
+        "gen_compile_pass_rate": 0.0,
+        "gen_eval_examples": 5,
+        "gen_exact_match_count": 0,
+        "gen_exact_match_rate": 0.0,
+        "gen_failures_by_type": {
+          "syntax_error": 5
+        },
+        "gen_fixed_code_complete_count": 0,
+        "gen_fixed_code_complete_rate": 0.0,
+        "gen_pass_count": 0,
+        "gen_pass_rate": 0.0,
+        "gen_syntax_pass_count": 0,
+        "gen_syntax_pass_rate": 0.0,
+        "gen_verifier_pass_count": 0,
+        "gen_verifier_pass_rate": 0.0,
+        "per_category": {
+          "incorrect base case in recursion": {
+            "gen_compile_pass_count": 0,
+            "gen_compile_pass_rate": 0.0,
+            "gen_eval_examples": 1,
+            "gen_exact_match_count": 0,
+            "gen_exact_match_rate": 0.0,
+            "gen_failures_by_type": {
+              "syntax_error": 1
+            },
+            "gen_fixed_code_complete_count": 0,
+            "gen_fixed_code_complete_rate": 0.0,
+            "gen_pass_count": 0,
+            "gen_pass_rate": 0.0,
+            "gen_syntax_pass_count": 0,
+            "gen_syntax_pass_rate": 0.0,
+            "gen_verifier_pass_count": 0,
+            "gen_verifier_pass_rate": 0.0
+          },
+          "missing return": {
+            "gen_compile_pass_count": 0,
+            "gen_compile_pass_rate": 0.0,
+            "gen_eval_examples": 1,
+            "gen_exact_match_count": 0,
+            "gen_exact_match_rate": 0.0,
+            "gen_failures_by_type": {
+              "syntax_error": 1
+            },
+            "gen_fixed_code_complete_count": 0,
+            "gen_fixed_code_complete_rate": 0.0,
+            "gen_pass_count": 0,
+            "gen_pass_rate": 0.0,
+            "gen_syntax_pass_count": 0,
+            "gen_syntax_pass_rate": 0.0,
+            "gen_verifier_pass_count": 0,
+            "gen_verifier_pass_rate": 0.0
+          },
+          "off-by-one loop/index bug": {
+            "gen_compile_pass_count": 0,
+            "gen_compile_pass_rate": 0.0,
+            "gen_eval_examples": 1,
+            "gen_exact_match_count": 0,
+            "gen_exact_match_rate": 0.0,
+            "gen_failures_by_type": {
+              "syntax_error": 1
+            },
+            "gen_fixed_code_complete_count": 0,
+            "gen_fixed_code_complete_rate": 0.0,
+            "gen_pass_count": 0,
+            "gen_pass_rate": 0.0,
+            "gen_syntax_pass_count": 0,
+            "gen_syntax_pass_rate": 0.0,
+            "gen_verifier_pass_count": 0,
+            "gen_verifier_pass_rate": 0.0
+          },
+          "wrong accumulator initialization": {
+            "gen_compile_pass_count": 0,
+            "gen_compile_pass_rate": 0.0,
+            "gen_eval_examples": 1,
+            "gen_exact_match_count": 0,
+            "gen_exact_match_rate": 0.0,
+            "gen_failures_by_type": {
+              "syntax_error": 1
+            },
+            "gen_fixed_code_complete_count": 0,
+            "gen_fixed_code_complete_rate": 0.0,
+            "gen_pass_count": 0,
+            "gen_pass_rate": 0.0,
+            "gen_syntax_pass_count": 0,
+            "gen_syntax_pass_rate": 0.0,
+            "gen_verifier_pass_count": 0,
+            "gen_verifier_pass_rate": 0.0
+          },
+          "wrong comparison operator": {
+            "gen_compile_pass_count": 0,
+            "gen_compile_pass_rate": 0.0,
+            "gen_eval_examples": 1,
+            "gen_exact_match_count": 0,
+            "gen_exact_match_rate": 0.0,
+            "gen_failures_by_type": {
+              "syntax_error": 1
+            },
+            "gen_fixed_code_complete_count": 0,
+            "gen_fixed_code_complete_rate": 0.0,
+            "gen_pass_count": 0,
+            "gen_pass_rate": 0.0,
+            "gen_syntax_pass_count": 0,
+            "gen_syntax_pass_rate": 0.0,
+            "gen_verifier_pass_count": 0,
+            "gen_verifier_pass_rate": 0.0
+          }
+        }
+      }
+    },
+    "train": {
+      "results": [
+        {
+          "bug_type": "missing return",
+          "candidate_code": "s_0000(sde>\ndef add_order_totals_00(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "s_0000(sde>\ndef add_order_totals_00(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-missing-return-000",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 55.774,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_szh98w30/candidate_with_tests.py\", line 1\n    s_0000(sde>\n          ^\nSyntaxError: '(' was never closed\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "missing return",
+          "candidate_code": "s_01:\n     suef add_order_totals_01(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "s_01:\n     suef add_order_totals_01(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-missing-return-001",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.813,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_gmal5flc/candidate_with_tests.py\", line 1\n    s_01:\n         ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "missing return",
+          "candidate_code": "s_02(s):\n<>\ndef add_order_totals_02(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "s_02(s):\n<>\ndef add_order_totals_02(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-missing-return-002",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.622,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_3x5wx8n1/candidate_with_tests.py\", line 1\n    s_02(s):\n           ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "missing return",
+          "candidate_code": "s_03(s):\n<>\ndef add_order_totals_03(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "s_03(s):\n<>\ndef add_order_totals_03(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-missing-return-003",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 55.919,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_39hvln21/candidate_with_tests.py\", line 1\n    s_03(s):\n           ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "missing return",
+          "candidate_code": "s_04(s):\n<>\ndef add_order_totals_04(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "s_04(s):\n<>\ndef add_order_totals_04(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-missing-return-004",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.629,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_vi14_eb2/candidate_with_tests.py\", line 1\n    s_04(s):\n           ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "missing return",
+          "candidate_code": "s_05(s):\n<>\ndef add_order_totals_05(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "s_05(s):\n<>\ndef add_order_totals_05(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-missing-return-005",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.435,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_qfq7bw9n/candidate_with_tests.py\", line 1\n    s_05(s):\n           ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "missing return",
+          "candidate_code": "s_07(s):\n<>\ndef add_order_totals_07(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "s_07(s):\n<>\ndef add_order_totals_07(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-missing-return-007",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 55.926,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_yvdb2dpc/candidate_with_tests.py\", line 1\n    s_07(s):\n           ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "missing return",
+          "candidate_code": "s_08(s):\n<>\ndef add_order_totals_08(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "s_08(s):\n<>\ndef add_order_totals_08(subtotal, shipping):\n    total = subtotal + shipping\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-missing-return-008",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 55.458,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_ddf2cn8j/candidate_with_tests.py\", line 1\n    s_08(s):\n           ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "off-by-one loop/index bug",
+          "candidate_code": "es(val   1\n     sum_all_values_00(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "es(val   1\n     sum_all_values_00(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-off-by-one-000",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.412,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_6hqhbv70/candidate_with_tests.py\", line 1\n    es(val   1\n      ^\nSyntaxError: '(' was never closed\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "off-by-one loop/index bug",
+          "candidate_code": "es(val   1\n     sum_all_values_01(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "es(val   1\n     sum_all_values_01(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-off-by-one-001",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.224,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_te8t8uwp/candidate_with_tests.py\", line 1\n    es(val   1\n      ^\nSyntaxError: '(' was never closed\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "off-by-one loop/index bug",
+          "candidate_code": "es(val   1\n     sum_all_values_02(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "es(val   1\n     sum_all_values_02(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-off-by-one-002",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 57.512,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_kbp8_zf2/candidate_with_tests.py\", line 1\n    es(val   1\n      ^\nSyntaxError: '(' was never closed\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "off-by-one loop/index bug",
+          "candidate_code": "es(val   1\n     sum_all_values_04(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "es(val   1\n     sum_all_values_04(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-off-by-one-004",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.006,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_tmqzh6eq/candidate_with_tests.py\", line 1\n    es(val   1\n      ^\nSyntaxError: '(' was never closed\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "off-by-one loop/index bug",
+          "candidate_code": "es(val   1\n     sum_all_values_05(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "es(val   1\n     sum_all_values_05(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-off-by-one-005",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.078,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_6laose3d/candidate_with_tests.py\", line 1\n    es(val   1\n      ^\nSyntaxError: '(' was never closed\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "off-by-one loop/index bug",
+          "candidate_code": "es(val   1\n     sum_all_values_06(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "es(val   1\n     sum_all_values_06(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-off-by-one-006",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 55.699,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_tib2ehin/candidate_with_tests.py\", line 1\n    es(val   1\n      ^\nSyntaxError: '(' was never closed\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "off-by-one loop/index bug",
+          "candidate_code": "es(val   1\n     sum_all_values_07(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "es(val   1\n     sum_all_values_07(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-off-by-one-007",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.881,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_erkdy79a/candidate_with_tests.py\", line 1\n    es(val   1\n      ^\nSyntaxError: '(' was never closed\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "off-by-one loop/index bug",
+          "candidate_code": "es(val   1\n     sum_all_values_09(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "es(val   1\n     sum_all_values_09(values):\n    total = 0\n    for position in range(len(values)):\n        total += values[position]\n    return total\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-off-by-one-009",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.392,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_nl2h_uio/candidate_with_tests.py\", line 1\n    es(val   1\n      ^\nSyntaxError: '(' was never closed\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong comparison operator",
+          "candidate_code": "des_add_order_toedets_minimum_score_00(score, minimum):\n    return score >= minimum\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "des_add_order_toedets_minimum_score_00(score, minimum):\n    return score >= minimum\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-comparison-000",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.632,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_zv411i4_/candidate_with_tests.py\", line 1\n    des_add_order_toedets_minimum_score_00(score, minimum):\n                                                          ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong comparison operator",
+          "candidate_code": "des_add_order_toedets_minimum_score_02(score, minimum):\n    return score >= minimum\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "des_add_order_toedets_minimum_score_02(score, minimum):\n    return score >= minimum\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-comparison-002",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.073,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_lzqc7wav/candidate_with_tests.py\", line 1\n    des_add_order_toedets_minimum_score_02(score, minimum):\n                                                          ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong comparison operator",
+          "candidate_code": "des_add_order_toedets_minimum_score_03(score, minimum):\n    return score >= minimum\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "des_add_order_toedets_minimum_score_03(score, minimum):\n    return score >= minimum\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-comparison-003",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.711,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_xxn029_c/candidate_with_tests.py\", line 1\n    des_add_order_toedets_minimum_score_03(score, minimum):\n                                                          ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong comparison operator",
+          "candidate_code": "des_add_order_toeeets_minimum_score_04(score, minimum):\n    return score >= minimum\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "des_add_order_toeeets_minimum_score_04(score, minimum):\n    return score >= minimum\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-comparison-004",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 57.322,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_mi6ehnml/candidate_with_tests.py\", line 1\n    des_add_order_toeeets_minimum_score_04(score, minimum):\n                                                          ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong comparison operator",
+          "candidate_code": "des_add_order_toedets_minimum_score_06(score, minimum):\n    return score >= minimum\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "des_add_order_toedets_minimum_score_06(score, minimum):\n    return score >= minimum\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-comparison-006",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 57.206,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_unw_ijkk/candidate_with_tests.py\", line 1\n    des_add_order_toedets_minimum_score_06(score, minimum):\n                                                          ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong comparison operator",
+          "candidate_code": "des_add_order_toedets_minimum_score_07(score, minimum):\n    return score >= minimum\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "des_add_order_toedets_minimum_score_07(score, minimum):\n    return score >= minimum\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-comparison-007",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.731,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_5pekl1pe/candidate_with_tests.py\", line 1\n    des_add_order_toedets_minimum_score_07(score, minimum):\n                                                          ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong comparison operator",
+          "candidate_code": "des_add_order_toedets_minimum_score_08(score, minimum):\n    return score >= minimum\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "des_add_order_toedets_minimum_score_08(score, minimum):\n    return score >= minimum\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-comparison-008",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.155,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_i9s338ds/candidate_with_tests.py\", line 1\n    des_add_order_toedets_minimum_score_08(score, minimum):\n                                                          ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong comparison operator",
+          "candidate_code": "des_add_order_toedets_minimum_score_09(score, minimum):\n    return score >= minimum\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "des_add_order_toedets_minimum_score_09(score, minimum):\n    return score >= minimum\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-comparison-009",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.53,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_6ldlvsoz/candidate_with_tests.py\", line 1\n    des_add_order_toedets_minimum_score_09(score, minimum):\n                                                          ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong accumulator initialization",
+          "candidate_code": "</_00(pre>\ndef multiply_values_00(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "\n</_00(pre>\ndef multiply_values_00(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-accumulator-init-000",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.729,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_jq43coft/candidate_with_tests.py\", line 1\n    </_00(pre>\n    ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong accumulator initialization",
+          "candidate_code": "</ed_code>\ndef multiply_values_01(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "\n</ed_code>\ndef multiply_values_01(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-accumulator-init-001",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 57.968,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_9_wcgdam/candidate_with_tests.py\", line 1\n    </ed_code>\n    ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong accumulator initialization",
+          "candidate_code": "</_02(pre>\ndef multiply_values_02(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "\n</_02(pre>\ndef multiply_values_02(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-accumulator-init-002",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.218,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_t_ify5kd/candidate_with_tests.py\", line 1\n    </_02(pre>\n    ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong accumulator initialization",
+          "candidate_code": "</_03(pre>\ndef multiply_values_03(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "\n</_03(pre>\ndef multiply_values_03(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-accumulator-init-003",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 57.544,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_xnhcp33f/candidate_with_tests.py\", line 1\n    </_03(pre>\n    ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong accumulator initialization",
+          "candidate_code": "</_04(pre>\ndef multiply_values_04(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "\n</_04(pre>\ndef multiply_values_04(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-accumulator-init-004",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.736,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_gx7v27dr/candidate_with_tests.py\", line 1\n    </_04(pre>\n    ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong accumulator initialization",
+          "candidate_code": "</_07(pre>\ndef multiply_values_07(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "\n</_07(pre>\ndef multiply_values_07(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-accumulator-init-007",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.591,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_2bcrqc2r/candidate_with_tests.py\", line 1\n    </_07(pre>\n    ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong accumulator initialization",
+          "candidate_code": "</_08(pre>\ndef multiply_values_08(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "\n</_08(pre>\ndef multiply_values_08(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-accumulator-init-008",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.151,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_0p_1odl7/candidate_with_tests.py\", line 1\n    </_08(pre>\n    ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "wrong accumulator initialization",
+          "candidate_code": "</ed_code>\ndef multiply_values_09(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "\n</ed_code>\ndef multiply_values_09(values):\n    producode 1\n    for value in values:\n        product *= value\n    return product\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-wrong-accumulator-init-009",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 55.956,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_qbmyl35s/candidate_with_tests.py\", line 1\n    </ed_code>\n    ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "incorrect base case in recursion",
+          "candidate_code": "mixed_code>\ndef factorial_value_02(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_02(n - 1)\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "mixed_code>\ndef factorial_value_02(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_02(n - 1)\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-bad-recursion-base-case-002",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 57.174,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_2b8cv0it/candidate_with_tests.py\", line 1\n    mixed_code>\n               ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "incorrect base case in recursion",
+          "candidate_code": "mixed_code>\ndef factorial_value_03(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_03(n - 1)\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "mixed_code>\ndef factorial_value_03(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_03(n - 1)\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-bad-recursion-base-case-003",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.594,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_7eq6ov6u/candidate_with_tests.py\", line 1\n    mixed_code>\n               ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "incorrect base case in recursion",
+          "candidate_code": "mixed_code>\ndef factorial_value_04(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_04(n - 1)\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "mixed_code>\ndef factorial_value_04(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_04(n - 1)\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-bad-recursion-base-case-004",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.853,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_te84u51s/candidate_with_tests.py\", line 1\n    mixed_code>\n               ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "incorrect base case in recursion",
+          "candidate_code": "mixed_code>\ndef factorial_value_05(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_05(n - 1)\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "mixed_code>\ndef factorial_value_05(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_05(n - 1)\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-bad-recursion-base-case-005",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.379,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_9503n0s6/candidate_with_tests.py\", line 1\n    mixed_code>\n               ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "incorrect base case in recursion",
+          "candidate_code": "mixed_code>\ndef factorial_value_06(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_06(n - 1)\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "mixed_code>\ndef factorial_value_06(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_06(n - 1)\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-bad-recursion-base-case-006",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.614,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_dky4y6k4/candidate_with_tests.py\", line 1\n    mixed_code>\n               ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "incorrect base case in recursion",
+          "candidate_code": "mixed_code>\ndef factorial_value_07(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_07(n - 1)\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "mixed_code>\ndef factorial_value_07(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_07(n - 1)\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-bad-recursion-base-case-007",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 55.879,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_4w08rmat/candidate_with_tests.py\", line 1\n    mixed_code>\n               ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "incorrect base case in recursion",
+          "candidate_code": "mixed_code>\ndef factorial_value_08(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_08(n - 1)\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "mixed_code>\ndef factorial_value_08(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_08(n - 1)\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-bad-recursion-base-case-008",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.294,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_7ggc8elv/candidate_with_tests.py\", line 1\n    mixed_code>\n               ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        },
+        {
+          "bug_type": "incorrect base case in recursion",
+          "candidate_code": "mixed_code>\ndef factorial_value_09(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_09(n - 1)\n</fixed_code>",
+          "domain": "coding",
+          "exact_match": false,
+          "exit_code": 1,
+          "failure_type": "syntax_error",
+          "fixed_code_block_complete": false,
+          "generated_text": "mixed_code>\ndef factorial_value_09(n):\n    if n <= 1:\n        return 1\n    return n * factorial_value_09(n - 1)\n</fixed_code>\n",
+          "lesson_id": "coding-debugging-bad-recursion-base-case-009",
+          "passed": false,
+          "skill": "debugging",
+          "target_modules": [
+            "coding",
+            "debugging"
+          ],
+          "timeout": false,
+          "verifier_duration_ms": 56.581,
+          "verifier_stderr": "  File \"/tmp/mopforge_verify_m_zg3ioa/candidate_with_tests.py\", line 1\n    mixed_code>\n               ^\nSyntaxError: invalid syntax\n",
+          "verifier_stdout": ""
+        }
+      ],
+      "summary": {
+        "gen_compile_pass_count": 0,
+        "gen_compile_pass_rate": 0.0,
+        "gen_eval_examples": 40,
+        "gen_exact_match_count": 0,
+        "gen_exact_match_rate": 0.0,
+        "gen_failures_by_type": {
+          "syntax_error": 40
+        },
+        "gen_fixed_code_complete_count": 0,
+        "gen_fixed_code_complete_rate": 0.0,
+        "gen_pass_count": 0,
+        "gen_pass_rate": 0.0,
+        "gen_syntax_pass_count": 0,
+        "gen_syntax_pass_rate": 0.0,
+        "gen_verifier_pass_count": 0,
+        "gen_verifier_pass_rate": 0.0,
+        "per_category": {
+          "incorrect base case in recursion": {
+            "gen_compile_pass_count": 0,
+            "gen_compile_pass_rate": 0.0,
+            "gen_eval_examples": 8,
+            "gen_exact_match_count": 0,
+            "gen_exact_match_rate": 0.0,
+            "gen_failures_by_type": {
+              "syntax_error": 8
+            },
+            "gen_fixed_code_complete_count": 0,
+            "gen_fixed_code_complete_rate": 0.0,
+            "gen_pass_count": 0,
+            "gen_pass_rate": 0.0,
+            "gen_syntax_pass_count": 0,
+            "gen_syntax_pass_rate": 0.0,
+            "gen_verifier_pass_count": 0,
+            "gen_verifier_pass_rate": 0.0
+          },
+          "missing return": {
+            "gen_compile_pass_count": 0,
+            "gen_compile_pass_rate": 0.0,
+            "gen_eval_examples": 8,
+            "gen_exact_match_count": 0,
+            "gen_exact_match_rate": 0.0,
+            "gen_failures_by_type": {
+              "syntax_error": 8
+            },
+            "gen_fixed_code_complete_count": 0,
+            "gen_fixed_code_complete_rate": 0.0,
+            "gen_pass_count": 0,
+            "gen_pass_rate": 0.0,
+            "gen_syntax_pass_count": 0,
+            "gen_syntax_pass_rate": 0.0,
+            "gen_verifier_pass_count": 0,
+            "gen_verifier_pass_rate": 0.0
+          },
+          "off-by-one loop/index bug": {
+            "gen_compile_pass_count": 0,
+            "gen_compile_pass_rate": 0.0,
+            "gen_eval_examples": 8,
+            "gen_exact_match_count": 0,
+            "gen_exact_match_rate": 0.0,
+            "gen_failures_by_type": {
+              "syntax_error": 8
+            },
+            "gen_fixed_code_complete_count": 0,
+            "gen_fixed_code_complete_rate": 0.0,
+            "gen_pass_count": 0,
+            "gen_pass_rate": 0.0,
+            "gen_syntax_pass_count": 0,
+            "gen_syntax_pass_rate": 0.0,
+            "gen_verifier_pass_count": 0,
+            "gen_verifier_pass_rate": 0.0
+          },
+          "wrong accumulator initialization": {
+            "gen_compile_pass_count": 0,
+            "gen_compile_pass_rate": 0.0,
+            "gen_eval_examples": 8,
+            "gen_exact_match_count": 0,
+            "gen_exact_match_rate": 0.0,
+            "gen_failures_by_type": {
+              "syntax_error": 8
+            },
+            "gen_fixed_code_complete_count": 0,
+            "gen_fixed_code_complete_rate": 0.0,
+            "gen_pass_count": 0,
+            "gen_pass_rate": 0.0,
+            "gen_syntax_pass_count": 0,
+            "gen_syntax_pass_rate": 0.0,
+            "gen_verifier_pass_count": 0,
+            "gen_verifier_pass_rate": 0.0
+          },
+          "wrong comparison operator": {
+            "gen_compile_pass_count": 0,
+            "gen_compile_pass_rate": 0.0,
+            "gen_eval_examples": 8,
+            "gen_exact_match_count": 0,
+            "gen_exact_match_rate": 0.0,
+            "gen_failures_by_type": {
+              "syntax_error": 8
+            },
+            "gen_fixed_code_complete_count": 0,
+            "gen_fixed_code_complete_rate": 0.0,
+            "gen_pass_count": 0,
+            "gen_pass_rate": 0.0,
+            "gen_syntax_pass_count": 0,
+            "gen_syntax_pass_rate": 0.0,
+            "gen_verifier_pass_count": 0,
+            "gen_verifier_pass_rate": 0.0
+          }
+        }
+      }
+    }
+  },
+  "summary": {
+    "gen_compile_pass_count": 0,
+    "gen_compile_pass_rate": 0.0,
+    "gen_eval_examples": 5,
+    "gen_exact_match_count": 0,
+    "gen_exact_match_rate": 0.0,
+    "gen_failures_by_type": {
+      "syntax_error": 5
+    },
+    "gen_fixed_code_complete_count": 0,
+    "gen_fixed_code_complete_rate": 0.0,
+    "gen_pass_count": 0,
+    "gen_pass_rate": 0.0,
+    "gen_syntax_pass_count": 0,
+    "gen_syntax_pass_rate": 0.0,
+    "gen_verifier_pass_count": 0,
+    "gen_verifier_pass_rate": 0.0,
+    "per_category": {
+      "incorrect base case in recursion": {
+        "gen_compile_pass_count": 0,
+        "gen_compile_pass_rate": 0.0,
+        "gen_eval_examples": 1,
+        "gen_exact_match_count": 0,
+        "gen_exact_match_rate": 0.0,
+        "gen_failures_by_type": {
+          "syntax_error": 1
+        },
+        "gen_fixed_code_complete_count": 0,
+        "gen_fixed_code_complete_rate": 0.0,
+        "gen_pass_count": 0,
+        "gen_pass_rate": 0.0,
+        "gen_syntax_pass_count": 0,
+        "gen_syntax_pass_rate": 0.0,
+        "gen_verifier_pass_count": 0,
+        "gen_verifier_pass_rate": 0.0
+      },
+      "missing return": {
+        "gen_compile_pass_count": 0,
+        "gen_compile_pass_rate": 0.0,
+        "gen_eval_examples": 1,
+        "gen_exact_match_count": 0,
+        "gen_exact_match_rate": 0.0,
+        "gen_failures_by_type": {
+          "syntax_error": 1
+        },
+        "gen_fixed_code_complete_count": 0,
+        "gen_fixed_code_complete_rate": 0.0,
+        "gen_pass_count": 0,
+        "gen_pass_rate": 0.0,
+        "gen_syntax_pass_count": 0,
+        "gen_syntax_pass_rate": 0.0,
+        "gen_verifier_pass_count": 0,
+        "gen_verifier_pass_rate": 0.0
+      },
+      "off-by-one loop/index bug": {
+        "gen_compile_pass_count": 0,
+        "gen_compile_pass_rate": 0.0,
+        "gen_eval_examples": 1,
+        "gen_exact_match_count": 0,
+        "gen_exact_match_rate": 0.0,
+        "gen_failures_by_type": {
+          "syntax_error": 1
+        },
+        "gen_fixed_code_complete_count": 0,
+        "gen_fixed_code_complete_rate": 0.0,
+        "gen_pass_count": 0,
+        "gen_pass_rate": 0.0,
+        "gen_syntax_pass_count": 0,
+        "gen_syntax_pass_rate": 0.0,
+        "gen_verifier_pass_count": 0,
+        "gen_verifier_pass_rate": 0.0
+      },
+      "wrong accumulator initialization": {
+        "gen_compile_pass_count": 0,
+        "gen_compile_pass_rate": 0.0,
+        "gen_eval_examples": 1,
+        "gen_exact_match_count": 0,
+        "gen_exact_match_rate": 0.0,
+        "gen_failures_by_type": {
+          "syntax_error": 1
+        },
+        "gen_fixed_code_complete_count": 0,
+        "gen_fixed_code_complete_rate": 0.0,
+        "gen_pass_count": 0,
+        "gen_pass_rate": 0.0,
+        "gen_syntax_pass_count": 0,
+        "gen_syntax_pass_rate": 0.0,
+        "gen_verifier_pass_count": 0,
+        "gen_verifier_pass_rate": 0.0
+      },
+      "wrong comparison operator": {
+        "gen_compile_pass_count": 0,
+        "gen_compile_pass_rate": 0.0,
+        "gen_eval_examples": 1,
+        "gen_exact_match_count": 0,
+        "gen_exact_match_rate": 0.0,
+        "gen_failures_by_type": {
+          "syntax_error": 1
+        },
+        "gen_fixed_code_complete_count": 0,
+        "gen_fixed_code_complete_rate": 0.0,
+        "gen_pass_count": 0,
+        "gen_pass_rate": 0.0,
+        "gen_syntax_pass_count": 0,
+        "gen_syntax_pass_rate": 0.0,
+        "gen_verifier_pass_count": 0,
+        "gen_verifier_pass_rate": 0.0
+      }
+    }
+  }
+}

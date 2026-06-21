@@ -417,6 +417,26 @@ Interpretation rules:
 - If train and held-out quality improve but plateau after protocol and data
   fixes, model capacity becomes a credible blocker.
 
+Measured first diagnostic outcome:
+
+- protocol, full-eval, category-coverage, best-checkpoint, ground-truth-control,
+  truncation, and optimizer-update checks passed,
+- best eval loss reached `0.0129`,
+- train and held-out XML completion, syntax, verifier, and exact match were all
+  `0%`,
+- therefore the memorization gate failed and Phase C/1B remain blocked,
+- the next investigation must focus on the teacher-forced-loss versus
+  autoregressive-generation mismatch before adding model scale or data volume.
+
+Post-report root cause and fix:
+
+- supervised training used `BOS + prompt + target + EOS`,
+- greedy generation incorrectly began from `BOS + prompt + EOS`,
+- generation now begins from `BOS + prompt`, matching the trained target
+  boundary,
+- the failed report remains valid pre-fix evidence and the learning gate must be
+  rerun before Phase C is allowed.
+
 #### Phase C - Full 100M Quality Comparison
 
 Proceed only after the memorization gate passes.

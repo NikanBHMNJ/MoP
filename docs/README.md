@@ -30,6 +30,7 @@ and tested before it has proven a GPU efficiency result.
 - [v0.46.0 L4 warm sparse comparison report](../reports/v0_46_0_l4_warm_sparse_comparison/README.md)
 - [Goal 48 code cached-sparse L4 report](../reports/goal48_code_cached_sparse_efficiency/README.md)
 - [Goal 49 verified code-quality L4 report](../reports/goal49_verified_code_quality_efficiency/README.md)
+- [Goal 50 100M learning-gate L4 report](../reports/goal50_100m_learning_gate/README.md)
 - [GPU runtime limitations](gpu_runtime_limitations.md)
 - [Serious jobs checklist](serious_jobs_checklist.md)
 - [Colab 100M training notebook](colab_training.md)
@@ -77,6 +78,13 @@ These reports do not prove MoP superiority. The measured result is more careful:
   result: seeded epoch reshuffling, full eval loss, best-checkpoint generation,
   bug-category-balanced samples, per-category failures, raw/XML ground-truth
   controls, and prompt/target truncation statistics.
+- The first Goal 50 run passed every protocol/control check but failed the
+  learning gate: train and held-out XML completion, syntax, verifier, and exact
+  match were all `0%` despite `0.0129` best eval loss. This points to a
+  teacher-forced-loss/autoregressive-generation mismatch, not a broken verifier.
+- The audit then found that generation inserted EOS after the prompt while
+  training did not. That prompt-boundary mismatch is fixed and regression
+  tested; the learning gate must be rerun before the full comparison.
 - The framework can measure the tradeoff and preserve the evidence.
 
 ## Current Implementation Focus
@@ -101,11 +109,12 @@ The current code adds the pieces needed for a more serious next comparison:
 - internal routed low-rank deltas,
 - comparison and acceptance-gate reports.
 
-The next run should execute the Goal 50 100M memorization gate. Do not scale to
-1B unless train generation passes the XML, syntax, verifier, and exact-match
-thresholds and all five categories are represented. After that gate passes,
-repeat the full fixed code-dataset comparison with at least 10,000 balanced
-verified lessons and at least 2,000 optimizer updates.
+The next run should diagnose the failed Goal 50 memorization gate. Do not scale
+to 1B or run the full comparison until train generation passes the XML, syntax,
+verifier, and exact-match thresholds. The immediate evidence is that low
+teacher-forced loss did not translate into valid autoregressive output framing.
+The generation EOS-boundary fix is now the next measured rerun, not permission
+to bypass the failed gate.
 
 The Goal 49 Colab notebook automates that comparison and creates a downloadable
 lightweight report. For cached profiles, full-model generation happens after

@@ -1,0 +1,61 @@
+{
+  "files": [
+    {
+      "bytes": 1007,
+      "path": "README.md",
+      "sha256": "ac69161e735b5d90d6a9a140b0a376c37f626fa0d86bdc09250843d888558310"
+    },
+    {
+      "bytes": 3569,
+      "path": "config.json",
+      "sha256": "cea85d0dc64907f6bdbde67816d501b2dfb70369913bd31eaa248ab461698220"
+    },
+    {
+      "bytes": 628,
+      "path": "experiment_settings.json",
+      "sha256": "7205554e8289b3aa419e783cfe2553f6878414cc2af509a6bed2389638af3274"
+    },
+    {
+      "bytes": 66578,
+      "path": "generation_eval.json",
+      "sha256": "9c7a2531203aee9c3542017d5b59b76607b7906d3264f638bb7019cb26104569"
+    },
+    {
+      "bytes": 186040,
+      "path": "gpu_training_result.json",
+      "sha256": "5c6d861349affa976dfc8a0ce3b4ac5905fa05d3519a4fa984b5ae738e7eae0f"
+    },
+    {
+      "bytes": 15854,
+      "path": "ground_truth_controls.json",
+      "sha256": "b99d3c22b45d307aba1eaf4e90a77a23281f5218972b930f190c1deaf6db41dd"
+    },
+    {
+      "bytes": 8935,
+      "path": "learning_gate.json",
+      "sha256": "b95a2cedf5b55d8f8dbd66eac566261e9b5c4b87e4bbbaca63e934d8e66c7165"
+    },
+    {
+      "bytes": 569,
+      "path": "memory_estimate.json",
+      "sha256": "8dd391ce38911cd31f20eaca938c1cf782bf58db8f2ce132607b8aac1c486920"
+    },
+    {
+      "bytes": 21184,
+      "path": "metrics.json",
+      "sha256": "5c91a581b3f6b1b14b438b9b3e7d30115028336b7751c1d848c6402ef7d65aa5"
+    },
+    {
+      "bytes": 616,
+      "path": "runtime.json",
+      "sha256": "4d1f371b89df89c6d8663afb0a79675103708dc4630a11d2fdc4b8f53da22b93"
+    },
+    {
+      "bytes": 147685,
+      "path": "state.json",
+      "sha256": "842ba116cd563c20fee17cececed45d96f2c36c54f7d885c49c26bd937287463"
+    }
+  ],
+  "forbidden_model_files_detected": false,
+  "report_id": "goal50_100m_learning_gate"
+}
