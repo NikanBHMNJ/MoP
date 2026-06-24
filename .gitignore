@@ -27,6 +27,10 @@ pytest_tmp/
 !/reports/goal50_100m_learning_gate/**
 !/reports/goal50_100m_quality_comparison/
 !/reports/goal50_100m_quality_comparison/**
+!/reports/goal51_1b_a100_feasibility_probe/
+!/reports/goal51_1b_a100_feasibility_probe/**
+!/reports/goal52_h100_2b_readiness/
+!/reports/goal52_h100_2b_readiness/**
 /benchmarks/
 /experiments/
 /ablations/
@@ -41,6 +45,8 @@ pytest_tmp/
 !/notebooks/colab_l4_goal49_verified_code_quality_report.ipynb
 !/notebooks/colab_l4_goal50_100m_learning_gate.ipynb
 !/notebooks/colab_l4_goal50_100m_quality_comparison.ipynb
+!/notebooks/colab_a100_goal51_1b_feasibility_probe.ipynb
+!/notebooks/colab_h100_goal52_2b_readiness.ipynb
 
 # Local registries and generated data
 /data/*.jsonl

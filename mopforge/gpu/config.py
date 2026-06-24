@@ -33,19 +33,29 @@ class GPUTrainingConfig:
     lesson_path: str = "data/coding_bugfix_lessons.jsonl"
     index_path: str | None = None
     corpus_path: str | None = None
+    token_shard_manifest: str | None = None
+    tokenizer_type: str = "byte"
+    tokenizer_name_or_path: str | None = None
+    tokenizer_spec_path: str | None = None
+    tokenizer_vocab_size: int | None = None
 
     output_root: str = "gpu_runs"
     artifact_root: str = "artifacts"
     run_id: str | None = None
 
     max_steps: int = 100
+    max_optimizer_steps: int | None = None
+    max_train_tokens: int | None = None
     micro_batch_size: int = 1
     gradient_accumulation_steps: int = 1
     eval_every_steps: int = 50
+    eval_every_optimizer_steps: int | None = None
     eval_batches: int = 2
     eval_full_dataset: bool = False
     save_every_steps: int = 100
+    save_every_optimizer_steps: int | None = None
     log_every_steps: int = 10
+    log_every_optimizer_steps: int | None = None
     shuffle_train: bool = True
     train_shuffle_seed: int = 42
 
@@ -55,6 +65,10 @@ class GPUTrainingConfig:
     optimizer: str = "adamw"
     scheduler: str = "none"
     warmup_steps: int = 0
+    warmup_optimizer_steps: int | None = None
+    scheduler_unit: str = "optimizer_steps"
+    warmup_tokens: int = 0
+    min_lr_ratio: float = 0.0
     early_stopping_enabled: bool = False
     early_stopping_patience_evals: int = 5
     early_stopping_min_delta: float = 0.0
@@ -62,6 +76,14 @@ class GPUTrainingConfig:
     d_model: int = 256
     n_layers: int = 4
     n_heads: int = 4
+    architecture_family: str = "tiny_transformer"
+    intermediate_size: int | None = None
+    n_key_value_heads: int | None = None
+    rope_theta: float = 10000.0
+    rms_norm_eps: float = 1e-6
+    dropout: float = 0.0
+    attention_dropout: float = 0.0
+    tie_word_embeddings: bool = True
     max_seq_len: int = 1024
     module_names: list[str] | None = None
     always_include_core: bool = True
@@ -95,10 +117,17 @@ class GPUTrainingConfig:
     deterministic: bool = False
     compile_model: bool = False
     require_device_available: bool = True
+    distributed_strategy: str = "none"
+    distributed_backend: str = "nccl"
+    distributed_timeout_seconds: int = 1800
+    fsdp_use_orig_params: bool = True
+    fsdp_cpu_offload: bool = False
+    distributed_checkpoint_mode: str = "full"
 
     activation_checkpointing: bool = False
     efficient_attention: str = "auto"
     empty_cache_every_steps: int | None = None
+    empty_cache_every_optimizer_steps: int | None = None
 
     save_full_checkpoints: bool = True
     save_best_eval_checkpoint: bool = True
@@ -158,6 +187,28 @@ class GPUTrainingConfig:
             _positive_int(getattr(self, field_name), field_name)
         if self.d_model % self.n_heads != 0:
             raise ValueError("d_model must be divisible by n_heads.")
+        if self.architecture_family not in {"tiny_transformer", "production_decoder_v2"}:
+            raise ValueError(
+                "architecture_family must be tiny_transformer or production_decoder_v2."
+            )
+        if self.intermediate_size is not None and (
+            type(self.intermediate_size) is not int or self.intermediate_size <= 0
+        ):
+            raise ValueError("intermediate_size must be a positive integer or None.")
+        if self.n_key_value_heads is not None:
+            if type(self.n_key_value_heads) is not int or self.n_key_value_heads <= 0:
+                raise ValueError("n_key_value_heads must be a positive integer or None.")
+            if self.n_heads % self.n_key_value_heads:
+                raise ValueError("n_heads must be divisible by n_key_value_heads.")
+        for field_name in ("rope_theta", "rms_norm_eps"):
+            value = getattr(self, field_name)
+            if not isinstance(value, (int, float)) or float(value) <= 0:
+                raise ValueError(f"{field_name} must be positive.")
+        for field_name in ("dropout", "attention_dropout"):
+            value = getattr(self, field_name)
+            if not isinstance(value, (int, float)) or not 0.0 <= float(value) < 1.0:
+                raise ValueError(f"{field_name} must be in [0.0, 1.0).")
+            setattr(self, field_name, float(value))
         if type(self.train_shuffle_seed) is not int:
             raise ValueError("train_shuffle_seed must be an integer.")
         if self.learning_rate <= 0:
@@ -194,6 +245,32 @@ class GPUTrainingConfig:
             raise ValueError(f"scheduler must be one of: {', '.join(sorted(SCHEDULERS))}.")
         if type(self.warmup_steps) is not int or self.warmup_steps < 0:
             raise ValueError("warmup_steps must be a non-negative integer.")
+        if self.max_train_tokens is not None and (
+            type(self.max_train_tokens) is not int or self.max_train_tokens <= 0
+        ):
+            raise ValueError("max_train_tokens must be a positive integer or None.")
+        if self.scheduler_unit not in {"optimizer_steps", "tokens"}:
+            raise ValueError("scheduler_unit must be optimizer_steps or tokens.")
+        if type(self.warmup_tokens) is not int or self.warmup_tokens < 0:
+            raise ValueError("warmup_tokens must be a non-negative integer.")
+        if self.scheduler_unit == "tokens" and self.max_train_tokens is None:
+            raise ValueError("Token-unit scheduling requires max_train_tokens.")
+        if self.max_train_tokens is not None and self.warmup_tokens >= self.max_train_tokens:
+            raise ValueError("warmup_tokens must be smaller than max_train_tokens.")
+        if not isinstance(self.min_lr_ratio, (int, float)) or not 0.0 <= float(self.min_lr_ratio) <= 1.0:
+            raise ValueError("min_lr_ratio must be in [0, 1].")
+        self.min_lr_ratio = float(self.min_lr_ratio)
+        for field_name in (
+            "max_optimizer_steps",
+            "eval_every_optimizer_steps",
+            "save_every_optimizer_steps",
+            "log_every_optimizer_steps",
+            "warmup_optimizer_steps",
+            "empty_cache_every_optimizer_steps",
+        ):
+            value = getattr(self, field_name)
+            if value is not None and (type(value) is not int or value <= 0):
+                raise ValueError(f"{field_name} must be a positive integer or None.")
         if self.trainable_policy_mode not in SUPPORTED_POLICY_MODES:
             raise ValueError("trainable_policy_mode is not supported.")
         if self.efficient_attention not in EFFICIENT_ATTENTION:
@@ -241,8 +318,44 @@ class GPUTrainingConfig:
             value = getattr(self, field_name)
             if value is not None and (type(value) is not int or value <= 0):
                 raise ValueError(f"{field_name} must be a positive integer or None.")
+        if not isinstance(self.tokenizer_type, str):
+            raise ValueError("tokenizer_type must be byte or hf.")
+        self.tokenizer_type = self.tokenizer_type.strip().lower()
+        if self.tokenizer_type not in {"byte", "hf"}:
+            raise ValueError("tokenizer_type must be byte or hf.")
+        if self.tokenizer_type == "hf" and not (
+            self.tokenizer_name_or_path or self.tokenizer_spec_path
+        ):
+            raise ValueError(
+                "HF tokenizer configs require tokenizer_name_or_path or tokenizer_spec_path."
+            )
+        if self.tokenizer_vocab_size is not None and (
+            type(self.tokenizer_vocab_size) is not int or self.tokenizer_vocab_size <= 0
+        ):
+            raise ValueError("tokenizer_vocab_size must be a positive integer or None.")
         if type(self.num_workers) is not int or self.num_workers < 0:
             raise ValueError("num_workers must be a non-negative integer.")
+        if self.distributed_strategy not in {"none", "ddp", "fsdp"}:
+            raise ValueError("distributed_strategy must be none, ddp, or fsdp.")
+        if self.distributed_backend not in {"nccl", "gloo"}:
+            raise ValueError("distributed_backend must be nccl or gloo.")
+        if type(self.distributed_timeout_seconds) is not int or self.distributed_timeout_seconds <= 0:
+            raise ValueError("distributed_timeout_seconds must be positive.")
+        if self.distributed_checkpoint_mode not in {"full", "sharded"}:
+            raise ValueError("distributed_checkpoint_mode must be full or sharded.")
+        if self.distributed_strategy == "fsdp" and self.architecture_family != "production_decoder_v2":
+            raise ValueError("FSDP currently requires architecture_family=production_decoder_v2.")
+        if self.distributed_strategy == "fsdp" and self.distributed_checkpoint_mode != "sharded":
+            raise ValueError("FSDP requires distributed_checkpoint_mode=sharded.")
+        if self.distributed_strategy != "none" and self.activation_cache_path:
+            raise ValueError(
+                "Distributed cached-tail training is not supported; run the offloaded sparse tail on one GPU."
+            )
+        if self.distributed_strategy != "none" and self.run_generation_eval:
+            raise ValueError(
+                "Distributed generated-code evaluation is not supported during training; "
+                "consolidate the checkpoint and run `mopforge eval code` afterward."
+            )
         for field_name in (
             "use_fast_adapters",
             "use_generated_params",
@@ -271,6 +384,9 @@ class GPUTrainingConfig:
             "early_stopping_enabled",
             "eval_full_dataset",
             "shuffle_train",
+            "tie_word_embeddings",
+            "fsdp_use_orig_params",
+            "fsdp_cpu_offload",
         ):
             if not isinstance(getattr(self, field_name), bool):
                 raise ValueError(f"{field_name} must be a boolean.")
@@ -288,6 +404,9 @@ class GPUTrainingConfig:
             "resume_from_checkpoint",
             "base_checkpoint_path",
             "activation_cache_path",
+            "token_shard_manifest",
+            "tokenizer_name_or_path",
+            "tokenizer_spec_path",
         ):
             value = getattr(self, field_name)
             if value is not None:
@@ -308,6 +427,37 @@ class GPUTrainingConfig:
     @property
     def effective_batch_size(self) -> int:
         return int(self.micro_batch_size * self.gradient_accumulation_steps)
+
+    @property
+    def optimizer_step_budget(self) -> int:
+        """Return the exact optimizer-update budget for this run."""
+
+        if self.max_optimizer_steps is not None:
+            return int(self.max_optimizer_steps)
+        return int(
+            (self.max_steps + self.gradient_accumulation_steps - 1)
+            // self.gradient_accumulation_steps
+        )
+
+    @property
+    def microstep_budget(self) -> int:
+        """Return the microstep budget, preserving legacy ``max_steps`` jobs."""
+
+        if self.max_optimizer_steps is not None:
+            return int(self.max_optimizer_steps * self.gradient_accumulation_steps)
+        return int(self.max_steps)
+
+    @property
+    def scheduler_warmup_optimizer_steps(self) -> int:
+        """Resolve scheduler warmup in optimizer updates.
+
+        ``warmup_steps`` historically advanced once per optimizer update despite
+        its ambiguous name. Keep that behavior for old configs.
+        """
+
+        if self.warmup_optimizer_steps is not None:
+            return int(self.warmup_optimizer_steps)
+        return int(self.warmup_steps)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

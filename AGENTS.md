@@ -507,6 +507,266 @@ A 1B run may begin only after:
 Until those gates pass, a 1B run would make the same unresolved experiment more
 expensive rather than proving model-scale quality.
 
+### Goal 51 - A100 1B Admission And Feasibility
+
+The Goal 50 memorization and full 100M comparison gates now pass. The next step
+is not an immediate full 1B training run. First make MoP-Forge scale-aware and
+run a staged 1B admission probe on A100 40 GB and 80 GB hardware.
+
+Do not promise that a hardware run or model-quality target is guaranteed.
+Instead, guarantee that the workflow stops before expensive training unless
+every measurable prerequisite passes.
+
+#### Framework Prerequisites
+
+Implement these before the first 1B pilot:
+
+1. Add an explicit `max_optimizer_steps` budget while preserving backward
+   compatibility with `max_steps` microsteps.
+2. Drive warmup, cosine decay, evaluation cadence, checkpoint cadence, and
+   reporting from clearly named optimizer-step or microstep units. The current
+   scheduler advances per optimizer update but derives its duration from
+   `max_steps`; this must not remain ambiguous at 1B scale.
+3. Add a staged command such as:
+
+   ```text
+   mopforge gpu probe <config>
+   ```
+
+   It must separately measure model allocation, forward, backward, optimizer
+   initialization/step, evaluation, cleanup, checkpoint save, and checkpoint
+   reload.
+4. Make the memory estimator reflect actual runtime storage. BF16 autocast does
+   not imply that model parameters and optimizer state occupy BF16 storage; the
+   estimate must inspect or explicitly model parameter, gradient, optimizer,
+   master-weight, activation, and transient workspace dtypes.
+5. Record at every probe phase:
+   - allocated and reserved CUDA memory,
+   - peak allocated and reserved CUDA memory,
+   - free and total device memory,
+   - allocator retries and OOM counters when available,
+   - non-releasable/cached memory where available,
+   - host RAM and report/checkpoint disk requirements,
+   - phase duration and tokens/sec.
+6. Catch CUDA OOM during a probe, write a failure report, clean up CUDA state,
+   and stop. Do not silently lower sequence length, batch size, model size, or
+   benchmark difficulty.
+7. Propagate source sequence-length, truncation, split, and tokenizer metadata
+   into activation-cache manifests and cached loaders. Shared dataset evidence
+   must not require a report-time fallback.
+8. Add atomic model-only checkpoint writes and a mandatory save/reload/resume
+   probe. Probe checkpoints should omit optimizer state unless resume testing
+   explicitly requires it.
+9. Add incremental KV-cached generation before large 1B generation
+   evaluations. The current greedy path recomputes the complete context for
+   every generated token and is not acceptable for a full 1B quality report.
+10. Keep quantization, FP8, CPU optimizer offload, FSDP, and DeepSpeed outside
+    the first single-A100 comparison unless a later measured failure justifies a
+    separately reported experiment.
+
+#### A100 Admission Profiles
+
+Create executable, not plan-only, profiles for both hardware classes.
+
+Common conservative starting policy:
+
+```text
+precision: bf16 autocast
+allow_tf32: true
+max_seq_len: 1024
+micro_batch_size: 1
+gradient_accumulation_steps: 16 or 32
+activation_checkpointing: true
+efficient_attention: torch_sdpa
+compile_model: false for the first probe
+generation evaluation: disabled for allocation/backward probes
+optimizer checkpoint state: disabled for the first probe
+quantization: none
+```
+
+Keep sequence length at 1,024 for the first comparison because the measured
+Goal 50 dataset fits within it. Do not spend A100 memory on a 2,048-token context
+until a new dataset and quality objective require it.
+
+A100 40 GB admission gate:
+
+- peak reserved VRAM should remain at or below approximately 34 GB,
+- leave enough headroom for allocator and checkpoint transients,
+- do not increase microbatch size above one until the complete optimizer-step
+  probe passes.
+
+A100 80 GB admission gate:
+
+- begin with the same conservative profile used on 40 GB,
+- peak reserved VRAM should remain at or below approximately 68 GB,
+- use the additional memory only after the common profile passes, so 40 GB and
+  80 GB evidence remains comparable.
+
+Proposed tracked configs:
+
+```text
+configs/jobs/1b_dense_a100_40gb_probe.json
+configs/jobs/1b_mop_full_a100_40gb_probe.json
+configs/jobs/1b_cached_adapter_128_a100_40gb_probe.json
+configs/jobs/1b_dense_a100_80gb_probe.json
+configs/jobs/1b_mop_full_a100_80gb_probe.json
+configs/jobs/1b_cached_adapter_128_a100_80gb_probe.json
+```
+
+Proposed notebook:
+
+```text
+notebooks/colab_a100_goal51_1b_feasibility_probe.ipynb
+```
+
+The notebook must detect total A100 memory and select only the matching 40 GB or
+80 GB profile. It must never assume that an A100 label implies a specific memory
+capacity.
+
+#### Probe Stages
+
+Run each profile through these hard gates:
+
+1. Validate config, dataset, tokenizer, model shape, and real parameter count.
+2. Produce a static memory estimate with a named safety margin.
+3. Allocate the model and record baseline CUDA/host memory.
+4. Run forward-only warmup and measured steps.
+5. Run backward without an optimizer step.
+6. Initialize AdamW, run 20 to 50 optimizer updates, and verify finite,
+   decreasing loss.
+7. Reset peaks at phase boundaries and verify cleanup behavior.
+8. Save a lightweight/model-only checkpoint, reload it, resume, and compare the
+   resumed loss to the uninterrupted path.
+9. Project 500-update and 2,000-update runtime from measured steady-state
+   throughput.
+10. Write a lightweight admission report with no weights or optimizer state.
+
+The probe passes only if:
+
+- no phase OOMs,
+- every loss is finite,
+- optimizer updates actually equal the requested count,
+- reserved VRAM remains below the hardware-specific gate,
+- checkpoint save/reload/resume succeeds,
+- cleanup and final reserved memory are reported,
+- measured throughput supports the requested run within the available hardware
+  window,
+- no benchmark, context, batch, or model setting is silently changed.
+
+#### 1B Pilot After Admission
+
+After the matching A100 admission report passes, run a 500-optimizer-update
+pilot with only:
+
+```text
+Dense 1B
+MoP Full 1B teacher/warm base
+Cached Adapter/Norm/Head 128 1B student
+```
+
+Cached Adapter/Norm/Head 128 is the primary 1B student because Goal 50 measured
+the strongest combined quality, throughput, VRAM, time-to-target, and
+checkpoint result for that profile. Keep Cached Tail-Only LoRA Rank 8 as a
+secondary follow-up, not a required first pilot.
+
+Pilot requirements:
+
+- use the same tokenizer, sequence length, fixed split, optimizer-update budget,
+  eval cadence, and predeclared target loss across comparable profiles,
+- keep full held-out loss evaluation,
+- use a deterministic stratified generation subset of at least 50 examples,
+- generate from the best checkpoint,
+- retain ground-truth controls and all five bug categories,
+- use a more diverse, leakage-audited code-repair evaluation set in addition to
+  the templated Goal 50 benchmark,
+- report quality and efficiency separately,
+- exclude all model/checkpoint/cache artifacts from Git.
+
+Only proceed to a 2,000-optimizer-update 1B comparison if the pilot passes its
+memory, resume, loss, syntax, verifier, exact-match, throughput, and
+time-to-target gates. Require a second seed before any strong research claim.
+
+Goal 51 evidence supports only the measured A100 hardware class, memory size,
+dataset, model profile, context, seed, and training budget. A 40 GB pass does
+not automatically prove an 80 GB result, and an 80 GB pass must not be used to
+claim 40 GB feasibility.
+
+### Goal 52 - Production Decoder And 2B H100 Readiness
+
+Goal 51 and the narrow Goal 50 quality gates are prerequisites, not a complete
+path to a usable 2B model. Goal 52 makes the implementation scale-aware before
+spending a long H100 allocation.
+
+Implemented production foundation:
+
+1. `production_decoder_v2` uses RoPE, RMSNorm, grouped-query attention, SwiGLU,
+   PyTorch SDPA, activation checkpointing, and native incremental K/V caching.
+2. The same decoder supports Dense, oracle MoP, and learned top-k token-routed
+   MoP feed-forward execution.
+3. `mopforge tokenizer train-bpe` trains a local byte-level BPE tokenizer and
+   records source hashes and immutable special-token IDs.
+4. `mopforge gpu pack-corpus` creates deterministic, fixed-length,
+   memory-mapped token shards with document-level train/eval membership and
+   shard hashes.
+5. `GPUTrainer` supports torchrun DDP/FSDP, rank-aware samplers, no-sync
+   accumulation, optimizer-step/token budgets, exact data-cursor resume, and
+   deterministic process-group cleanup.
+6. Distributed Checkpoint shards preserve model and optimizer state.
+   `mopforge gpu consolidate-checkpoint` reconstructs a model-only checkpoint
+   for evaluation, post-training, and export.
+7. Production post-training includes verified SFT through `GPUTrainer`,
+   one-time reference-logprob-cached DPO, and reference-free ORPO.
+8. Standard code evaluation accepts trusted HumanEval-, MBPP-, or native-style
+   JSONL and records pass@1, syntax, exact match, task failures, and a separate
+   contamination audit against named training sources.
+9. `mopforge model export-hf` writes Llama-compatible config, tokenizer, and
+   sharded weights for a Dense model or one explicitly materialized MoP expert.
+
+Tracked H100 admission sizes:
+
+```text
+304M Dense: 304,137,216 parameters
+1B Dense: 1,015,779,072 parameters
+2B Dense: 2,082,246,912 parameters
+2B-class routed MoP: 2,480,265,984 total, about 1,015,779,072 active
+```
+
+Run `notebooks/colab_h100_goal52_2b_readiness.ipynb`. It must detect an H100
+80 GB or 94 GB memory tier, build or validate the tokenizer and packed shard
+manifests, and require passing 304M and 1B reports before starting the matching
+2B probe. Do not silently alter model dimensions, context, microbatch, or
+accumulation after failure.
+
+After single-H100 admission, the first distributed pilots are:
+
+```text
+configs/jobs/goal52_2b_dense_8xh100_fsdp_pilot.json
+configs/jobs/goal52_2b_mop_8xh100_fsdp_pilot.json
+configs/jobs/goal52_2b_verified_sft_8xh100_fsdp.json
+```
+
+Each pilot is a 500-optimizer-update gate, not a full pretraining claim. Require
+sharded save/reload/resume, finite loss, exact update/token counts, per-rank
+VRAM, throughput, host/disk telemetry, and no automatic workload change. Keep
+checkpoints, optimizer state, corpora, tokenizer artifacts, and token shards
+out of Git.
+
+Before calling any model usable, require held-out loss/perplexity, standard code
+pass@1, contamination evidence, verified repair pass/syntax rates, generated
+samples and failure categories, checkpoint-resume equivalence, named hardware
+efficiency, and a second seed for strong comparative claims. The local Python
+verifier is not a secure sandbox and may run only trusted code.
+
+Goal 52 implementation evidence and commands are documented in:
+
+```text
+docs/production_2b_readiness.md
+reports/goal52_h100_2b_readiness/
+```
+
+The report directory currently contains a schema only. Do not claim measured
+H100 feasibility or quality until the generated hardware reports are added.
+
 ## Target Profiles
 
 Optimize this path first:

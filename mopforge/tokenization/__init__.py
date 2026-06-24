@@ -15,6 +15,7 @@ from mopforge.tokenization.registry import (
     register_tokenizer_type,
     tokenizer_spec_from_config,
 )
+from mopforge.tokenization.training import BPETrainingConfig, train_bpe_tokenizer
 
 __all__ = [
     "BaseTokenizer",
@@ -22,10 +23,12 @@ __all__ = [
     "HFTokenizerWrapper",
     "TokenizerProtocol",
     "TokenizerSpec",
+    "BPETrainingConfig",
     "build_tokenizer",
     "get_tokenizer_pad_token_id",
     "get_tokenizer_special_token_id",
     "get_tokenizer_vocab_size",
     "register_tokenizer_type",
     "tokenizer_spec_from_config",
+    "train_bpe_tokenizer",
 ]

@@ -24,7 +24,8 @@ research plumbing, not a claim that MoP is better than MoE today.
 
 It proves that the local research loop can be made reproducible and CPU-safe:
 structured data, tiny models, local checkpoints, experiments, benchmarks,
-analysis, reports, and single-device GPU beta jobs can be configured and tested.
+analysis, reports, single-device GPU jobs, and torchrun DDP/FSDP beta jobs can
+be configured and tested.
 
 ## What It Does Not Prove Yet
 

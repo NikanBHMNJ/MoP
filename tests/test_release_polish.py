@@ -52,7 +52,7 @@ def test_required_docs_and_release_metadata_exist() -> None:
     readme = Path("README.md").read_text(encoding="utf-8")
     assert "0.46.0" in readme
     assert "v1.0-beta" in readme
-    assert "not a production distributed LLM training framework" in readme
+    assert "not a managed production training service" in readme
 
 
 def test_release_check_script_and_json_output(tmp_path) -> None:

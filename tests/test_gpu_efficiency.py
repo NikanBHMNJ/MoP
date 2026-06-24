@@ -114,6 +114,13 @@ def test_cuda_memory_helpers_are_safe_without_cuda() -> None:
         "peak_reserved_gb": None,
         "final_allocated_gb": None,
         "final_reserved_gb": None,
+        "device_free_gb": None,
+        "device_total_gb": None,
+        "num_alloc_retries": None,
+        "num_ooms": None,
+        "inactive_split_gb": None,
+        "allocator_cached_gb": None,
+        "non_releasable_gb": None,
     }
 
 

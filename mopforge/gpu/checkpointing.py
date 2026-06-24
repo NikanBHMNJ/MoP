@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
+from uuid import uuid4
 from typing import Any
 
 from mopforge.lifecycle import capture_rng_state, restore_rng_state
@@ -88,7 +90,15 @@ def save_gpu_checkpoint(
             "architecture_sha256": architecture_sha256,
         },
     }
-    torch.save(payload, output)
+    temporary = output.with_name(f".{output.name}.{uuid4().hex}.tmp")
+    try:
+        torch.save(payload, temporary)
+        with temporary.open("rb+") as handle:
+            os.fsync(handle.fileno())
+        os.replace(temporary, output)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
     return str(output)
 
 

@@ -29,8 +29,24 @@ from mopforge.gpu.memory import (
     write_memory_estimate,
 )
 from mopforge.gpu.mop_execution import estimate_active_parameters, fast_parameter_metadata
+from mopforge.gpu.distributed import (
+    DistributedRuntime,
+    broadcast_object,
+    distributed_barrier,
+    distributed_no_sync,
+    distributed_sum,
+    finalize_distributed_runtime,
+    initialize_distributed_runtime,
+    wrap_distributed_model,
+)
+from mopforge.gpu.distributed_checkpoint import (
+    is_sharded_checkpoint,
+    load_sharded_training_checkpoint,
+    save_sharded_training_checkpoint,
+)
 from mopforge.gpu.registry import GPURunRecord, GPURunRegistry
 from mopforge.gpu.scaler import AmpScaler
+from mopforge.gpu.scheduling import TokenLRScheduler
 from mopforge.models import (
     ModelArchitectureConfig,
     ModelRegistry,
@@ -53,7 +69,7 @@ from mopforge.runtime import (
     move_model_to_runtime,
     runtime_metadata,
 )
-from mopforge.tokenization import TokenizerSpec, build_tokenizer
+from mopforge.tokenization import build_tokenizer, tokenizer_spec_from_config
 from mopforge.training.parameter_policy import (
     TrainableParameterPolicy,
     apply_trainable_policy,
@@ -78,6 +94,7 @@ class GPUTrainer:
         self.runtime_meta: dict[str, Any] = {}
         self.tokenizer = None
         self.model = None
+        self.training_model = None
         self.optimizer = None
         self.scheduler = None
         self.scaler: AmpScaler | None = None
@@ -96,11 +113,35 @@ class GPUTrainer:
         self._last_loss_metadata: dict[str, Any] = {}
         self._latest_eval_metrics: dict[str, Any] = {}
         self._setup_done = False
+        self.distributed = DistributedRuntime()
 
-    def setup(self) -> None:
+    def close(self) -> None:
+        """Release a process group initialized by this trainer."""
+
+        finalize_distributed_runtime(self.distributed)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, traceback):
+        self.close()
+        return False
+
+    def setup(self, *, initialize_optimizer: bool = True) -> None:
         """Build runtime, model, data, optimizer, and optional resume state."""
 
         torch = _require_torch()
+        self.distributed = initialize_distributed_runtime(
+            self.config.distributed_strategy,
+            backend=self.config.distributed_backend,
+            timeout_seconds=self.config.distributed_timeout_seconds,
+        )
+        synchronized_run_id = broadcast_object(self.run_id, self.distributed)
+        if synchronized_run_id != self.run_id:
+            self.run_id = str(synchronized_run_id)
+            self.output_dir = self.registry.run_dir(self.run_id)
+            self.checkpoint_dir = self.output_dir / "checkpoints"
+            self.log_dir = self.output_dir / "logs"
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
         self.log_dir.mkdir(parents=True, exist_ok=True)
@@ -111,7 +152,7 @@ class GPUTrainer:
         self.state.runtime_metadata = dict(self.runtime_meta)
         self.scaler = AmpScaler(self.runtime)
 
-        self.tokenizer = build_tokenizer(TokenizerSpec(tokenizer_type="byte"))
+        self.tokenizer = build_tokenizer(tokenizer_spec_from_config(self.config))
         self.model = self._build_model()
         self.model = move_model_to_runtime(self.model, self.runtime)
         activation_metadata = apply_activation_checkpointing(
@@ -148,18 +189,32 @@ class GPUTrainer:
                 "efficient_attention": attention_metadata,
             }
         )
-        self.optimizer = build_optimizer_for_trainable_parameters(
+        model_only_warm_start_loaded = False
+        if (
+            initialize_optimizer
+            and self.config.resume_from_checkpoint
+            and self.config.resume_model_only
+            and not is_sharded_checkpoint(self.config.resume_from_checkpoint)
+        ):
+            self.load_checkpoint(self.config.resume_from_checkpoint)
+            model_only_warm_start_loaded = True
+        self.training_model = wrap_distributed_model(
             self.model,
-            learning_rate=self.config.learning_rate,
-            weight_decay=self.config.weight_decay,
+            self.distributed,
+            precision=self.runtime.precision_policy.selected,
+            fsdp_use_orig_params=self.config.fsdp_use_orig_params,
+            fsdp_cpu_offload=self.config.fsdp_cpu_offload,
         )
-        self.scheduler = _build_scheduler(self.optimizer, self.config)
+        self.model_metadata["distributed"] = self.distributed.to_dict()
+        if initialize_optimizer:
+            self.initialize_optimizer()
         data_config = GPUDataConfig(
             dataset_ref=self.config.dataset_ref,
             dataset_split=self.config.dataset_split,
             dataset_split_id=self.config.dataset_split_id,
             lesson_path=self.config.lesson_path,
             corpus_path=self.config.corpus_path,
+            token_shard_manifest=self.config.token_shard_manifest,
             max_seq_len=self.config.max_seq_len,
             micro_batch_size=self.config.micro_batch_size,
             num_workers=self.config.num_workers,
@@ -169,6 +224,8 @@ class GPUTrainer:
             shuffle_train=self.config.shuffle_train,
             shuffle_seed=self.config.train_shuffle_seed,
             max_examples=_max_examples(self.config),
+            distributed_rank=self.distributed.rank,
+            distributed_world_size=self.distributed.world_size,
         )
         self._data_config = data_config
         if self.config.activation_cache_path:
@@ -192,8 +249,13 @@ class GPUTrainer:
             )
         self._train_iter = iter(self.train_loader)
 
-        if self.config.resume_from_checkpoint:
+        if (
+            self.config.resume_from_checkpoint
+            and initialize_optimizer
+            and not model_only_warm_start_loaded
+        ):
             self.load_checkpoint(self.config.resume_from_checkpoint)
+            self._restore_data_cursor()
 
         if self.config.activation_cache_path and self.config.offload_frozen_backbone_for_cache:
             self.model_metadata["cached_training_backbone_offload"] = offload_cached_frozen_backbone(
@@ -201,50 +263,104 @@ class GPUTrainer:
                 runtime=self.runtime,
             )
 
-        self._write_setup_artifacts()
+        if self.distributed.is_primary:
+            self._write_setup_artifacts()
         self._setup_done = True
+
+    def initialize_optimizer(self) -> None:
+        """Create optimizer and scheduler after model allocation when requested."""
+
+        if self.optimizer is not None:
+            return
+        self.optimizer = build_optimizer_for_trainable_parameters(
+            self.training_model or self.model,
+            learning_rate=self.config.learning_rate,
+            weight_decay=self.config.weight_decay,
+        )
+        self.scheduler = _build_scheduler(self.optimizer, self.config)
 
     def train(self) -> GPUTrainingResult:
         if not self._setup_done:
             self.setup()
+        if self.optimizer is None:
+            self.initialize_optimizer()
         torch = _require_torch()
-        self.model.train()
+        self.training_model.train()
         self.optimizer.zero_grad(set_to_none=True)
         status = "completed"
         reset_cuda_peak_memory(self.runtime)
         self._train_started_at = time.perf_counter()
         try:
-            while self.state.global_step < self.config.max_steps:
+            while not self._training_budget_reached():
                 step_started_at = time.perf_counter()
                 batch = move_batch_to_device(
                     self._next_train_batch(),
                     self.runtime.device_info.selected,
                 )
-                loss = self._forward_loss(batch, include_distillation=True)
-                scaled_loss = loss / float(self.config.gradient_accumulation_steps)
-                self.scaler.scale(scaled_loss).backward()
+                batch_tokens = _token_count(batch) * self.distributed.world_size
+                reaches_token_budget = bool(
+                    self.config.max_train_tokens is not None
+                    and self.state.tokens_seen + batch_tokens >= self.config.max_train_tokens
+                )
+                synchronize = (
+                    (self.state.global_step + 1)
+                    % self.config.gradient_accumulation_steps
+                    == 0
+                    or (
+                        (
+                            self.config.max_train_tokens is None
+                            or self.config.max_optimizer_steps is not None
+                        )
+                        and self.state.global_step + 1 >= self.config.microstep_budget
+                    )
+                    or reaches_token_budget
+                )
+                with distributed_no_sync(
+                    self.training_model,
+                    self.distributed,
+                    synchronize=synchronize,
+                ):
+                    loss = self._forward_loss(batch, include_distillation=True)
+                    scaled_loss = loss / float(self.config.gradient_accumulation_steps)
+                    self.scaler.scale(scaled_loss).backward()
                 self.state.global_step += 1
-                self.state.samples_seen += _batch_size(batch)
-                self.state.tokens_seen += _token_count(batch)
+                self.state.samples_seen += _batch_size(batch) * self.distributed.world_size
+                self.state.tokens_seen += batch_tokens
                 self.state.latest_train_loss = float(loss.detach().float().cpu().item())
                 should_step = (
                     self.state.global_step % self.config.gradient_accumulation_steps == 0
-                    or self.state.global_step >= self.config.max_steps
+                    or (
+                        (
+                            self.config.max_train_tokens is None
+                            or self.config.max_optimizer_steps is not None
+                        )
+                        and self.state.global_step >= self.config.microstep_budget
+                    )
+                    or reaches_token_budget
                 )
+                did_optimizer_step = False
                 if should_step:
                     if self.config.max_grad_norm is not None:
                         self.scaler.unscale_(self.optimizer)
                         torch.nn.utils.clip_grad_norm_(
-                            [p for p in self.model.parameters() if p.requires_grad],
+                            [p for p in self.training_model.parameters() if p.requires_grad],
                             self.config.max_grad_norm,
                         )
                     self.scaler.step(self.optimizer)
                     self.scaler.update()
                     self.optimizer.zero_grad(set_to_none=True)
                     self.state.optimizer_step += 1
+                    did_optimizer_step = True
                     if self.scheduler is not None:
-                        self.scheduler.step()
-                if self.state.global_step % self.config.eval_every_steps == 0:
+                        if self.config.scheduler_unit == "tokens":
+                            self.scheduler.step(self.state.tokens_seen)
+                        else:
+                            self.scheduler.step()
+                if self._cadence_due(
+                    self.config.eval_every_steps,
+                    self.config.eval_every_optimizer_steps,
+                    did_optimizer_step,
+                ):
                     eval_metrics = self.evaluate()
                     self.state.latest_eval_loss = eval_metrics.get("eval_loss_mean")
                     improved = self.state.best_eval_loss is None or (
@@ -274,30 +390,113 @@ class GPUTrainer:
                         self.state.stopped_early = True
                         self.state.stop_reason = "eval_loss_patience_exhausted"
                         break
-                if self.state.global_step % self.config.log_every_steps == 0:
+                if self._cadence_due(
+                    self.config.log_every_steps,
+                    self.config.log_every_optimizer_steps,
+                    did_optimizer_step,
+                ):
                     self._append_metrics({"event": "log", **dict(self._last_loss_metadata)})
-                if self.config.save_full_checkpoints and self.state.global_step % self.config.save_every_steps == 0:
+                if self.config.save_full_checkpoints and self._cadence_due(
+                    self.config.save_every_steps,
+                    self.config.save_every_optimizer_steps,
+                    did_optimizer_step,
+                ):
                     self.save_checkpoint(self.state.global_step)
-                if self.config.empty_cache_every_steps and self.state.global_step % self.config.empty_cache_every_steps == 0:
+                if self._optional_cadence_due(
+                    self.config.empty_cache_every_steps,
+                    self.config.empty_cache_every_optimizer_steps,
+                    did_optimizer_step,
+                ):
                     self._empty_cache()
                 self._step_times.append(time.perf_counter() - step_started_at)
             if self.config.save_full_checkpoints and not self.state.latest_checkpoint_path:
                 self.save_checkpoint(self.state.global_step)
         except Exception:
             status = "failed"
+            self.close()
             raise
         finally:
             self._train_finished_at = time.perf_counter()
             self._empty_cache()
-            self._write_state()
-        return self._finish(status)
+            if self.distributed.is_primary:
+                self._write_state()
+            distributed_barrier(self.distributed)
+        try:
+            return self._finish(status)
+        finally:
+            self.close()
+
+    def _training_budget_reached(self) -> bool:
+        if (
+            self.config.max_train_tokens is not None
+            and self.state.tokens_seen >= self.config.max_train_tokens
+        ):
+            return True
+        if self.config.max_train_tokens is not None and self.config.max_optimizer_steps is None:
+            return False
+        if self.config.max_optimizer_steps is not None:
+            return self.state.optimizer_step >= self.config.optimizer_step_budget
+        return self.state.global_step >= self.config.microstep_budget
+
+    def _restore_data_cursor(self) -> None:
+        epoch = max(1, int(self.state.train_epoch or 1))
+        sampler = getattr(self.train_loader, "sampler", None)
+        set_epoch = getattr(sampler, "set_epoch", None)
+        if callable(set_epoch):
+            set_epoch(epoch - 1)
+        self._train_iter = iter(self.train_loader)
+        batches_to_skip = int(self.state.train_batches_in_epoch)
+        for _ in range(batches_to_skip):
+            try:
+                next(self._train_iter)
+            except StopIteration as exc:
+                raise RuntimeError(
+                    "Checkpoint data cursor exceeds the restored train epoch."
+                ) from exc
+        self.data_metadata["resume_cursor"] = {
+            "epoch": epoch,
+            "batches_skipped": batches_to_skip,
+            "exact_within_epoch": True,
+        }
+
+    def _cadence_due(
+        self,
+        microstep_interval: int,
+        optimizer_interval: int | None,
+        did_optimizer_step: bool,
+    ) -> bool:
+        if optimizer_interval is not None:
+            return bool(
+                did_optimizer_step
+                and self.state.optimizer_step > 0
+                and self.state.optimizer_step % optimizer_interval == 0
+            )
+        return self.state.global_step > 0 and self.state.global_step % microstep_interval == 0
+
+    def _optional_cadence_due(
+        self,
+        microstep_interval: int | None,
+        optimizer_interval: int | None,
+        did_optimizer_step: bool,
+    ) -> bool:
+        if optimizer_interval is not None:
+            return bool(
+                did_optimizer_step
+                and self.state.optimizer_step > 0
+                and self.state.optimizer_step % optimizer_interval == 0
+            )
+        return bool(
+            microstep_interval
+            and self.state.global_step > 0
+            and self.state.global_step % microstep_interval == 0
+        )
 
     def evaluate(self) -> dict[str, Any]:
         if not self._setup_done:
             self.setup()
         losses: list[float] = []
         examples = 0
-        self.model.eval()
+        self.training_model.eval()
         try:
             import torch
 
@@ -310,11 +509,14 @@ class GPUTrainer:
                     losses.append(float(loss.detach().float().cpu().item()))
                     examples += _batch_size(batch)
         finally:
-            self.model.train()
-        mean_loss = sum(losses) / len(losses) if losses else None
+            self.training_model.train()
+        loss_sum = distributed_sum(sum(losses), self.distributed)
+        loss_count = int(distributed_sum(len(losses), self.distributed))
+        examples = int(distributed_sum(examples, self.distributed))
+        mean_loss = loss_sum / loss_count if loss_count else None
         metrics = {
             "eval_loss_mean": mean_loss,
-            "eval_batches": len(losses),
+            "eval_batches": loss_count,
             "eval_examples": examples,
             "eval_full_dataset": bool(self.config.eval_full_dataset),
             "step": self.state.global_step,
@@ -333,6 +535,10 @@ class GPUTrainer:
         except StopIteration:
             self.state.train_epoch += 1
             self.state.train_batches_in_epoch = 0
+            sampler = getattr(self.train_loader, "sampler", None)
+            set_epoch = getattr(sampler, "set_epoch", None)
+            if callable(set_epoch):
+                set_epoch(self.state.train_epoch - 1)
             self._train_iter = iter(self.train_loader)
             batch = next(self._train_iter)
         self.state.train_batches_in_epoch += 1
@@ -345,9 +551,26 @@ class GPUTrainer:
         tag: str | None = None,
         record_latest: bool = True,
         record_best: bool = False,
+        model_only: bool = False,
     ) -> str:
+        if (
+            self.config.distributed_checkpoint_mode == "sharded"
+            and self.config.distributed_strategy in {"ddp", "fsdp"}
+        ):
+            return self._save_sharded_checkpoint(
+                step,
+                tag=tag,
+                record_latest=record_latest,
+                record_best=record_best,
+                model_only=model_only,
+            )
         filename = f"checkpoint-{tag}.pt" if tag else f"checkpoint-step-{step:06d}.pt"
         path = self.checkpoint_dir / filename
+        if self.distributed.enabled and self.config.distributed_strategy == "fsdp":
+            raise RuntimeError("FSDP requires distributed_checkpoint_mode='sharded'.")
+        if self.distributed.enabled and not self.distributed.is_primary:
+            distributed_barrier(self.distributed)
+            return str(path)
         if record_best:
             self.state.best_checkpoint_path = str(path)
         base_checkpoint_path = None
@@ -360,9 +583,13 @@ class GPUTrainer:
         saved = save_gpu_checkpoint(
             path,
             model=self.model,
-            optimizer=self.optimizer if self.config.save_optimizer_state else None,
-            scheduler=self.scheduler,
-            scaler=self.scaler,
+            optimizer=(
+                self.optimizer
+                if self.config.save_optimizer_state and not model_only
+                else None
+            ),
+            scheduler=None if model_only else self.scheduler,
+            scaler=None if model_only else self.scaler,
             state=self.state,
             config=self.config,
             runtime_metadata=self.runtime_meta,
@@ -404,13 +631,96 @@ class GPUTrainer:
                     "checkpoint_tag": tag,
                     "record_latest": record_latest,
                     "record_best": record_best,
+                    "model_only": model_only,
                 },
             )
         )
+        distributed_barrier(self.distributed)
+        return saved
+
+    def _save_sharded_checkpoint(
+        self,
+        step: int,
+        *,
+        tag: str | None,
+        record_latest: bool,
+        record_best: bool,
+        model_only: bool,
+    ) -> str:
+        if model_only:
+            raise ValueError("Distributed sharded checkpoints always include optimizer state.")
+        filename = f"checkpoint-{tag}" if tag else f"checkpoint-step-{step:06d}"
+        path = self.checkpoint_dir / filename
+        saved = save_sharded_training_checkpoint(
+            path,
+            model=self.training_model,
+            optimizer=self.optimizer,
+            scheduler=self.scheduler,
+            scaler=self.scaler,
+            trainer_state=self.state,
+            config=self.config,
+            runtime=self.distributed,
+            metadata={
+                "runtime": self.runtime_meta,
+                "data": self.data_metadata,
+                "model": self.model_metadata,
+                "global_step": step,
+            },
+        )
+        if record_latest:
+            self.state.latest_checkpoint_path = saved
+        if record_best:
+            self.state.best_checkpoint_path = saved
+        self.checkpoint_metadata = {
+            "latest_checkpoint_path": self.state.latest_checkpoint_path,
+            "best_checkpoint_path": self.state.best_checkpoint_path,
+            "sharded": True,
+            "world_size": self.distributed.world_size,
+        }
+        if self.distributed.is_primary:
+            self._register_artifact(
+                ArtifactRecord(
+                    artifact_id=f"gpu-sharded-checkpoint-{self.run_id}-{step}-{uuid4().hex[:8]}",
+                    kind="checkpoint",
+                    path=saved,
+                    run_id=self.run_id,
+                    model_type=self.config.model_type,
+                    step=step,
+                    metadata={
+                        "training_kind": "gpu_train",
+                        "checkpoint_format": "mopforge_distributed_sharded_v1",
+                        "optimizer_step": self.state.optimizer_step,
+                        "tokens_seen": self.state.tokens_seen,
+                        "world_size": self.distributed.world_size,
+                    },
+                )
+            )
         return saved
 
     def load_checkpoint(self, path: str) -> dict[str, Any]:
         checkpoint_path = _resolve_checkpoint_reference(path, self.config.output_root)
+        if is_sharded_checkpoint(checkpoint_path):
+            if self.config.resume_model_only:
+                raise ValueError("resume_model_only is not supported for sharded checkpoints.")
+            payload = load_sharded_training_checkpoint(
+                checkpoint_path,
+                model=self.training_model,
+                optimizer=self.optimizer,
+                scheduler=self.scheduler,
+                scaler=self.scaler,
+                runtime=self.distributed,
+            )
+            self.state = GPUTrainingState.from_dict(payload.get("trainer_state", {}))
+            self.state.runtime_metadata = dict(self.runtime_meta)
+            metadata = {
+                "checkpoint_path": checkpoint_path,
+                "resume_model_only": False,
+                "sharded": True,
+                "restored": ["model", "optimizer", "scheduler", "scaler"],
+            }
+            self.checkpoint_metadata = metadata
+            self.model_metadata["resume"] = dict(metadata)
+            return payload
         payload = load_gpu_checkpoint(checkpoint_path, map_location=self.runtime.device_info.selected if self.runtime else "cpu")
         model_only = bool(self.config.resume_model_only)
         metadata = restore_gpu_checkpoint(
@@ -446,10 +756,18 @@ class GPUTrainer:
             arch = ModelArchitectureConfig(
                 name=self.config.name,
                 model_type=self.config.model_type,
+                architecture_family=self.config.architecture_family,
                 d_model=self.config.d_model,
                 n_layers=self.config.n_layers,
                 n_heads=self.config.n_heads,
                 max_seq_len=self.config.max_seq_len,
+                intermediate_size=self.config.intermediate_size,
+                n_key_value_heads=self.config.n_key_value_heads,
+                rope_theta=self.config.rope_theta,
+                rms_norm_eps=self.config.rms_norm_eps,
+                dropout=self.config.dropout,
+                attention_dropout=self.config.attention_dropout,
+                tie_word_embeddings=self.config.tie_word_embeddings,
                 module_names=self.config.module_names or ["core", "coding", "debugging", "repair"],
                 always_include_core=self.config.always_include_core,
                 mop_block_type=self.config.mop_block_type,
@@ -485,14 +803,28 @@ class GPUTrainer:
             active_conditions = [condition_names_from_target_modules(item) for item in (target_modules or [])]
         with autocast_context(self.runtime):
             if "hidden_states" in batch:
-                outputs = self.model.forward_from_hidden(
-                    batch["hidden_states"],
-                    attention_mask=batch.get("attention_mask"),
-                    labels=batch.get("labels"),
-                    active_modules=target_modules,
-                    active_adapters=active_adapters,
-                    active_conditions=active_conditions,
-                )
+                if self.distributed.enabled:
+                    if self.model.__class__.__name__ != "ProductionCausalLM":
+                        raise RuntimeError(
+                            "Distributed cached-tail training requires production_decoder_v2."
+                        )
+                    outputs = self.training_model(
+                        hidden_states=batch["hidden_states"],
+                        attention_mask=batch.get("attention_mask"),
+                        labels=batch.get("labels"),
+                        active_modules=target_modules,
+                        active_adapters=active_adapters,
+                        active_conditions=active_conditions,
+                    )
+                else:
+                    outputs = self.model.forward_from_hidden(
+                        batch["hidden_states"],
+                        attention_mask=batch.get("attention_mask"),
+                        labels=batch.get("labels"),
+                        active_modules=target_modules,
+                        active_adapters=active_adapters,
+                        active_conditions=active_conditions,
+                    )
             else:
                 kwargs = {
                     "input_ids": batch["input_ids"],
@@ -505,7 +837,7 @@ class GPUTrainer:
                     kwargs["active_adapters"] = active_adapters
                 if active_conditions is not None:
                     kwargs["active_conditions"] = active_conditions
-                outputs = self.model(**kwargs)
+                outputs = self.training_model(**kwargs)
         loss = outputs.get("loss")
         if loss is None:
             loss = outputs["logits"].sum() * 0.0
@@ -697,6 +1029,20 @@ class GPUTrainer:
             "finite": finite,
             "global_steps": self.state.global_step,
             "optimizer_steps": self.state.optimizer_step,
+            "microstep_budget": self.config.microstep_budget,
+            "optimizer_step_budget": self.config.optimizer_step_budget,
+            "max_train_tokens": self.config.max_train_tokens,
+            "scheduler_unit": self.config.scheduler_unit,
+            "budget_source": (
+                "max_train_tokens"
+                if self.config.max_train_tokens is not None
+                and self.config.max_optimizer_steps is None
+                else (
+                    "max_optimizer_steps"
+                    if self.config.max_optimizer_steps is not None
+                    else "max_steps_legacy_microsteps"
+                )
+            ),
             "train_epoch": self.state.train_epoch,
             "train_batches_in_epoch": self.state.train_batches_in_epoch,
             "samples_seen": self.state.samples_seen,
@@ -728,7 +1074,19 @@ class GPUTrainer:
             "model": dict(self.model_metadata),
             "memory_snapshots": list(self.state.memory_snapshots),
             "efficiency": efficiency,
+            "distributed": self.distributed.to_dict(),
         }
+        if self.distributed.enabled and not self.distributed.is_primary:
+            return GPUTrainingResult(
+                run_id=self.run_id,
+                status=status,
+                config=self.config.to_dict(),
+                state=self.state.to_dict(),
+                metrics=metrics,
+                artifacts=dict(self.artifacts),
+                runtime_metadata=dict(self.runtime_meta),
+                output_dir=str(self.output_dir),
+            )
         if self.config.run_generation_eval:
             metrics.update(self._generation_eval_metrics())
         _write_json(self.output_dir / "metrics.json", metrics)
@@ -814,7 +1172,7 @@ class GPUTrainer:
                 }
             }
         previous_mode = self.model.training
-        self.model.eval()
+        self.training_model.eval()
         selected_eval = select_generation_eval_lessons(
             eval_lessons,
             max_lessons=self.config.generation_eval_examples,
@@ -833,7 +1191,7 @@ class GPUTrainer:
                 results_by_split[split_name] = self._generate_for_lessons(lessons)
         finally:
             if previous_mode:
-                self.model.train()
+                self.training_model.train()
             if cached_training and self.config.offload_frozen_backbone_for_cache:
                 offload_cached_frozen_backbone(self.model, runtime=self.runtime)
                 self._empty_cache()
@@ -1200,8 +1558,13 @@ def select_attention_metadata(efficient_attention: str) -> dict[str, Any]:
 
 
 def _runtime_config(config: GPUTrainingConfig) -> RuntimeConfig:
+    device = config.device
+    if config.distributed_strategy in {"ddp", "fsdp"} and device in {"cuda", "auto"}:
+        import os
+
+        device = f"cuda:{int(os.environ.get('LOCAL_RANK', '0'))}"
     return RuntimeConfig(
-        device=config.device,
+        device=device,
         precision=config.precision,
         enable_amp=config.enable_amp,
         allow_tf32=config.allow_tf32,
@@ -1214,19 +1577,30 @@ def _runtime_config(config: GPUTrainingConfig) -> RuntimeConfig:
 def _build_scheduler(optimizer, config: GPUTrainingConfig):
     if config.scheduler == "none":
         return None
+    if config.scheduler_unit == "tokens":
+        return TokenLRScheduler(
+            optimizer,
+            scheduler=config.scheduler,
+            total_tokens=config.max_train_tokens,
+            warmup_tokens=config.warmup_tokens,
+            min_lr_ratio=config.min_lr_ratio,
+        )
     try:
         import torch
     except Exception:
         return None
 
+    warmup_updates = config.scheduler_warmup_optimizer_steps
+    total_updates = config.optimizer_step_budget
+
     def lr_lambda(step: int) -> float:
-        if config.warmup_steps and step < config.warmup_steps:
-            return min(1.0, float(step + 1) / float(max(1, config.warmup_steps)))
+        if warmup_updates and step < warmup_updates:
+            return min(1.0, float(step + 1) / float(max(1, warmup_updates)))
         if config.scheduler == "cosine":
-            decay_steps = max(1, config.max_steps - config.warmup_steps)
+            decay_steps = max(1, total_updates - warmup_updates)
             progress = min(
                 1.0,
-                float(max(0, step - config.warmup_steps)) / float(decay_steps),
+                float(max(0, step - warmup_updates)) / float(decay_steps),
             )
             return 0.5 * (1.0 + math.cos(math.pi * progress))
         if config.scheduler == "linear_warmup":

@@ -24,6 +24,20 @@ from mopforge.models.registry import ModelRecord, ModelRegistry
 from mopforge.models.tiny_dense import TinyCausalTransformer
 from mopforge.models.tiny_mop import TinyMoPCausalTransformer
 from mopforge.models.tiny_router import TinyModuleRouter, predict_modules
+from mopforge.models.production_decoder import (
+    ProductionCausalLM,
+    ProductionDecoderConfig,
+    RMSNorm,
+    production_parameter_count,
+)
+from mopforge.models.hf_export import (
+    export_gpu_checkpoint_to_huggingface,
+    export_huggingface_llama,
+)
+from mopforge.models.checkpoint_loader import (
+    architecture_from_gpu_config,
+    load_gpu_checkpoint_model,
+)
 
 __all__ = [
     "FastAdapter",
@@ -40,6 +54,9 @@ __all__ = [
     "TinyCausalTransformer",
     "TinyMoPCausalTransformer",
     "TinyModuleRouter",
+    "ProductionCausalLM",
+    "ProductionDecoderConfig",
+    "RMSNorm",
     "adapter_names_from_target_modules",
     "condition_names_from_target_modules",
     "build_tiny_model_from_architecture",
@@ -47,4 +64,9 @@ __all__ = [
     "normalize_condition_names",
     "parameter_summary_for_architecture",
     "predict_modules",
+    "production_parameter_count",
+    "export_huggingface_llama",
+    "export_gpu_checkpoint_to_huggingface",
+    "architecture_from_gpu_config",
+    "load_gpu_checkpoint_model",
 ]

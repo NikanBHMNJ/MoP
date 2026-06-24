@@ -68,6 +68,26 @@ def test_gradient_accumulation_changes_optimizer_step_count(tmp_path):
     assert result.metrics["effective_batch_size"] == 2
 
 
+def test_explicit_optimizer_budget_runs_exact_accumulated_updates(tmp_path):
+    result = GPUTrainer(
+        _config(
+            tmp_path,
+            max_steps=999,
+            max_optimizer_steps=3,
+            gradient_accumulation_steps=2,
+            eval_every_optimizer_steps=3,
+            save_every_optimizer_steps=3,
+            log_every_optimizer_steps=1,
+        )
+    ).train()
+
+    assert result.metrics["global_steps"] == 6
+    assert result.metrics["optimizer_steps"] == 3
+    assert result.metrics["microstep_budget"] == 6
+    assert result.metrics["optimizer_step_budget"] == 3
+    assert result.metrics["budget_source"] == "max_optimizer_steps"
+
+
 def test_trainer_records_real_epoch_boundaries(tmp_path):
     result = GPUTrainer(_config(tmp_path, max_steps=6, save_every_steps=6)).train()
 
@@ -99,6 +119,72 @@ def test_checkpoint_resume_continues_global_step(tmp_path):
     resumed = GPUTrainer(_config(tmp_path, max_steps=2, resume_from_checkpoint=checkpoint)).train()
     assert resumed.metrics["global_steps"] == 2
     assert resumed.metrics["optimizer_steps"] >= first.metrics["optimizer_steps"]
+
+
+def test_model_only_warm_start_loads_before_distributed_wrapping(tmp_path, monkeypatch):
+    first = GPUTrainer(_config(tmp_path, max_steps=1)).train()
+    checkpoint = first.artifacts["latest_checkpoint_path"]
+    trainer = GPUTrainer(
+        _config(
+            tmp_path,
+            resume_from_checkpoint=checkpoint,
+            resume_model_only=True,
+        )
+    )
+    import mopforge.gpu.trainer as trainer_module
+
+    events = []
+    original_wrap = trainer_module.wrap_distributed_model
+    original_load = trainer.load_checkpoint
+
+    def tracked_wrap(*args, **kwargs):
+        events.append("wrap")
+        return original_wrap(*args, **kwargs)
+
+    def tracked_load(*args, **kwargs):
+        events.append("load")
+        return original_load(*args, **kwargs)
+
+    monkeypatch.setattr(trainer_module, "wrap_distributed_model", tracked_wrap)
+    monkeypatch.setattr(trainer, "load_checkpoint", tracked_load)
+    trainer.setup()
+    trainer.close()
+
+    assert events[:2] == ["load", "wrap"]
+
+
+def test_token_budget_supersedes_legacy_microstep_limit(tmp_path):
+    result = GPUTrainer(
+        _config(
+            tmp_path,
+            max_steps=1,
+            max_train_tokens=150,
+            scheduler="cosine",
+            scheduler_unit="tokens",
+            warmup_tokens=50,
+            save_every_steps=100,
+            eval_every_steps=100,
+        )
+    ).train()
+
+    assert result.metrics["tokens_seen"] >= 150
+    assert result.metrics["global_steps"] > 1
+    assert result.metrics["budget_source"] == "max_train_tokens"
+
+
+def test_resume_restores_exact_epoch_batch_cursor(tmp_path):
+    first = GPUTrainer(_config(tmp_path, max_steps=2, save_every_steps=2)).train()
+    resumed = GPUTrainer(
+        _config(
+            tmp_path,
+            max_steps=3,
+            resume_from_checkpoint=first.artifacts["latest_checkpoint_path"],
+        )
+    )
+    resumed.setup()
+
+    assert resumed.data_metadata["resume_cursor"]["exact_within_epoch"] is True
+    assert resumed.data_metadata["resume_cursor"]["batches_skipped"] == 2
 
 
 def test_checkpoint_payload_contains_gpu_metadata(tmp_path):

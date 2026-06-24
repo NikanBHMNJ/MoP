@@ -42,17 +42,26 @@ from mopforge.configs import (
     validate_config_envelope,
 )
 from mopforge.experiments import ExperimentRegistry, run_experiment
+from mopforge.eval import (
+    audit_code_contamination,
+    load_code_benchmark,
+    run_code_benchmark,
+)
 from mopforge.gpu import (
     DistributedConfig,
     GPUTrainer,
     GPURunRegistry,
+    TokenShardBuildConfig,
     build_torchrun_command,
+    build_token_shards,
+    consolidate_sharded_gpu_checkpoint,
     config_hash,
     dry_run_gpu_training_config,
     estimate_from_config,
     evaluate_efficiency_gates,
     file_sha256,
     prepare_efficiency_dataset,
+    run_gpu_probe,
     validate_gpu_training_config,
     write_activation_cache,
     write_gate_report,
@@ -73,16 +82,27 @@ from mopforge.manifests import (
     dry_run_payload,
     plan_run_manifest,
 )
-from mopforge.models import ModelArchitectureConfig, ModelRegistry
+from mopforge.models import (
+    ModelArchitectureConfig,
+    ModelRegistry,
+    export_gpu_checkpoint_to_huggingface,
+)
 from mopforge.papers import PaperReportRegistry, build_paper_report
 from mopforge.statistics import make_metric_table, write_table_csv, write_table_json, write_table_markdown
 from mopforge.lifecycle.checkpoint import load_full_training_checkpoint
 from mopforge.lifecycle.resume import resolve_full_checkpoint_reference
 from mopforge.pretrain import ContinuedPretrainConfig
 from mopforge.pretrain import run_continued_pretraining
+from mopforge.posttrain import (
+    PreferenceTrainer,
+    PreferenceTrainingConfig,
+    build_verified_preference_records,
+    write_preference_records,
+)
 from mopforge.runtime import RuntimeConfig, build_runtime_context, detect_devices, runtime_metadata
 from mopforge.sft import FinetuneConfig, list_training_modes, run_finetune
 from mopforge.training import TinyTrainer, TrainerConfig
+from mopforge.tokenization import BPETrainingConfig, train_bpe_tokenizer
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -143,6 +163,23 @@ def _build_parser() -> argparse.ArgumentParser:
     dry_run_parser.add_argument("path")
     dry_run_parser.set_defaults(func=_cmd_config_dry_run)
 
+    tokenizer_parser = subparsers.add_parser("tokenizer", help="tokenizer commands")
+    tokenizer_sub = tokenizer_parser.add_subparsers(
+        dest="tokenizer_command",
+        required=True,
+    )
+    tokenizer_train = tokenizer_sub.add_parser(
+        "train-bpe",
+        help="train a local byte-level BPE tokenizer",
+    )
+    tokenizer_train.add_argument("sources", nargs="+")
+    tokenizer_train.add_argument("--output-dir", required=True)
+    tokenizer_train.add_argument("--vocab-size", type=int, default=32768)
+    tokenizer_train.add_argument("--min-frequency", type=int, default=2)
+    tokenizer_train.add_argument("--text-field", default="text")
+    tokenizer_train.add_argument("--max-records", type=int)
+    tokenizer_train.set_defaults(func=_cmd_tokenizer_train_bpe)
+
     runtime_parser = subparsers.add_parser("runtime", help="runtime/device commands")
     runtime_sub = runtime_parser.add_subparsers(dest="runtime_command", required=True)
     runtime_detect = runtime_sub.add_parser("detect", help="detect runtime devices")
@@ -167,15 +204,33 @@ def _build_parser() -> argparse.ArgumentParser:
     gpu_estimate = gpu_sub.add_parser("estimate", help="estimate GPU training memory")
     gpu_estimate.add_argument("path")
     gpu_estimate.set_defaults(func=_cmd_gpu_estimate)
-    gpu_train = gpu_sub.add_parser("train", help="execute a single-device GPU-aware train job")
+    gpu_train = gpu_sub.add_parser(
+        "train", help="execute a single-device or torchrun GPU training job"
+    )
     gpu_train.add_argument("path")
     gpu_train.add_argument("--device")
     gpu_train.add_argument("--precision")
     gpu_train.add_argument("--allow-plan-run", action="store_true")
     gpu_train.set_defaults(func=_cmd_gpu_train)
+    gpu_probe = gpu_sub.add_parser(
+        "probe",
+        help="run a staged GPU memory, training, and checkpoint feasibility probe",
+    )
+    gpu_probe.add_argument("path")
+    gpu_probe.add_argument("--optimizer-updates", type=int)
+    gpu_probe.add_argument("--output")
+    gpu_probe.set_defaults(func=_cmd_gpu_probe)
     gpu_resume = gpu_sub.add_parser("resume", help="resume a GPU run from run ID or checkpoint")
     gpu_resume.add_argument("checkpoint_or_run_id")
     gpu_resume.set_defaults(func=_cmd_gpu_resume)
+    gpu_consolidate = gpu_sub.add_parser(
+        "consolidate-checkpoint",
+        help="consolidate a distributed sharded checkpoint for evaluation/export",
+    )
+    gpu_consolidate.add_argument("checkpoint_dir")
+    gpu_consolidate.add_argument("output")
+    gpu_consolidate.add_argument("--config")
+    gpu_consolidate.set_defaults(func=_cmd_gpu_consolidate_checkpoint)
     gpu_benchmark = gpu_sub.add_parser("benchmark", help="write a GPU run benchmark scaffold")
     gpu_benchmark.add_argument("run_id")
     gpu_benchmark.set_defaults(func=_cmd_gpu_benchmark)
@@ -259,6 +314,25 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     gpu_data.add_argument("--overwrite", action="store_true")
     gpu_data.set_defaults(func=_cmd_gpu_prepare_efficiency_data)
+    gpu_pack = gpu_sub.add_parser(
+        "pack-corpus",
+        help="tokenize and pack text/JSONL sources into memory-mapped shards",
+    )
+    gpu_pack.add_argument("sources", nargs="+")
+    gpu_pack.add_argument("--tokenizer-spec", required=True)
+    gpu_pack.add_argument("--output-dir", required=True)
+    gpu_pack.add_argument("--sequence-length", type=int, default=1024)
+    gpu_pack.add_argument("--tokens-per-shard", type=int, default=10_000_000)
+    gpu_pack.add_argument("--eval-fraction", type=float, default=0.01)
+    gpu_pack.add_argument("--split-seed", type=int, default=42)
+    gpu_pack.add_argument("--text-field", default="text")
+    gpu_pack.add_argument("--max-records", type=int)
+    gpu_pack.add_argument(
+        "--drop-remainder",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
+    gpu_pack.set_defaults(func=_cmd_gpu_pack_corpus)
     gpu_launch = gpu_sub.add_parser("launch-torchrun", help="print a torchrun dry-run command; never launches")
     gpu_launch.add_argument("path")
     gpu_launch.add_argument("--dry-run", action="store_true", default=True)
@@ -292,6 +366,16 @@ def _build_parser() -> argparse.ArgumentParser:
     model_snapshot.add_argument("model_id")
     model_snapshot.add_argument("--root", default="models")
     model_snapshot.set_defaults(func=_cmd_model_snapshot)
+    model_export = model_sub.add_parser(
+        "export-hf",
+        help="export a consolidated GPU checkpoint as Hugging Face Llama artifacts",
+    )
+    model_export.add_argument("checkpoint")
+    model_export.add_argument("output")
+    model_export.add_argument("--config")
+    model_export.add_argument("--expert")
+    model_export.add_argument("--max-shard-size-gb", type=float, default=4.0)
+    model_export.set_defaults(func=_cmd_model_export_hf)
 
     manifest_parser = subparsers.add_parser("manifest", help="research run manifest commands")
     manifest_sub = manifest_parser.add_subparsers(dest="manifest_command", required=True)
@@ -547,6 +631,36 @@ def _build_parser() -> argparse.ArgumentParser:
     analyze_show_parser.add_argument("--registry-root", default="reports")
     analyze_show_parser.set_defaults(func=_cmd_analyze_show)
 
+    eval_parser = subparsers.add_parser("eval", help="production evaluation commands")
+    eval_sub = eval_parser.add_subparsers(dest="eval_command", required=True)
+    eval_code = eval_sub.add_parser(
+        "code", help="run pass@1 evaluation over trusted HumanEval/MBPP/native JSONL"
+    )
+    eval_code.add_argument("checkpoint")
+    eval_code.add_argument("benchmark")
+    eval_code.add_argument("output")
+    eval_code.add_argument("--config")
+    eval_code.add_argument(
+        "--format", choices=["auto", "humaneval", "mbpp", "native"], default="auto"
+    )
+    eval_code.add_argument("--max-tasks", type=int)
+    eval_code.add_argument("--max-new-tokens", type=int, default=256)
+    eval_code.add_argument("--device", default="auto")
+    eval_code.add_argument("--expert")
+    eval_code.set_defaults(func=_cmd_eval_code)
+    eval_contamination = eval_sub.add_parser(
+        "contamination", help="audit benchmark overlap against training sources"
+    )
+    eval_contamination.add_argument("benchmark")
+    eval_contamination.add_argument("training_sources", nargs="+")
+    eval_contamination.add_argument("--output", required=True)
+    eval_contamination.add_argument(
+        "--format", choices=["auto", "humaneval", "mbpp", "native"], default="auto"
+    )
+    eval_contamination.add_argument("--ngram-size", type=int, default=13)
+    eval_contamination.add_argument("--threshold", type=float, default=0.8)
+    eval_contamination.set_defaults(func=_cmd_eval_contamination)
+
     report_parser = subparsers.add_parser("report", help="report commands")
     report_subparsers = report_parser.add_subparsers(dest="report_command", required=True)
     report_build_parser = report_subparsers.add_parser(
@@ -601,6 +715,26 @@ def _build_parser() -> argparse.ArgumentParser:
     sft_resume_parser.add_argument("checkpoint")
     sft_resume_parser.add_argument("--config", dest="config_path")
     sft_resume_parser.set_defaults(func=_cmd_sft_resume)
+
+    posttrain_parser = subparsers.add_parser(
+        "posttrain", help="production preference post-training commands"
+    )
+    posttrain_sub = posttrain_parser.add_subparsers(
+        dest="posttrain_command", required=True
+    )
+    preference_prepare = posttrain_sub.add_parser(
+        "prepare-preferences",
+        help="build verified chosen/rejected records from generation evaluation",
+    )
+    preference_prepare.add_argument("lessons")
+    preference_prepare.add_argument("generation_eval")
+    preference_prepare.add_argument("output")
+    preference_prepare.set_defaults(func=_cmd_posttrain_prepare_preferences)
+    preference_train = posttrain_sub.add_parser(
+        "preference", help="run production DPO or ORPO from a JSON config"
+    )
+    preference_train.add_argument("config")
+    preference_train.set_defaults(func=_cmd_posttrain_preference)
 
     pretrain_parser = subparsers.add_parser("pretrain", help="continued pretraining commands")
     pretrain_subparsers = pretrain_parser.add_subparsers(
@@ -900,7 +1034,11 @@ def _cmd_gpu_train(args) -> int:
         payload = config.to_dict()
         payload.update(updates)
         config = type(config).from_dict(payload)
-    result = GPUTrainer(config).train()
+    trainer = GPUTrainer(config)
+    try:
+        result = trainer.train()
+    finally:
+        trainer.close()
     selected_device = str(result.runtime_metadata.get("selected_device", ""))
     requested_device = str(result.runtime_metadata.get("requested_device", config.device))
     if selected_device.startswith("cpu") and requested_device in {"auto", "cuda", "mps"}:
@@ -913,6 +1051,25 @@ def _cmd_gpu_train(args) -> int:
     print(f"result_path={result.artifacts.get('gpu_training_result_json')}")
     print(f"latest_checkpoint_path={result.artifacts.get('latest_checkpoint_path')}")
     return 0 if result.status == "completed" else 1
+
+
+def _cmd_gpu_probe(args) -> int:
+    envelope = MoPForgeConfig.load(args.path)
+    if envelope.kind != "gpu_train":
+        raise ValueError(
+            f"gpu probe requires kind='gpu_train', got {envelope.kind!r}."
+        )
+    _ensure_no_validation_errors(envelope)
+    config = gpu_training_config_from_envelope(envelope)
+    result = run_gpu_probe(
+        config,
+        optimizer_updates=args.optimizer_updates,
+        output_path=args.output,
+    )
+    print(f"status={result['status']}")
+    print(f"admission_passed={result['acceptance']['passed']}")
+    print(f"report_path={result['report_path']}")
+    return 0 if result["status"] == "completed" else 1
 
 
 def _cmd_gpu_cache_activations(args) -> int:
@@ -953,6 +1110,19 @@ def _cmd_gpu_cache_activations(args) -> int:
             "source_checkpoint_sha256": file_sha256(checkpoint_path),
             "config_sha256": config_hash(cache_config),
             "run_id": trainer.run_id,
+            "source_data_metadata": dict(trainer.data_metadata),
+            "source_dataset": {
+                "dataset_ref": cache_config.dataset_ref,
+                "dataset_split": cache_config.dataset_split,
+                "dataset_split_id": cache_config.dataset_split_id,
+                "lesson_path": cache_config.lesson_path,
+                "corpus_path": cache_config.corpus_path,
+                "max_seq_len": cache_config.max_seq_len,
+            },
+            "source_tokenizer": {
+                "type": type(trainer.tokenizer).__name__,
+                "vocab_size": getattr(trainer.tokenizer, "vocab_size", None),
+            },
         },
     )
     print(f"cache_path={result['path']}")
@@ -962,6 +1132,21 @@ def _cmd_gpu_cache_activations(args) -> int:
     print(f"sharded={result.get('sharded')}")
     print(f"shard_count={result.get('shard_count')}")
     print(f"source_checkpoint={checkpoint_path}")
+    return 0
+
+
+def _cmd_tokenizer_train_bpe(args) -> int:
+    result = train_bpe_tokenizer(
+        BPETrainingConfig(
+            source_paths=list(args.sources),
+            output_dir=args.output_dir,
+            vocab_size=args.vocab_size,
+            min_frequency=args.min_frequency,
+            text_field=args.text_field,
+            max_records=args.max_records,
+        )
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 
 
@@ -1018,6 +1203,28 @@ def _cmd_gpu_prepare_efficiency_data(args) -> int:
     return 0
 
 
+def _cmd_gpu_pack_corpus(args) -> int:
+    result = build_token_shards(
+        TokenShardBuildConfig(
+            source_paths=list(args.sources),
+            tokenizer_spec_path=args.tokenizer_spec,
+            output_dir=args.output_dir,
+            sequence_length=args.sequence_length,
+            tokens_per_shard=args.tokens_per_shard,
+            eval_fraction=args.eval_fraction,
+            split_seed=args.split_seed,
+            text_field=args.text_field,
+            max_records=args.max_records,
+            drop_remainder=args.drop_remainder,
+        )
+    )
+    print(f"manifest_path={result['manifest_path']}")
+    print(f"records={result['records']}")
+    print(f"raw_tokens={result['raw_tokens']}")
+    print(f"packed_tokens={result['packed_tokens']}")
+    return 0
+
+
 def _cmd_gpu_resume(args) -> int:
     ref = args.checkpoint_or_run_id
     registry = GPURunRegistry()
@@ -1050,12 +1257,26 @@ def _cmd_gpu_resume(args) -> int:
         payload["run_id"] = None
     except Exception:
         pass
-    result = GPUTrainer(type(config).from_dict(payload)).train()
+    trainer = GPUTrainer(type(config).from_dict(payload))
+    try:
+        result = trainer.train()
+    finally:
+        trainer.close()
     print(f"run_id={result.run_id}")
     print(f"status={result.status}")
     print(f"result_path={result.artifacts.get('gpu_training_result_json')}")
     print(f"resumed_from={checkpoint_path}")
     return 0 if result.status == "completed" else 1
+
+
+def _cmd_gpu_consolidate_checkpoint(args) -> int:
+    result = consolidate_sharded_gpu_checkpoint(
+        args.checkpoint_dir,
+        args.output,
+        config_path=args.config,
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
 
 
 def _cmd_gpu_benchmark(args) -> int:
@@ -1206,6 +1427,18 @@ def _cmd_model_snapshot(args) -> int:
     manifest = ModelRegistry(args.root).snapshot_model(args.model_id)
     print(f"model_id={manifest.model_id}")
     print(f"version_id={manifest.version_id}")
+    return 0
+
+
+def _cmd_model_export_hf(args) -> int:
+    report = export_gpu_checkpoint_to_huggingface(
+        args.checkpoint,
+        args.output,
+        config_path=args.config,
+        expert_name=args.expert,
+        max_shard_size_bytes=int(args.max_shard_size_gb * 1024**3),
+    )
+    print(json.dumps(report, indent=2, sort_keys=True))
     return 0
 
 
@@ -1727,6 +1960,58 @@ def _cmd_sft_resume(args) -> int:
         final_step=int(result.metrics.get("global_step", 0)),
         result_path=result_path,
     )
+    return 0
+
+
+def _cmd_eval_code(args) -> int:
+    report = run_code_benchmark(
+        args.checkpoint,
+        args.benchmark,
+        args.output,
+        config_path=args.config,
+        benchmark_format=args.format,
+        max_tasks=args.max_tasks,
+        max_new_tokens=args.max_new_tokens,
+        device=args.device,
+        expert_name=args.expert,
+    )
+    print(f"tasks={report['tasks']}")
+    print(f"pass_at_1={report['pass_at_1']:.6f}")
+    print(f"output={args.output}")
+    return 0
+
+
+def _cmd_eval_contamination(args) -> int:
+    tasks = load_code_benchmark(args.benchmark, benchmark_format=args.format)
+    report = audit_code_contamination(
+        tasks,
+        args.training_sources,
+        ngram_size=args.ngram_size,
+        similarity_threshold=args.threshold,
+    )
+    output = Path(args.output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    print(f"benchmark_tasks={report['benchmark_tasks']}")
+    print(f"suspected_tasks={report['suspected_tasks']}")
+    print(f"output={output}")
+    return 0
+
+
+def _cmd_posttrain_prepare_preferences(args) -> int:
+    records = build_verified_preference_records(
+        args.lessons, args.generation_eval
+    )
+    output = write_preference_records(records, args.output)
+    print(f"preference_records={len(records)}")
+    print(f"output={output}")
+    return 0
+
+
+def _cmd_posttrain_preference(args) -> int:
+    config = PreferenceTrainingConfig.from_json(args.config)
+    result = PreferenceTrainer(config).train()
+    print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 
 

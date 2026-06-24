@@ -85,6 +85,8 @@ def build_cached_activation_dataloaders(
         **loader_kwargs,
     )
     eval_loader = torch.utils.data.DataLoader(eval_ds, shuffle=False, **loader_kwargs)
+    cache_metadata = dict(train_ds.payload.get("metadata") or {})
+    source_data_metadata = dict(cache_metadata.get("source_data_metadata") or {})
     metadata = {
         "kind": "activation_cache",
         "source_path": str(Path(path)),
@@ -97,7 +99,16 @@ def build_cached_activation_dataloaders(
         "hard_example_replay": dict(train_ds.replay_metadata),
         "shuffle_train": bool(shuffle_train),
         "shuffle_seed": int(shuffle_seed),
-        "cache_metadata": dict(train_ds.payload.get("metadata") or {}),
+        "cache_metadata": cache_metadata,
+        "source_data_metadata": source_data_metadata,
+        "source_dataset": dict(cache_metadata.get("source_dataset") or {}),
+        "source_tokenizer": dict(cache_metadata.get("source_tokenizer") or {}),
+        "sequence_length_statistics": dict(
+            source_data_metadata.get("sequence_length_statistics") or {}
+        ),
+        "truncation_statistics": dict(
+            source_data_metadata.get("truncation_statistics") or {}
+        ),
     }
     return train_loader, eval_loader, metadata
 

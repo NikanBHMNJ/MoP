@@ -165,6 +165,8 @@ def test_trainable_only_checkpoint_contains_sparse_delta(tmp_path: Path) -> None
         trainable_only=True,
         trainable_policy=policy.to_dict(),
     )
+
+    assert not list(tmp_path.glob(".*.tmp"))
     payload = torch.load(saved, map_location="cpu", weights_only=False)
 
     assert payload["checkpoint_format"] == "mopforge_gpu_train_sparse_v1"

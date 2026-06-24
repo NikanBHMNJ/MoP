@@ -24,6 +24,16 @@ def validate_gpu_training_config(config: GPUTrainingConfig) -> list[str]:
         messages.append(f"WARNING: lesson_path does not exist yet: {config.lesson_path}")
     if config.corpus_path and not Path(config.corpus_path).exists():
         messages.append(f"WARNING: corpus_path does not exist yet: {config.corpus_path}")
+    if config.token_shard_manifest and not Path(config.token_shard_manifest).exists():
+        messages.append(
+            "WARNING: token_shard_manifest does not exist yet: "
+            f"{config.token_shard_manifest}"
+        )
+    if config.tokenizer_spec_path and not Path(config.tokenizer_spec_path).exists():
+        messages.append(
+            "WARNING: tokenizer_spec_path does not exist yet: "
+            f"{config.tokenizer_spec_path}"
+        )
     if config.activation_cache_path and not Path(config.activation_cache_path).exists():
         messages.append(f"WARNING: activation_cache_path does not exist yet: {config.activation_cache_path}")
     if config.distillation_enabled and not config.activation_cache_path:
@@ -87,6 +97,9 @@ def dry_run_gpu_training_config(config: GPUTrainingConfig) -> dict:
         "device": config.device,
         "precision": config.precision,
         "max_steps": config.max_steps,
+        "max_optimizer_steps": config.max_optimizer_steps,
+        "microstep_budget": config.microstep_budget,
+        "optimizer_step_budget": config.optimizer_step_budget,
         "micro_batch_size": config.micro_batch_size,
         "gradient_accumulation_steps": config.gradient_accumulation_steps,
         "effective_batch_size": config.effective_batch_size,

@@ -1,8 +1,8 @@
 # GPU Quickstart
 
-MoP-Forge now includes a serious single-GPU research beta for tiny-to-small MoP
-experiments and validated large-job profiles. It is not yet a fully production
-distributed LLM training framework.
+MoP-Forge includes a single-GPU research path and a torchrun DDP/FSDP beta for
+production decoder profiles. Distributed correctness is CPU-tested, but H100
+feasibility remains gated on measured hardware reports.
 
 CPU-only development path:
 
@@ -117,3 +117,71 @@ metadata fallback: Cached Adapter/Norm/Head 128 reached `88.0%` verifier/exact
 match, `8.35x` Dense throughput, and `31.70x` lower peak reserved VRAM. Cached
 Tail-Only LoRA Rank 8 reached the same quality with `6.70x` throughput and
 `22.83x` lower peak reserved VRAM.
+
+## Goal 51 A100 1B Admission
+
+Run a staged probe before a 500-update 1B pilot:
+
+```bash
+mopforge gpu validate configs/jobs/1b_dense_a100_40gb_probe.json
+mopforge gpu estimate configs/jobs/1b_dense_a100_40gb_probe.json
+mopforge gpu probe configs/jobs/1b_dense_a100_40gb_probe.json \
+  --optimizer-updates 20 \
+  --output reports/goal51_1b_a100_feasibility_probe/dense-40gb/gpu_probe_report.json
+```
+
+Use the matching `80gb` profile on an A100 80 GB. Profiles also exist for
+`mop_full` and `cached_adapter_128`. The cached profile requires a real warm
+base checkpoint and activation-cache manifest at the configured paths.
+
+The probe does not reduce batch size, sequence length, or accumulation after an
+OOM. It writes the failed phase and allocator counters, cleans up CUDA state,
+and blocks admission. Passing requires no OOM, finite decreasing loss, a
+successful model-only save/load loss check, and peak reserved VRAM no higher
+than `34 GB` (40 GB card) or `68 GB` (80 GB card).
+
+For Colab, use
+`notebooks/colab_a100_goal51_1b_feasibility_probe.ipynb`. It detects the actual
+A100 memory tier, selects the profile, runs the same CLI probe, and downloads a
+lightweight report archive without checkpoints or caches.
+
+## Goal 52 H100 2B Path
+
+Build the local tokenizer and packed memory-mapped corpus before validation:
+
+```bash
+mopforge tokenizer train-bpe data/code_corpus.jsonl \
+  --output-dir data/goal52_tokenizer \
+  --vocab-size 32768 \
+  --text-field text
+
+mopforge gpu pack-corpus data/code_corpus.jsonl \
+  --tokenizer-spec data/goal52_tokenizer/tokenizer_spec.json \
+  --output-dir data/goal52_code_tokens \
+  --sequence-length 1024 \
+  --split-seed 42 \
+  --text-field text
+```
+
+Then run the 304M calibration, 1B admission, and matching H100 80/94 GB 2B
+probe in order. The ready-to-run notebook is
+`notebooks/colab_h100_goal52_2b_readiness.ipynb`.
+
+For the eight-H100 FSDP pilot, inspect the exact torchrun command:
+
+```bash
+mopforge gpu launch-torchrun \
+  configs/jobs/goal52_2b_dense_8xh100_fsdp_pilot.json --dry-run
+```
+
+After a sharded run, create the model-only artifact required by evaluation and
+export:
+
+```bash
+mopforge gpu consolidate-checkpoint <checkpoint_dir> outputs/goal52-2b.pt
+mopforge model export-hf outputs/goal52-2b.pt outputs/goal52-hf
+```
+
+See [Goal 52 production readiness](production_2b_readiness.md) for exact model
+sizes, DPO/ORPO commands, standard code evaluation, contamination auditing, and
+the evidence required before a usability claim.

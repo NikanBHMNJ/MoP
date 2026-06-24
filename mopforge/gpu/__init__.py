@@ -22,6 +22,7 @@ from mopforge.gpu.data import (
 )
 from mopforge.gpu.distributed import (
     DistributedConfig,
+    DistributedRuntime,
     build_torchrun_command,
     validate_distributed_plan,
 )
@@ -31,7 +32,15 @@ from mopforge.gpu.memory import (
     estimate_from_config,
     estimate_training_memory,
     write_memory_estimate,
+    system_memory_metrics,
 )
+from mopforge.gpu.distributed_checkpoint import (
+    is_sharded_checkpoint,
+    load_sharded_training_checkpoint,
+    save_sharded_training_checkpoint,
+)
+from mopforge.gpu.consolidate import consolidate_sharded_gpu_checkpoint
+from mopforge.gpu.probe import run_gpu_probe
 from mopforge.gpu.mop_execution import (
     ModuleRoutingPlan,
     build_module_routing_plan,
@@ -68,11 +77,19 @@ from mopforge.gpu.warm_sparse import (
     DEFAULT_LEARNING_RATES,
     write_warm_sparse_sweep_configs,
 )
+from mopforge.gpu.token_shards import (
+    PackedTokenDataset,
+    TokenShardBuildConfig,
+    build_packed_token_dataloaders,
+    build_token_shards,
+    load_token_shard_manifest,
+)
 
 __all__ = [
     "AmpScaler",
     "CachedActivationDataset",
     "DistributedConfig",
+    "DistributedRuntime",
     "DEFAULT_BOTTLENECKS",
     "DEFAULT_LEARNING_RATES",
     "GPUDataConfig",
@@ -84,12 +101,16 @@ __all__ = [
     "GPURunRegistry",
     "ModelMemoryEstimate",
     "ModuleRoutingPlan",
+    "PackedTokenDataset",
     "StreamingJSONLDataset",
+    "TokenShardBuildConfig",
     "apply_activation_checkpointing",
     "build_gpu_dataloaders",
     "build_cached_activation_dataloaders",
     "build_module_routing_plan",
     "build_torchrun_command",
+    "build_token_shards",
+    "build_packed_token_dataloaders",
     "config_hash",
     "dry_run_gpu_training_config",
     "estimate_active_parameters",
@@ -102,7 +123,9 @@ __all__ = [
     "launch_torchrun_dry_run",
     "load_activation_cache",
     "load_gpu_checkpoint",
+    "load_sharded_training_checkpoint",
     "load_gpu_lesson_splits",
+    "load_token_shard_manifest",
     "model_profile_100m_dense",
     "model_profile_100m_mop",
     "offload_cached_frozen_backbone",
@@ -114,12 +137,17 @@ __all__ = [
     "prepare_efficiency_dataset",
     "restore_gpu_checkpoint",
     "routing_density",
+    "run_gpu_probe",
     "save_gpu_checkpoint",
+    "save_sharded_training_checkpoint",
+    "consolidate_sharded_gpu_checkpoint",
+    "is_sharded_checkpoint",
     "select_attention_metadata",
     "validate_distributed_plan",
     "validate_gpu_training_config",
     "write_activation_cache",
     "write_gate_report",
     "write_memory_estimate",
+    "system_memory_metrics",
     "write_warm_sparse_sweep_configs",
 ]

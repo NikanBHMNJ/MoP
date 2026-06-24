@@ -103,10 +103,17 @@ class HFTokenizerWrapper:
     def _load_tokenizer(self):
         kwargs = dict(self.kwargs)
         local_files_only = bool(kwargs.pop("local_files_only", True))
+        path = Path(self.name_or_path)
+        if path.is_file() and path.suffix.lower() == ".json":
+            try:
+                from tokenizers import Tokenizer
+            except ImportError as tokenizers_exc:
+                raise ImportError(_install_hint()) from tokenizers_exc
+            self._backend = "tokenizers"
+            return Tokenizer.from_file(str(path))
         try:
             from transformers import AutoTokenizer
         except ImportError as transformers_exc:
-            path = Path(self.name_or_path)
             if path.exists():
                 try:
                     from tokenizers import Tokenizer

@@ -1,7 +1,7 @@
 # MoP-Forge
 
 **Version:** `0.46.0`
-**Status:** local-first research framework with single-GPU efficiency tooling
+**Status:** local-first research framework with production-oriented GPU and distributed tooling
 
 MoP-Forge is a research codebase for testing **Mixture-of-Parameters (MoP)**
 training ideas against dense baselines. It focuses on evidence: every useful
@@ -9,16 +9,28 @@ efficiency claim should name the axis being improved, such as trainable
 parameters, VRAM, checkpoint size, active compute, throughput, or generated-code
 quality.
 
-MoP-Forge is not a production distributed LLM training framework. It does not include
-FSDP, DeepSpeed, custom CUDA kernels, model downloads, cloud launchers, or a
-hardened multi-GPU training stack.
+MoP-Forge now includes a torchrun DDP/FSDP training beta and a modern decoder
+path, but it is not a managed production training service. It does not include
+DeepSpeed, custom CUDA kernels, cloud launchers, a secure code sandbox, or a
+measured guarantee that a given large profile will fit unseen hardware.
 
 ## What Is Implemented
 
 MoP-Forge currently includes:
 
 - CPU-safe smoke training and test coverage for local development.
-- Single-device GPU training profiles with CUDA/BF16 support when available.
+- A production decoder family with RoPE, RMSNorm, grouped-query attention,
+  SwiGLU, PyTorch SDPA, activation checkpointing, native incremental K/V cache,
+  and Dense or token-routed MoP feed-forward blocks.
+- Local byte-level BPE tokenizer training with immutable tokenizer specs and
+  source hashes.
+- Deterministic packed, memory-mapped token shards with document-level fixed
+  train/eval membership and manifest hashes.
+- Single-device CUDA/BF16 training and torchrun DDP/FSDP execution, including
+  rank-aware data sampling and exact data-cursor resume.
+- Distributed Checkpoint (DCP) model/optimizer shards, sharded resume, and an
+  explicit consolidation path for evaluation and Hugging Face export.
+- Optimizer-step and token-budget scheduling with named cadence units.
 - Dense, full-MoP, adapter-only, core-frozen, routed-FFN, and warm sparse
   experiment profiles.
 - Trainable-parameter policies for sparse fine-tuning:
@@ -56,6 +68,19 @@ MoP-Forge currently includes:
 - Automatic raw/XML ground-truth verifier controls and pre-truncation
   prompt/target/sequence-length statistics for code-quality reports.
 - JSON/CSV GPU run comparison and sparse-efficiency acceptance gates.
+- Explicit optimizer-update budgets and optimizer-unit eval/save/log/scheduler
+  cadence, while retaining legacy microstep configs.
+- Staged `mopforge gpu probe` admission reports with per-phase CUDA/host/disk
+  telemetry, real optimizer-state allocation, OOM capture, atomic model-only
+  checkpoint resume checks, and 500/2,000-update runtime projections.
+- Incremental K/V-cached greedy decoding for Dense and post-core MoP models,
+  with explicit eager fallback for unsupported routed/internal-LoRA layouts.
+- Production supervised training through `GPUTrainer`, reference-cached DPO,
+  and reference-free ORPO post-training.
+- HumanEval-, MBPP-, and native-code JSONL adapters with pass@1, syntax,
+  exact-match, per-task artifacts, and source-overlap contamination auditing.
+- Hugging Face Llama-compatible export for Dense models or one explicitly
+  materialized MoP expert from a consolidated checkpoint.
 
 ## Latest Evidence
 
@@ -176,10 +201,61 @@ fixed split prove zero truncation and a 166-token maximum target within the
 256-token generation budget. Correcting that report-only logic produces a
 `PASS` without changing measured run values.
 
+Goal 51 A100/1B admission tooling is implemented, but no A100 result is claimed
+yet. The pending report area is:
+
+`reports/goal51_1b_a100_feasibility_probe/`
+
+Six executable profiles cover Dense, MoP Full, and Cached Adapter/Norm/Head 128
+on A100 40 GB and 80 GB. The Colab notebook detects the actual memory tier and
+runs a 20-update staged probe. Admission requires finite decreasing loss,
+successful atomic checkpoint/resume, no OOM, and peak reserved VRAM at or below
+`34 GB` on 40 GB or `68 GB` on 80 GB. The repository contains the report schema
+only; measured values must come from the target hardware.
+
+Goal 52 production-readiness tooling is implemented, but no H100 result is
+claimed yet. The pending evidence area is:
+
+`reports/goal52_h100_2b_readiness/`
+
+The production profiles describe exact analytic sizes: `304,137,216` Dense
+parameters, `1,015,779,072` Dense parameters, `2,082,246,912` Dense parameters,
+and a `2,480,265,984`-parameter routed MoP with one of three experts active per
+token. The H100 notebook gates 304M, 1B, and 2B single-GPU probes in order. Two
+eight-H100 FSDP configs define 500-update Dense and routed-MoP pilots after
+admission. These are executable profiles and report schemas, not measured
+quality or feasibility claims.
+
 ## Current Research Direction
 
-Goal 50 first tests whether the 100M pipeline can learn its narrow verified
-repair contract before spending an L4 session on a 1B model. The protocol now:
+Goal 52 extends the passing narrow Goal 50 quality path into a production-sized
+implementation. The next evidence sequence is:
+
+1. Train the local 32K byte-level BPE tokenizer on the licensed code corpus.
+2. Build deterministic 1,024-token memory-mapped train/eval shards.
+3. Pass the 304M H100 calibration probe.
+4. Pass the 1B probe without changing model, context, or batch policy.
+5. Run only the matching 80 GB or 94 GB 2B profile.
+6. Admit the eight-H100 500-update FSDP pilot only after checkpoint resume,
+   loss, throughput, VRAM, and contamination evidence passes.
+7. Continue with verified SFT, cached-reference DPO or ORPO, standard code
+   evaluation, sharded-checkpoint consolidation, and Hugging Face export.
+
+See [Goal 52 production readiness](docs/production_2b_readiness.md) for the
+commands and claim boundary.
+
+Goal 51 now gates the first 1B A100 pilot after the passing Goal 50 quality run.
+The admission path:
+
+- detects A100 40 GB versus 80 GB and selects a matching profile,
+- measures allocation, forward, backward, optimizer, eval, checkpoint, resume,
+  and cleanup phases without silently changing the workload,
+- records actual parameter storage dtype separately from BF16 compute,
+- treats update budgets and cadence as optimizer-step units,
+- projects 500- and 2,000-update runtimes from measured steady updates,
+- blocks the pilot unless the memory, loss, resume, and OOM gates pass.
+
+The Goal 50 protocol remains the quality foundation:
 
 - separates microsteps from optimizer updates,
 - reshuffles the train set deterministically at every real epoch,
@@ -241,6 +317,10 @@ declared before all runs from the Goal 49 Dense `0.8022` baseline evidence.
 The first measured full comparison now passes its configured narrow code-repair
 quality and efficiency gates. This supports proceeding to a separate 1B probe,
 not a broad general-code claim.
+
+Run `notebooks/colab_a100_goal51_1b_feasibility_probe.ipynb` for that probe.
+Start with Dense, then MoP Full, then the cached Adapter/Norm/Head 128 profile
+after uploading or generating its warm base checkpoint and activation cache.
 
 ## Quickstart
 

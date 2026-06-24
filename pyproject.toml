@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mopforge"
 version = "0.46.0"
-description = "MoP-Forge v1.0-beta release candidate polish for local-first Mixture-of-Parameters research and serious single-GPU beta experiments"
+description = "Local-first Mixture-of-Parameters research with cached sparse and distributed GPU training tooling"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "MoP-Forge Contributors" }]
@@ -30,7 +30,7 @@ mopforge = "mopforge.cli.main:main"
 include = ["mopforge*"]
 
 [tool.pytest.ini_options]
-addopts = "--basetemp=C:/tmp/mop_pytest_tmp -p no:cacheprovider"
+addopts = "--basetemp=.pytest_basetemp -p no:cacheprovider"
 norecursedirs = [
     ".pytest_basetemp",
     ".pytest_goal*",

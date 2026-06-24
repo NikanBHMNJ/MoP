@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import pytest
 
 from mopforge.builders import generate_coding_bugfix_lessons
 from mopforge.eval import (
@@ -17,7 +18,7 @@ from mopforge.eval import (
 from mopforge.formatting import format_lesson_prompt
 from mopforge.kts import KnowledgeLesson
 from mopforge.models import TinyCausalTransformer, TinyMoPCausalTransformer
-from mopforge.generation import generate_greedy
+from mopforge.generation import generate_greedy, kv_cache_prefill, supports_kv_cache
 from mopforge.tokenization import ByteTokenizer
 
 
@@ -109,6 +110,39 @@ def test_generate_greedy_mop_returns_string_if_torch_installed() -> None:
     )
 
     assert isinstance(generated, str)
+
+
+@pytest.mark.parametrize("model_kind", ["dense", "mop"])
+def test_kv_cache_prefill_matches_full_forward_logits(model_kind) -> None:
+    if TinyCausalTransformer is None or TinyMoPCausalTransformer is None:
+        return
+    import torch
+
+    tokenizer = ByteTokenizer()
+    model_class = TinyCausalTransformer if model_kind == "dense" else TinyMoPCausalTransformer
+    model = model_class(
+        vocab_size=tokenizer.vocab_size,
+        d_model=16,
+        n_heads=2,
+        n_layers=2,
+        max_seq_len=32,
+        dropout=0.0,
+    )
+    model.eval()
+    input_ids = torch.tensor(
+        [[tokenizer.bos_token_id, *tokenizer.encode("abc", add_special_tokens=False)]],
+        dtype=torch.long,
+    )
+    kwargs = {"active_modules": ["coding"]} if model_kind == "mop" else {}
+
+    with torch.no_grad():
+        expected = model(input_ids=input_ids, attention_mask=torch.ones_like(input_ids), **kwargs)["logits"]
+        actual, cache, metadata = kv_cache_prefill(model, input_ids, **kwargs)
+
+    assert supports_kv_cache(model)[0] is True
+    assert len(cache) == 2
+    assert metadata["kv_cache_tokens"] == input_ids.shape[1]
+    assert torch.allclose(actual, expected, atol=1e-5, rtol=1e-4)
 
 
 def test_evaluate_generated_code_for_lesson_returns_expected_keys_if_torch_installed() -> None:

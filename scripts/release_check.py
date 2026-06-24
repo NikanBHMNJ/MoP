@@ -30,6 +30,7 @@ REQUIRED_DOCS = [
     "docs/research_positioning.md",
     "docs/installation.md",
     "docs/command_cookbook.md",
+    "docs/production_2b_readiness.md",
 ]
 
 

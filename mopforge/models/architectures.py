@@ -13,6 +13,7 @@ GENERATED_TYPES = {"low_rank_adapter", "scale_shift"}
 INTENDED_SCALES = {"tiny_cpu", "small_gpu", "medium_gpu", "large_gpu"}
 MOP_BLOCK_TYPES = {"post_core_mlp", "routed_ffn"}
 ROUTING_GRANULARITIES = {"example", "token"}
+ARCHITECTURE_FAMILIES = {"tiny_transformer", "production_decoder_v2"}
 
 
 @dataclass(slots=True)
@@ -21,11 +22,19 @@ class ModelArchitectureConfig:
 
     name: str
     model_type: str = "dense"
+    architecture_family: str = "tiny_transformer"
     d_model: int = 64
     n_layers: int = 2
     n_heads: int = 2
     max_seq_len: int = 512
     vocab_size: int | None = None
+    intermediate_size: int | None = None
+    n_key_value_heads: int | None = None
+    rope_theta: float = 10000.0
+    rms_norm_eps: float = 1e-6
+    dropout: float = 0.0
+    attention_dropout: float = 0.0
+    tie_word_embeddings: bool = True
     module_names: list[str] = field(default_factory=lambda: ["core", "coding", "debugging", "repair"])
     always_include_core: bool = True
     mop_block_type: str = "post_core_mlp"
@@ -56,6 +65,10 @@ class ModelArchitectureConfig:
         self.name = _non_empty(self.name, "name")
         if self.model_type not in MODEL_TYPES:
             raise ValueError(f"model_type must be one of: {', '.join(sorted(MODEL_TYPES))}.")
+        if self.architecture_family not in ARCHITECTURE_FAMILIES:
+            raise ValueError(
+                "architecture_family must be tiny_transformer or production_decoder_v2."
+            )
         for field_name in ("d_model", "n_layers", "n_heads", "max_seq_len"):
             value = getattr(self, field_name)
             if type(value) is not int or value <= 0:
@@ -64,6 +77,26 @@ class ModelArchitectureConfig:
             raise ValueError("d_model must be divisible by n_heads.")
         if self.vocab_size is not None and (type(self.vocab_size) is not int or self.vocab_size <= 0):
             raise ValueError("vocab_size must be a positive integer or None.")
+        if self.intermediate_size is not None and (
+            type(self.intermediate_size) is not int or self.intermediate_size <= 0
+        ):
+            raise ValueError("intermediate_size must be a positive integer or None.")
+        if self.n_key_value_heads is not None:
+            if type(self.n_key_value_heads) is not int or self.n_key_value_heads <= 0:
+                raise ValueError("n_key_value_heads must be a positive integer or None.")
+            if self.n_heads % self.n_key_value_heads != 0:
+                raise ValueError("n_heads must be divisible by n_key_value_heads.")
+        if not isinstance(self.rope_theta, (int, float)) or float(self.rope_theta) <= 0:
+            raise ValueError("rope_theta must be positive.")
+        if not isinstance(self.rms_norm_eps, (int, float)) or float(self.rms_norm_eps) <= 0:
+            raise ValueError("rms_norm_eps must be positive.")
+        for field_name in ("dropout", "attention_dropout"):
+            value = getattr(self, field_name)
+            if not isinstance(value, (int, float)) or not 0.0 <= float(value) < 1.0:
+                raise ValueError(f"{field_name} must be in [0.0, 1.0).")
+            setattr(self, field_name, float(value))
+        if not isinstance(self.tie_word_embeddings, bool):
+            raise ValueError("tie_word_embeddings must be a boolean.")
         self.module_names = _strings(self.module_names, "module_names")
         if not isinstance(self.always_include_core, bool):
             raise ValueError("always_include_core must be a boolean.")
@@ -166,6 +199,43 @@ def build_tiny_model_from_architecture(config: ModelArchitectureConfig, tokenize
         "generated_rank": config.generated_rank,
         "generated_type": config.generated_type,
     }
+    if config.architecture_family == "production_decoder_v2":
+        from mopforge.models.production_decoder import (
+            ProductionCausalLM,
+            ProductionDecoderConfig,
+        )
+
+        if ProductionCausalLM is None:
+            raise RuntimeError("PyTorch is required for ProductionCausalLM.")
+        production_config = ProductionDecoderConfig(
+            vocab_size=vocab_size,
+            d_model=config.d_model,
+            n_layers=config.n_layers,
+            n_heads=config.n_heads,
+            n_key_value_heads=config.n_key_value_heads or config.n_heads,
+            intermediate_size=config.intermediate_size or config.d_model * 4,
+            max_seq_len=config.max_seq_len,
+            model_type=config.model_type,
+            module_names=tuple(config.module_names),
+            active_experts=config.active_experts,
+            routing_granularity=config.routing_granularity,
+            rope_theta=float(config.rope_theta),
+            rms_norm_eps=float(config.rms_norm_eps),
+            dropout=float(config.dropout),
+            attention_dropout=float(config.attention_dropout),
+            tie_word_embeddings=config.tie_word_embeddings,
+        )
+        return ProductionCausalLM(
+            production_config,
+            use_fast_adapters=config.use_fast_adapters,
+            fast_adapter_names=config.fast_adapter_names,
+            fast_adapter_bottleneck_dim=config.fast_adapter_bottleneck_dim,
+            use_generated_params=config.use_generated_params,
+            generated_condition_names=config.generated_condition_names,
+            generated_condition_dim=config.generated_condition_dim,
+            generated_rank=config.generated_rank,
+            generated_type=config.generated_type,
+        )
     if config.model_type == "dense":
         from mopforge.models.tiny_dense import TinyCausalTransformer
 
@@ -195,6 +265,52 @@ def build_tiny_model_from_architecture(config: ModelArchitectureConfig, tokenize
 def parameter_summary_for_architecture(config: ModelArchitectureConfig) -> dict[str, Any]:
     """Best-effort parameter summary without making PyTorch mandatory."""
 
+    if config.architecture_family == "production_decoder_v2":
+        from mopforge.models.production_decoder import (
+            ProductionDecoderConfig,
+            production_parameter_count,
+        )
+
+        vocab_size = int(config.vocab_size or 259)
+        production_config = ProductionDecoderConfig(
+            vocab_size=vocab_size,
+            d_model=config.d_model,
+            n_layers=config.n_layers,
+            n_heads=config.n_heads,
+            n_key_value_heads=config.n_key_value_heads or config.n_heads,
+            intermediate_size=config.intermediate_size or config.d_model * 4,
+            max_seq_len=config.max_seq_len,
+            model_type=config.model_type,
+            module_names=tuple(config.module_names),
+            active_experts=config.active_experts,
+            routing_granularity=config.routing_granularity,
+            rope_theta=float(config.rope_theta),
+            rms_norm_eps=float(config.rms_norm_eps),
+            dropout=float(config.dropout),
+            attention_dropout=float(config.attention_dropout),
+            tie_word_embeddings=config.tie_word_embeddings,
+        )
+        total = production_parameter_count(production_config)
+        if config.use_fast_adapters:
+            adapter_count = len(config.fast_adapter_names or ["default"])
+            bottleneck = config.fast_adapter_bottleneck_dim
+            total += adapter_count * (
+                2 * config.d_model
+                + config.d_model * bottleneck
+                + bottleneck
+                + bottleneck * config.d_model
+                + config.d_model
+            )
+        return {
+            "instantiated": False,
+            "analytic": True,
+            "total_params": int(total),
+            "trainable_params": int(total),
+            "frozen_params": 0,
+            "model_type": config.model_type,
+            "architecture_family": config.architecture_family,
+            "intended_scale": config.intended_scale,
+        }
     try:
         model = build_tiny_model_from_architecture(config)
     except Exception as exc:

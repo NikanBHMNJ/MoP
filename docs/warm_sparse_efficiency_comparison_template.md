@@ -139,10 +139,45 @@ the cached boundary; ordinary routed LoRA remains inside transformer blocks and
 is not a valid frozen-backbone cached-tail profile. Cached-run generation is a
 post-training quality evaluation and must not be counted as cached-tail VRAM.
 
+## Goal 51 1B Admission Addendum
+
+Before a 1B pilot, attach the `mopforge gpu probe` report and fill these measured
+fields. Do not copy static estimator values into observed columns.
+
+| Gate | A100 40 GB | A100 80 GB | Observed | Pass |
+| --- | ---: | ---: | ---: | --- |
+| Optimizer updates | 20-50 | 20-50 |  |  |
+| Peak reserved VRAM | <=34 GB | <=68 GB |  |  |
+| Finite loss | required | required |  |  |
+| Loss decreases | required | required |  |  |
+| OOM/allocator retry audit | no OOM | no OOM |  |  |
+| Atomic model-only resume | same-batch loss matches | same-batch loss matches |  |  |
+| 500-update projection | recorded | recorded |  |  |
+| 2,000-update projection | recorded | recorded |  |  |
+
+Record every phase: model/data allocation, forward, backward, optimizer-state
+initialization and steady updates, evaluation, checkpoint save/load, and
+cleanup. Parameter storage dtype and BF16 autocast compute dtype are separate
+facts and must both appear in the report.
+
 For the 100M learning diagnostic, use
 `notebooks/colab_l4_goal50_100m_learning_gate.ipynb` before filling this full
 comparison. Do not interpret microsteps as optimizer updates, and do not scale
 to 1B when the memorization gate fails.
+
+## Goal 52 Scale Addendum
+
+For production-decoder/H100 reports, attach the packed-token manifest, local BPE
+spec hash, analytic and runtime parameter counts, scheduler unit, tokens seen,
+distributed world size, and checkpoint format. FSDP estimates must state the
+declared shard factor; measured per-rank peak allocated and reserved VRAM remain
+authoritative.
+
+Do not compare a Dense 2B model with a routed MoP only by total parameters.
+Report total parameters, active parameters per token, trainable parameters, and
+router/expert balance separately. Before a usability claim, attach standard
+code pass@1, contamination evidence, verified repair quality, representative
+samples, and the consolidated-checkpoint/Hugging Face export report.
 
 ## Interpretation
 

@@ -24,6 +24,7 @@ class GPUDataConfig:
     dataset_split_id: str | None = None
     lesson_path: str | None = None
     corpus_path: str | None = None
+    token_shard_manifest: str | None = None
     max_seq_len: int = 1024
     micro_batch_size: int = 1
     num_workers: int = 0
@@ -34,6 +35,8 @@ class GPUDataConfig:
     shuffle_train: bool = True
     shuffle_seed: int = 42
     max_examples: int | None = None
+    distributed_rank: int = 0
+    distributed_world_size: int = 1
 
     def __post_init__(self) -> None:
         for field_name in ("max_seq_len", "micro_batch_size"):
@@ -52,6 +55,12 @@ class GPUDataConfig:
             raise ValueError("shuffle_seed must be an integer.")
         if self.max_examples is not None and (type(self.max_examples) is not int or self.max_examples <= 0):
             raise ValueError("max_examples must be a positive integer or None.")
+        if type(self.distributed_rank) is not int or self.distributed_rank < 0:
+            raise ValueError("distributed_rank must be a non-negative integer.")
+        if type(self.distributed_world_size) is not int or self.distributed_world_size <= 0:
+            raise ValueError("distributed_world_size must be positive.")
+        if self.distributed_rank >= self.distributed_world_size:
+            raise ValueError("distributed_rank must be smaller than distributed_world_size.")
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -93,6 +102,19 @@ def build_gpu_dataloaders(
     torch = _require_torch()
     pin_memory = bool(config.pin_memory and runtime.device_info.device_type == "cuda")
     prefetch_factor = None if config.num_workers == 0 else 2
+    if config.token_shard_manifest:
+        from mopforge.gpu.token_shards import build_packed_token_dataloaders
+
+        return build_packed_token_dataloaders(
+            config.token_shard_manifest,
+            micro_batch_size=config.micro_batch_size,
+            num_workers=config.num_workers,
+            pin_memory=pin_memory,
+            shuffle_train=config.shuffle_train,
+            shuffle_seed=config.shuffle_seed,
+            distributed_rank=config.distributed_rank,
+            distributed_world_size=config.distributed_world_size,
+        )
     if config.corpus_path:
         records = _load_corpus_records(config)
         train_records, eval_records = _split(records, config.seed)
@@ -121,13 +143,35 @@ def build_gpu_dataloaders(
         loader_kwargs["prefetch_factor"] = prefetch_factor
     train_generator = torch.Generator()
     train_generator.manual_seed(int(config.shuffle_seed))
+    train_sampler = None
+    eval_sampler = None
+    if config.distributed_world_size > 1:
+        train_sampler = torch.utils.data.DistributedSampler(
+            train_ds,
+            num_replicas=config.distributed_world_size,
+            rank=config.distributed_rank,
+            shuffle=config.shuffle_train,
+            seed=config.shuffle_seed,
+        )
+        eval_sampler = torch.utils.data.DistributedSampler(
+            eval_ds,
+            num_replicas=config.distributed_world_size,
+            rank=config.distributed_rank,
+            shuffle=False,
+        )
     train_loader = torch.utils.data.DataLoader(
         train_ds,
-        shuffle=config.shuffle_train,
+        shuffle=bool(config.shuffle_train and train_sampler is None),
+        sampler=train_sampler,
         generator=train_generator if config.shuffle_train else None,
         **loader_kwargs,
     )
-    eval_loader = torch.utils.data.DataLoader(eval_ds, shuffle=False, **loader_kwargs)
+    eval_loader = torch.utils.data.DataLoader(
+        eval_ds,
+        shuffle=False,
+        sampler=eval_sampler,
+        **loader_kwargs,
+    )
     metadata = {
         "kind": kind,
         "train_examples": len(train_ds),
@@ -140,6 +184,8 @@ def build_gpu_dataloaders(
         "streaming": config.streaming,
         "shuffle_train": config.shuffle_train,
         "shuffle_seed": config.shuffle_seed,
+        "distributed_rank": config.distributed_rank,
+        "distributed_world_size": config.distributed_world_size,
         "dataset_ref": config.dataset_ref,
         "dataset_split": config.dataset_split,
         "dataset_split_id": config.dataset_split_id,

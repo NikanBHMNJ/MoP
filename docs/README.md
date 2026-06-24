@@ -1,7 +1,8 @@
 # MoP-Forge Documentation
 
 These docs cover MoP-Forge `0.46.0`, a local-first research framework for
-Mixture-of-Parameters experiments and single-GPU efficiency studies.
+Mixture-of-Parameters experiments, cached sparse efficiency, and a
+production-oriented torchrun DDP/FSDP training beta.
 
 The docs are organized around one principle: implementation details, experiment
 evidence, and research claims should stay separate. A feature can be implemented
@@ -23,6 +24,9 @@ and tested before it has proven a GPU efficiency result.
 - [Colab L4 Goal 49 verified-code quality report notebook](../notebooks/colab_l4_goal49_verified_code_quality_report.ipynb)
 - [Colab L4 Goal 50 100M learning-gate notebook](../notebooks/colab_l4_goal50_100m_learning_gate.ipynb)
 - [Colab L4 Goal 50 full 100M quality comparison notebook](../notebooks/colab_l4_goal50_100m_quality_comparison.ipynb)
+- [Colab A100 Goal 51 1B feasibility probe notebook](../notebooks/colab_a100_goal51_1b_feasibility_probe.ipynb)
+- [Colab H100 Goal 52 2B readiness notebook](../notebooks/colab_h100_goal52_2b_readiness.ipynb)
+- [Goal 52 production decoder, distributed training, post-training, evaluation, and export](production_2b_readiness.md)
 - [GPU job profiles](gpu_job_profiles.md)
 - [GPU efficiency benchmarking](gpu_efficiency_benchmarking.md)
 - [Warm sparse GPU efficiency comparison template](warm_sparse_efficiency_comparison_template.md)
@@ -32,6 +36,8 @@ and tested before it has proven a GPU efficiency result.
 - [Goal 49 verified code-quality L4 report](../reports/goal49_verified_code_quality_efficiency/README.md)
 - [Goal 50 100M learning-gate L4 report](../reports/goal50_100m_learning_gate/README.md)
 - [Goal 50 full 100M quality comparison](../reports/goal50_100m_quality_comparison/README.md)
+- [Goal 51 1B A100 feasibility probe schema](../reports/goal51_1b_a100_feasibility_probe/README.md)
+- [Goal 52 H100 2B readiness schema](../reports/goal52_h100_2b_readiness/README.md)
 - [GPU runtime limitations](gpu_runtime_limitations.md)
 - [Serious jobs checklist](serious_jobs_checklist.md)
 - [Colab 100M training notebook](colab_training.md)
@@ -91,6 +97,14 @@ These reports do not prove MoP superiority. The measured result is more careful:
 - The report-only correction uses sequence-length evidence from an uncached
   profile on the shared fixed split because cached loaders omit that metadata;
   no measured run value changed.
+- Goal 51 adds an A100 admission probe with explicit optimizer-update budgets,
+  phase-level allocator/host/disk telemetry, atomic model-only resume checks,
+  measured runtime projections, and 40 GB/80 GB peak-reserved gates. No A100
+  result is committed yet.
+- Goal 52 adds the production decoder, local BPE and packed token-shard path,
+  DDP/FSDP execution and sharded resume/consolidation, token-unit scheduling,
+  DPO/ORPO, standard code evaluation, contamination evidence, Hugging Face
+  export, and gated 304M/1B/2B H100 profiles. No H100 result is committed yet.
 - The framework can measure the tradeoff and preserve the evidence.
 
 ## Current Implementation Focus
@@ -114,8 +128,15 @@ The current code adds the pieces needed for a more serious next comparison:
 - routed FFN expert execution,
 - internal routed low-rank deltas,
 - comparison and acceptance-gate reports.
+- 1B-class Dense, MoP Full, and cached Adapter 128 A100 40/80 GB profiles,
+- incremental K/V-cached generation for supported Dense/post-core MoP layouts.
+- production RoPE/RMSNorm/GQA/SwiGLU decoder profiles,
+- local BPE training and memory-mapped packed token shards,
+- torchrun DDP/FSDP with DCP sharded resume and consolidation,
+- cached-reference DPO, ORPO, standard code evaluation, contamination audit,
+  and Hugging Face export.
 
-The next permitted run is a separate 1B L4 memory/throughput probe. The full
+The next permitted run is a separate 1B A100 memory/throughput probe. The full
 100M comparison passed its narrow repair-quality and cached-efficiency gates,
 but this does not establish broad code generation or 1B feasibility.
 
