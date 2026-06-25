@@ -21,6 +21,7 @@ REQUIRED_DOCS = [
     "docs/gpu_job_profiles.md",
     "docs/gpu_efficiency_benchmarking.md",
     "docs/gpu_runtime_limitations.md",
+    "docs/efficiency_report_template.md",
     "docs/serious_jobs_checklist.md",
     "docs/config_templates.md",
     "docs/examples_guide.md",
@@ -28,9 +29,15 @@ REQUIRED_DOCS = [
     "docs/release_checklist.md",
     "docs/known_limitations.md",
     "docs/research_positioning.md",
+    "docs/academic_claim_standard.md",
+    "docs/startup_product_claim_standard.md",
     "docs/installation.md",
     "docs/command_cookbook.md",
     "docs/production_2b_readiness.md",
+    "reports/README.md",
+    "reports/verified_code_repair_100m_l4/README.md",
+    "reports/a100_1b_feasibility_probe/README.md",
+    "reports/h100_2b_readiness/README.md",
 ]
 
 
@@ -70,6 +77,7 @@ def run_checks(root: Path, *, quick_examples: bool = False) -> list[CheckResult]
     checks.append(_check_pyproject_version(root))
     checks.append(_check_cli(root, ["version"], REQUIRED_VERSION))
     checks.append(_check_cli(root, ["runtime", "detect"], "torch_available="))
+    checks.append(_check_cli(root, ["claim", "--help"], "scaffold"))
     checks.append(_check_cli(root, ["gpu", "validate", "configs/jobs/tiny_gpu_smoke.json"], "validation=valid"))
     checks.append(_check_cli(root, ["gpu", "estimate", "configs/jobs/100m_mop_a100_smoke.json"], "total_memory_gb_estimate"))
     checks.append(_check_docs(root))

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from mopforge.claims import ClaimCard, ClaimGate, scaffold_claim_card, validate_claim_card
 from mopforge.configs import MoPForgeConfig, get_default_config, list_default_config_names
 from mopforge.gpu import (
     AmpScaler,
@@ -86,6 +87,10 @@ EXPERIMENTAL_PUBLIC_API = (
     "DistributedConfig",
     "ModelMemoryEstimate",
     "estimate_training_memory",
+    "ClaimCard",
+    "ClaimGate",
+    "scaffold_claim_card",
+    "validate_claim_card",
 )
 
 PUBLIC_API_POLICY = PublicAPIPolicy(
@@ -96,6 +101,8 @@ PUBLIC_API_POLICY = PublicAPIPolicy(
 
 __all__ = [
     "AmpScaler",
+    "ClaimCard",
+    "ClaimGate",
     "DeviceInfo",
     "DistributedConfig",
     "EXPERIMENTAL_PUBLIC_API",
@@ -126,4 +133,6 @@ __all__ = [
     "estimate_training_memory",
     "get_default_config",
     "list_default_config_names",
+    "scaffold_claim_card",
+    "validate_claim_card",
 ]

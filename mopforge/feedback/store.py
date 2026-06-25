@@ -307,7 +307,7 @@ def feedback_records_from_generation_eval(
 def feedback_records_from_run_record(record: Any) -> list[LessonFeedbackRecord]:
     """Return per-lesson feedback from a run record when available.
 
-    Goal 11 run records store aggregate metrics only, so this currently returns
+    Legacy run records store aggregate metrics only, so this currently returns
     an empty list unless future records add per-lesson feedback metadata.
     """
 

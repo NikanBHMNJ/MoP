@@ -16,11 +16,13 @@ CPU tiny trainer:
 
 ## Experimental API
 
-Experimental symbols are usable but may change before v1.0:
+Experimental symbols are usable but may change before the production API is
+frozen:
 
 - `GPUTrainingConfig`, `GPUTrainingState`, `GPUTrainingResult`
 - `GPUDataConfig`, `GPUTrainer`, `AmpScaler`
 - `DistributedConfig`, `ModelMemoryEstimate`, `estimate_training_memory`
+- `ClaimCard`, `ClaimGate`, `scaffold_claim_card`, `validate_claim_card`
 
 ## Internal Modules
 

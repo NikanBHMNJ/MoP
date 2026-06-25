@@ -1,4 +1,4 @@
-"""Tests for Goal 21 tokenizer abstraction plumbing."""
+"""Tests for tokenizer abstraction plumbing."""
 
 from __future__ import annotations
 

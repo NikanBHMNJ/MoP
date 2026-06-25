@@ -29,6 +29,7 @@ def test_major_cli_help_commands() -> None:
     commands = [
         [],
         ["config"],
+        ["claim"],
         ["runtime"],
         ["gpu"],
         ["train"],

@@ -1,1 +1,0 @@
-GPU efficiency gates were not run because this TinyStories corpus workflow disables generated-code evaluation by default. Use comparison.json/csv for measured loss, throughput, VRAM, trainable ratio, active ratio, and checkpoint-size comparisons.

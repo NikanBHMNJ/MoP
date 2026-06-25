@@ -1,0 +1,27 @@
+{
+  "cached_warm_adapter_norm_head_128": {
+    "checkpoint_path": "gpu_runs/20260621T214425Z-verified-code-repair-100m-l4-cached-warm-adapter-norm-head-128-65c0e025/checkpoints/checkpoint-best-eval.pt",
+    "config_path": "configs/jobs/colab_l4_verified_code_repair_100m/cached_warm_adapter_norm_head_128.json",
+    "run_id": "20260621T214425Z-verified-code-repair-100m-l4-cached-warm-adapter-norm-head-128-65c0e025"
+  },
+  "cached_warm_lora_rank8": {
+    "checkpoint_path": "gpu_runs/20260621T215700Z-verified-code-repair-100m-l4-cached-warm-lora-rank8-2acf9d5e/checkpoints/checkpoint-best-eval.pt",
+    "config_path": "configs/jobs/colab_l4_verified_code_repair_100m/cached_warm_lora_rank8.json",
+    "run_id": "20260621T215700Z-verified-code-repair-100m-l4-cached-warm-lora-rank8-2acf9d5e"
+  },
+  "dense": {
+    "checkpoint_path": "gpu_runs/20260621T201304Z-verified-code-repair-100m-l4-dense-475621f6/checkpoints/checkpoint-best-eval.pt",
+    "config_path": "configs/jobs/colab_l4_verified_code_repair_100m/dense.json",
+    "run_id": "20260621T201304Z-verified-code-repair-100m-l4-dense-475621f6"
+  },
+  "mop_full": {
+    "checkpoint_path": "gpu_runs/20260621T204500Z-verified-code-repair-100m-l4-mop-full-f663b186/checkpoints/checkpoint-best-eval.pt",
+    "config_path": "configs/jobs/colab_l4_verified_code_repair_100m/mop_full.json",
+    "run_id": "20260621T204500Z-verified-code-repair-100m-l4-mop-full-f663b186"
+  },
+  "warm_adapter_norm_head_128": {
+    "checkpoint_path": "gpu_runs/20260621T212138Z-verified-code-repair-100m-l4-warm-adapter-norm-head-128-63018e84/checkpoints/checkpoint-best-eval.pt",
+    "config_path": "configs/jobs/colab_l4_verified_code_repair_100m/warm_adapter_norm_head_128.json",
+    "run_id": "20260621T212138Z-verified-code-repair-100m-l4-warm-adapter-norm-head-128-63018e84"
+  }
+}

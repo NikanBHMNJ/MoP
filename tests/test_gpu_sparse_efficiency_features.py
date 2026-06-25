@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import json
 from pathlib import Path
@@ -874,7 +874,7 @@ def test_prepare_efficiency_dataset_writes_versioned_fixed_split(tmp_path: Path)
     result = prepare_efficiency_dataset(
         source_path=tmp_path / "lessons.jsonl",
         dataset_root=tmp_path / "datasets",
-        dataset_id="goal47_efficiency",
+        dataset_id="fixed_efficiency",
         count_per_category=2,
         verify=False,
         split_seed=42,
@@ -904,7 +904,7 @@ def test_prepare_efficiency_dataset_can_write_verified_fixed_code_targets(tmp_pa
     result = prepare_efficiency_dataset(
         source_path=source,
         dataset_root=tmp_path / "datasets",
-        dataset_id="goal49_quality_efficiency",
+        dataset_id="verified_code_quality_baseline",
         count_per_category=1,
         verify=True,
         split_seed=42,
@@ -928,7 +928,7 @@ def test_prepare_efficiency_dataset_can_stratify_by_bug_type(tmp_path: Path) -> 
     result = prepare_efficiency_dataset(
         source_path=tmp_path / "balanced_lessons.jsonl",
         dataset_root=tmp_path / "datasets",
-        dataset_id="goal50_balanced_quality",
+        dataset_id="verified_code_repair_balanced_quality",
         count_per_category=10,
         verify=False,
         split_seed=42,
@@ -964,7 +964,7 @@ def test_prepare_efficiency_dataset_cli(tmp_path: Path) -> None:
             "--dataset-root",
             str(root),
             "--dataset-id",
-            "goal47_cli_efficiency",
+            "cli_efficiency",
             "--count-per-category",
             "1",
             "--no-verify",
@@ -977,7 +977,7 @@ def test_prepare_efficiency_dataset_cli(tmp_path: Path) -> None:
 
     assert result == 0
     assert source.exists()
-    assert (root / "goal47_cli_efficiency" / "dataset.json").exists()
+    assert (root / "cli_efficiency" / "dataset.json").exists()
 
 
 def _tiny_mop(*, use_fast_adapters: bool) -> TinyMoPCausalTransformer:

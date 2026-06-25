@@ -16,6 +16,14 @@ from mopforge.ablations import AblationRegistry
 from mopforge.analysis import AnalysisConfig, AnalysisRegistry, run_analysis
 from mopforge.ablations import AblationConfig, dry_run_ablation, run_ablation
 from mopforge.benchmarks import BenchmarkRegistry, run_benchmark
+from mopforge.claims import (
+    format_claim_validation,
+    load_claim_card,
+    scaffold_claim_card,
+    validate_claim_card,
+    write_claim_card,
+    write_claim_validation,
+)
 from mopforge.baselines import (
     build_baseline_experiment_config,
     get_baseline,
@@ -162,6 +170,43 @@ def _build_parser() -> argparse.ArgumentParser:
     dry_run_parser = config_subparsers.add_parser("dry-run", help="resolve a config")
     dry_run_parser.add_argument("path")
     dry_run_parser.set_defaults(func=_cmd_config_dry_run)
+
+    claim_parser = subparsers.add_parser("claim", help="claim readiness commands")
+    claim_sub = claim_parser.add_subparsers(dest="claim_command", required=True)
+    claim_scaffold = claim_sub.add_parser(
+        "scaffold",
+        help="create a claim card from a report directory",
+    )
+    claim_scaffold.add_argument("--report-dir", required=True)
+    claim_scaffold.add_argument("--claim-statement", required=True)
+    claim_scaffold.add_argument(
+        "--claim-type",
+        choices=["academic", "product", "release", "benchmark"],
+        default="benchmark",
+    )
+    claim_scaffold.add_argument(
+        "--academic-level",
+        choices=["A0", "A1", "A2", "A3", "A4", "A5"],
+        default="A2",
+    )
+    claim_scaffold.add_argument(
+        "--product-level",
+        choices=["P0", "P1", "P2", "P3", "P4", "not_applicable"],
+        default="P1",
+    )
+    claim_scaffold.add_argument("--output", default="outputs/claim_card.json")
+    claim_scaffold.add_argument("--validation-output")
+    claim_scaffold.set_defaults(func=_cmd_claim_scaffold)
+
+    claim_validate = claim_sub.add_parser(
+        "validate",
+        help="validate a claim card against academic and product evidence gates",
+    )
+    claim_validate.add_argument("path")
+    claim_validate.add_argument("--root", default=".")
+    claim_validate.add_argument("--output")
+    claim_validate.add_argument("--json", action="store_true")
+    claim_validate.set_defaults(func=_cmd_claim_validate)
 
     tokenizer_parser = subparsers.add_parser("tokenizer", help="tokenizer commands")
     tokenizer_sub = tokenizer_parser.add_subparsers(
@@ -905,6 +950,37 @@ def _cmd_config_dry_run(args) -> int:
     summary = dry_run_config(config)
     print(json.dumps(summary, indent=2, sort_keys=True))
     return 0 if summary["runnable_locally"] else 1
+
+
+def _cmd_claim_scaffold(args) -> int:
+    card = scaffold_claim_card(
+        report_dir=args.report_dir,
+        claim_statement=args.claim_statement,
+        claim_type=args.claim_type,
+        academic_level=args.academic_level,
+        product_level=args.product_level,
+    )
+    output = write_claim_card(card, args.output)
+    validation = validate_claim_card(card)
+    if args.validation_output:
+        validation_output = write_claim_validation(validation, args.validation_output)
+        print(f"claim_validation_path={validation_output}")
+    print(f"claim_card_path={output}")
+    print(format_claim_validation(validation))
+    return 0
+
+
+def _cmd_claim_validate(args) -> int:
+    card = load_claim_card(args.path)
+    validation = validate_claim_card(card, root=args.root)
+    if args.output:
+        output = write_claim_validation(validation, args.output)
+        print(f"claim_validation_path={output}")
+    if args.json:
+        print(json.dumps(validation, indent=2, sort_keys=True))
+    else:
+        print(format_claim_validation(validation))
+    return 0 if validation["overall_passed"] else 1
 
 
 def _cmd_runtime_detect(args) -> int:

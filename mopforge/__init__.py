@@ -3,8 +3,8 @@
 MoP-Forge is an experimental framework for structured training data and,
 eventually, Mixture-of-Parameters research prototypes.
 
-The broad top-level namespace is retained for backwards compatibility with the
-Goal 1-44 examples and tests. New integrations should prefer
+The broad top-level namespace is retained for backwards compatibility with older
+examples and tests. New integrations should prefer
 ``mopforge.public_api`` for the curated stable/experimental policy.
 """
 

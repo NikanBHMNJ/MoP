@@ -1,0 +1,19 @@
+{
+  "format": "mopforge_h100_2b_readiness_v1",
+  "required_evidence": [
+    "300m_probe.json",
+    "1b_probe.json",
+    "2b_probe.json",
+    "readiness_summary.json"
+  ],
+  "required_gates": [
+    "probe_completed",
+    "finite_loss",
+    "loss_decreased",
+    "checkpoint_resume_passed",
+    "peak_reserved_within_limit",
+    "no_oom"
+  ],
+  "weights_allowed": false,
+  "status": "awaiting_hardware_run"
+}

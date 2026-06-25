@@ -1,52 +1,67 @@
-# GPU Quickstart
+﻿# GPU Quickstart
 
-MoP-Forge includes a single-GPU research path and a torchrun DDP/FSDP beta for
-production decoder profiles. Distributed correctness is CPU-tested, but H100
-feasibility remains gated on measured hardware reports.
+MoP-Forge provides single-device CUDA/BF16 training, cached sparse-tail
+training, and torchrun DDP/FSDP admission paths. CPU tests validate framework
+correctness; performance and feasibility claims require measured GPU reports.
 
-CPU-only development path:
+## Local Validation
 
 ```bash
 mopforge runtime detect
 mopforge gpu validate configs/jobs/tiny_gpu_smoke.json
 mopforge gpu estimate configs/jobs/tiny_gpu_smoke.json
-mopforge gpu train configs/jobs/tiny_gpu_smoke.json
 ```
 
-CUDA path, when PyTorch CUDA is installed:
+Run the tiny profile on CUDA when available:
 
 ```bash
-mopforge runtime detect
 mopforge gpu train configs/jobs/tiny_gpu_smoke.json --device cuda --precision bf16
 ```
 
-The tiny smoke profile falls back to CPU when CUDA is unavailable. Real GPU
-performance is only validated on the user's hardware.
+The tiny profile is a functional check. Do not use it as performance evidence.
 
-Useful follow-up commands:
+Useful run commands:
 
 ```bash
 mopforge gpu list
 mopforge gpu show <run_id>
 mopforge gpu resume <run_id>
 mopforge gpu benchmark <run_id>
+mopforge gpu compare-runs <run_id> <run_id> --output outputs/comparison.json
 ```
 
-Cached sparse distillation path for a code dataset:
+## Cached Sparse Code-Repair Workflow
+
+Prepare a fixed verified repair split:
 
 ```bash
-mopforge gpu prepare-efficiency-data --count-per-category 100 --split-seed 42
+mopforge gpu prepare-efficiency-data \
+  --count-per-category 2000 \
+  --split-seed 42 \
+  --stratify-by bug_type \
+  --quality-format fixed_code_xml \
+  --verify \
+  --overwrite
+```
+
+Train a Dense or MoP Full warm source, then build a teacher activation cache:
+
+```bash
 mopforge gpu train configs/jobs/100m_mop_full_extended_efficiency.json
 
 mopforge gpu cache-activations configs/jobs/100m_mop_warm_adapters_norm_head_64_colab_efficiency.json \
-  --checkpoint <mop_full_run_id_or_checkpoint> \
-  --output outputs/code_warm_sparse_teacher_topk_cache_manifest.json \
+  --checkpoint <warm_source_checkpoint_or_run_id> \
+  --output outputs/code_repair_teacher_topk_cache_manifest.json \
   --teacher-top-k 16 \
   --records-per-shard 512
+```
 
+Generate sparse-tail configs:
+
+```bash
 mopforge gpu write-warm-sparse-sweep \
-  --base-checkpoint <mop_full_run_id_or_checkpoint> \
-  --activation-cache-path outputs/code_warm_sparse_teacher_topk_cache_manifest.json \
+  --base-checkpoint <warm_source_checkpoint_or_run_id> \
+  --activation-cache-path outputs/code_repair_teacher_topk_cache_manifest.json \
   --dataset-ref <dataset_id@version_id> \
   --dataset-split-id <split_id> \
   --cached-distillation-weight 0.2 \
@@ -55,133 +70,107 @@ mopforge gpu write-warm-sparse-sweep \
   --hard-example-replay \
   --hard-example-replay-loss-threshold <teacher_ce_loss_threshold> \
   --hard-example-replay-multiplier 2 \
-  --target-eval-loss <dense_or_mop_full_target_loss>
+  --target-eval-loss <predeclared_target_eval_loss> \
+  --output-dir configs/jobs/code_repair_cached_sparse
 ```
 
-The cached sparse configs train the tail from cached hidden states, can offload
-unused frozen backbone modules from CUDA, save the best eval-loss checkpoint,
-optionally replay high-loss cached examples, and report distillation/offload,
-hard replay, plus time/tokens-to-target-loss metadata in `metrics.json` and
-`compare-runs` outputs.
-
-For the next small-model code-quality run, keep the same fixed split discipline
-but frame verified repair targets as narrow XML blocks:
+Run comparable profiles and gate the claim:
 
 ```bash
-mopforge gpu prepare-efficiency-data \
-  --count-per-category 10 \
-  --split-seed 42 \
-  --stratify-by bug_type \
-  --quality-format fixed_code_xml
+mopforge gpu compare-runs <dense_run_id> <cached_sparse_run_id> \
+  --output outputs/code_repair_comparison.json \
+  --output-csv outputs/code_repair_comparison.csv
+
+mopforge gpu gate-efficiency \
+  --dense-run <dense_run_id> \
+  --sparse-run <cached_sparse_run_id> \
+  --output outputs/code_repair_efficiency_gate.json
 ```
 
-That mode writes lessons whose supervised target is
-`<fixed_code>...</fixed_code>`. It is intended for code repair, short
-completion, and test-error-conditioned fixing experiments where syntax pass,
-verifier pass, and exact-match quality are measured alongside VRAM, throughput,
-loss, and checkpoint size.
+## Current Measured L4 Workflow
 
-For the full L4 quality comparison, run
-`notebooks/colab_l4_goal49_verified_code_quality_report.ipynb`. It compares
-Warm Adapter/Norm/Head 128 with cached Adapter 128 and tail-only LoRA rank 8/16.
-Tail-only LoRA places the trainable deltas after the activation-cache boundary,
-allowing the frozen backbone to remain off CUDA during sparse training.
+The tracked L4 notebook for the current measured report is:
 
-Cached runs now restore the full model only after training to generate and
-verify code samples. Those samples are written to `generation_eval.json`; the
-restoration occurs after cached-tail VRAM metrics are captured.
+```text
+notebooks/colab_l4_verified_code_repair_100m.ipynb
+```
 
-Before a 1B quality run, execute
-`notebooks/colab_l4_goal50_100m_learning_gate.ipynb`. Its config uses full
-held-out loss evaluation, deterministic epoch reshuffling, 1,000 optimizer
-updates, generation from the best eval-loss checkpoint, all five bug
-categories, and raw/XML ground-truth controls. The generated report records
-microsteps and optimizer updates separately and blocks scaling when the
-memorization thresholds fail.
+It writes a lightweight report compatible with:
 
-The first measured Goal 50 gate exposed an EOS prompt-boundary mismatch. After
-that fix, the rerun reached `100%` train and held-out XML completion, syntax,
-verifier, and exact match. The full 100M comparison is now permitted; 1B remains
-gated on its quality and efficiency evidence.
+```text
+reports/verified_code_repair_100m_l4/
+```
 
-After a passing gate, use
-`notebooks/colab_l4_goal50_100m_quality_comparison.ipynb` for the full 100M
-comparison. Its shared target is predeclared as `TARGET_EVAL_LOSS=0.85`, based
-on the Goal 49 Dense best loss of `0.8022`. The notebook uses
-2,000 optimizer updates per enabled profile, 10,000 balanced verified lessons,
-full held-out loss, a five-category stratified generation subset, and an
-`acceptance_gates.json` claim boundary.
+The report excludes checkpoints, optimizer state, activation caches, token
+shards, corpora, and model weights.
 
-The first measured full comparison passes after correcting a report-only
-metadata fallback: Cached Adapter/Norm/Head 128 reached `88.0%` verifier/exact
-match, `8.35x` Dense throughput, and `31.70x` lower peak reserved VRAM. Cached
-Tail-Only LoRA Rank 8 reached the same quality with `6.70x` throughput and
-`22.83x` lower peak reserved VRAM.
+## A100 1B Admission
 
-## Goal 51 A100 1B Admission
-
-Run a staged probe before a 500-update 1B pilot:
+Run a staged probe before any 1B pilot:
 
 ```bash
 mopforge gpu validate configs/jobs/1b_dense_a100_40gb_probe.json
 mopforge gpu estimate configs/jobs/1b_dense_a100_40gb_probe.json
 mopforge gpu probe configs/jobs/1b_dense_a100_40gb_probe.json \
   --optimizer-updates 20 \
-  --output reports/goal51_1b_a100_feasibility_probe/dense-40gb/gpu_probe_report.json
+  --output reports/a100_1b_feasibility_probe/dense_40gb_probe.json
 ```
 
 Use the matching `80gb` profile on an A100 80 GB. Profiles also exist for
 `mop_full` and `cached_adapter_128`. The cached profile requires a real warm
-base checkpoint and activation-cache manifest at the configured paths.
+base checkpoint and activation-cache manifest.
 
-The probe does not reduce batch size, sequence length, or accumulation after an
-OOM. It writes the failed phase and allocator counters, cleans up CUDA state,
-and blocks admission. Passing requires no OOM, finite decreasing loss, a
-successful model-only save/load loss check, and peak reserved VRAM no higher
-than `34 GB` (40 GB card) or `68 GB` (80 GB card).
+Passing requires:
 
-For Colab, use
-`notebooks/colab_a100_goal51_1b_feasibility_probe.ipynb`. It detects the actual
-A100 memory tier, selects the profile, runs the same CLI probe, and downloads a
-lightweight report archive without checkpoints or caches.
+- no OOM,
+- finite decreasing loss,
+- exact optimizer-update count,
+- model-only checkpoint save/load/resume,
+- peak reserved VRAM within the hardware-specific gate,
+- measured runtime projections.
 
-## Goal 52 H100 2B Path
+Colab entrypoint:
 
-Build the local tokenizer and packed memory-mapped corpus before validation:
+```text
+notebooks/colab_a100_1b_feasibility_probe.ipynb
+```
+
+## H100 2B Readiness
+
+Build tokenizer and packed shards before the H100 probes:
 
 ```bash
 mopforge tokenizer train-bpe data/code_corpus.jsonl \
-  --output-dir data/goal52_tokenizer \
+  --output-dir data/tokenizer_32k \
   --vocab-size 32768 \
   --text-field text
 
 mopforge gpu pack-corpus data/code_corpus.jsonl \
-  --tokenizer-spec data/goal52_tokenizer/tokenizer_spec.json \
-  --output-dir data/goal52_code_tokens \
+  --tokenizer-spec data/tokenizer_32k/tokenizer_spec.json \
+  --output-dir data/code_tokens_1024 \
   --sequence-length 1024 \
   --split-seed 42 \
   --text-field text
 ```
 
-Then run the 304M calibration, 1B admission, and matching H100 80/94 GB 2B
-probe in order. The ready-to-run notebook is
-`notebooks/colab_h100_goal52_2b_readiness.ipynb`.
-
-For the eight-H100 FSDP pilot, inspect the exact torchrun command:
+Run calibration, 1B admission, and the matching H100 2B probe in order:
 
 ```bash
-mopforge gpu launch-torchrun \
-  configs/jobs/goal52_2b_dense_8xh100_fsdp_pilot.json --dry-run
+mopforge gpu probe configs/jobs/h100_300m_dense_probe.json \
+  --optimizer-updates 20 \
+  --output reports/h100_2b_readiness/300m_probe.json
+
+mopforge gpu probe configs/jobs/h100_1b_dense_probe.json \
+  --optimizer-updates 20 \
+  --output reports/h100_2b_readiness/1b_probe.json
 ```
 
-After a sharded run, create the model-only artifact required by evaluation and
-export:
+The ready-to-run notebook is:
 
-```bash
-mopforge gpu consolidate-checkpoint <checkpoint_dir> outputs/goal52-2b.pt
-mopforge model export-hf outputs/goal52-2b.pt outputs/goal52-hf
+```text
+notebooks/colab_h100_2b_readiness.ipynb
 ```
 
-See [Goal 52 production readiness](production_2b_readiness.md) for exact model
-sizes, DPO/ORPO commands, standard code evaluation, contamination auditing, and
-the evidence required before a usability claim.
+See [production_2b_readiness.md](production_2b_readiness.md) for model sizes,
+distributed pilot commands, post-training, evaluation, export, and claim
+requirements.

@@ -2,7 +2,7 @@
   "kind": "gpu_train",
   "version": "1",
   "payload": {
-    "name": "goal51_1b_dense_a100_80gb_probe",
+    "name": "a100_1b_dense_80gb_probe",
     "model_type": "dense",
     "lesson_path": "data/coding_bugfix_lessons.jsonl",
     "output_root": "gpu_runs",
@@ -45,11 +45,11 @@
       "probe_peak_reserved_limit_gb": 68,
       "probe_optimizer_steps": 20,
       "required_gpu_name_contains": "A100",
-      "goal": 51,
+      "readiness_track": "a100_1b",
       "profile_role": "dense"
     }
   },
   "metadata": {
-    "description": "Goal 51 executable 1B-class Dense admission probe for A100 80GB."
+    "description": "A100 1B admission executable 1B-class Dense admission probe for A100 80GB."
   }
 }

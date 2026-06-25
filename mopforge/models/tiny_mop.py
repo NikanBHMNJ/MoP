@@ -591,7 +591,7 @@ else:
     class TinyMoPCausalTransformer(nn.Module):
         """Tiny oracle-routed MoP causal LM for CPU smoke tests.
 
-        Routing is not learned in Goal 4. The caller supplies active modules,
+        Routing is oracle-supplied for this tiny model. The caller supplies active modules,
         usually from ``KnowledgeLesson.target_modules``. Backward-compatible
         configs include ``core`` automatically; newer sparse efficiency configs
         can set ``always_include_core=False`` and omit redundant core modules.

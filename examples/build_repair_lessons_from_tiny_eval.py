@@ -32,7 +32,7 @@ def ensure_lessons() -> None:
 
 
 def load_or_create_generation_results() -> list[dict]:
-    """Load Goal 7 eval output or create a tiny dense-model failure set."""
+    """Load existing eval output or create a tiny dense-model failure set."""
 
     if EVAL_PATH.exists():
         return _flatten_generation_report(json.loads(EVAL_PATH.read_text(encoding="utf-8")))

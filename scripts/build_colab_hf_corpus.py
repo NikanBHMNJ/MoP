@@ -1,8 +1,9 @@
 """Build a MoP-Forge TextCorpusRecord JSONL file from HF or local JSONL rows.
 
-The Colab path uses a bounded non-streaming Hugging Face split by default. Tests
-and offline verification can use ``--input-jsonl`` to exercise the same
-conversion code without internet access or Hugging Face dependencies.
+The helper is intentionally dataset-neutral. Remote Hugging Face conversion
+requires an explicit ``--dataset`` value; tests and offline verification can use
+``--input-jsonl`` to exercise the same conversion code without internet access
+or Hugging Face dependencies.
 """
 
 from __future__ import annotations
@@ -21,16 +22,19 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Convert a Hugging Face dataset or local JSONL rows to MoP-Forge corpus JSONL."
     )
-    parser.add_argument("--dataset", default="roneneldan/TinyStories", help="Hugging Face dataset name")
+    parser.add_argument(
+        "--dataset",
+        help="Hugging Face dataset name for remote rows; optional with --input-jsonl",
+    )
     parser.add_argument("--split", default="train", help="dataset split")
     parser.add_argument("--text-field", default="text", help="row field containing text")
     parser.add_argument("--max-records", type=int, default=1000, help="maximum records to write")
-    parser.add_argument("--output", default="data/colab_tinystories_corpus.jsonl", help="output JSONL path")
+    parser.add_argument("--output", default="data/colab_hf_corpus.jsonl", help="output JSONL path")
     parser.add_argument("--streaming", action=argparse.BooleanOptionalAction, default=False, help="use HF streaming")
     parser.add_argument("--input-jsonl", help="optional local JSONL input for offline conversion")
     parser.add_argument("--id-prefix", help="record id prefix; defaults to a slug of dataset/split")
     parser.add_argument("--source", help="record source label; defaults to dataset name")
-    parser.add_argument("--domain", default="story", help="optional domain metadata")
+    parser.add_argument("--domain", default="code", help="optional domain metadata")
     parser.add_argument("--language", default="en", help="optional language metadata")
     return parser.parse_args(argv)
 
@@ -39,14 +43,19 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     if args.max_records <= 0:
         raise ValueError("--max-records must be positive.")
+    dataset_name = args.dataset
+    if not dataset_name:
+        if not args.input_jsonl:
+            raise ValueError("Remote conversion requires --dataset, or use --input-jsonl for local rows.")
+        dataset_name = Path(args.input_jsonl).stem
     rows = (
         read_jsonl_rows(args.input_jsonl)
         if args.input_jsonl
-        else load_hf_rows(args.dataset, args.split, streaming=bool(args.streaming), max_records=args.max_records)
+        else load_hf_rows(dataset_name, args.split, streaming=bool(args.streaming), max_records=args.max_records)
     )
     records = rows_to_text_corpus_records(
         rows,
-        dataset_name=args.dataset,
+        dataset_name=dataset_name,
         split=args.split,
         text_field=args.text_field,
         max_records=args.max_records,
@@ -57,7 +66,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     output = write_records(records, args.output)
     summary = {
-        "dataset": args.dataset,
+        "dataset": dataset_name,
         "split": args.split,
         "text_field": args.text_field,
         "streaming": bool(args.streaming) and not args.input_jsonl,
@@ -116,7 +125,7 @@ def rows_to_text_corpus_records(
     max_records: int,
     id_prefix: str | None = None,
     source: str | None = None,
-    domain: str | None = "story",
+    domain: str | None = "code",
     language: str | None = "en",
 ) -> list[TextCorpusRecord]:
     if max_records <= 0:

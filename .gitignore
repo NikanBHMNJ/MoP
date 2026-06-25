@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
-.pytest_goal*/
+.pytest_*/
 pytest_tmp/
 .pytest_basetemp/
 .mypy_cache/
@@ -15,22 +15,15 @@ pytest_tmp/
 /outputs/
 /reports/*
 !/reports/
-!/reports/goal46_gpu_efficiency/
-!/reports/goal46_gpu_efficiency/**
-!/reports/v0_46_0_l4_warm_sparse_comparison/
-!/reports/v0_46_0_l4_warm_sparse_comparison/**
-!/reports/goal48_code_cached_sparse_efficiency/
-!/reports/goal48_code_cached_sparse_efficiency/**
-!/reports/goal49_verified_code_quality_efficiency/
-!/reports/goal49_verified_code_quality_efficiency/**
-!/reports/goal50_100m_learning_gate/
-!/reports/goal50_100m_learning_gate/**
-!/reports/goal50_100m_quality_comparison/
-!/reports/goal50_100m_quality_comparison/**
-!/reports/goal51_1b_a100_feasibility_probe/
-!/reports/goal51_1b_a100_feasibility_probe/**
-!/reports/goal52_h100_2b_readiness/
-!/reports/goal52_h100_2b_readiness/**
+!/reports/README.md
+!/reports/verified_code_repair_100m_l4/
+!/reports/verified_code_repair_100m_l4/**
+!/reports/a100_1b_feasibility_probe/
+!/reports/a100_1b_feasibility_probe/**
+!/reports/h100_2b_readiness/
+!/reports/h100_2b_readiness/**
+!/reports/claim_readiness_template/
+!/reports/claim_readiness_template/**
 /benchmarks/
 /experiments/
 /ablations/
@@ -40,13 +33,9 @@ pytest_tmp/
 /datasets/
 /models/
 /notebooks/*
-!/notebooks/colab_l4_v046_efficiency_comparison.ipynb
-!/notebooks/colab_l4_goal48_code_cached_sparse_report.ipynb
-!/notebooks/colab_l4_goal49_verified_code_quality_report.ipynb
-!/notebooks/colab_l4_goal50_100m_learning_gate.ipynb
-!/notebooks/colab_l4_goal50_100m_quality_comparison.ipynb
-!/notebooks/colab_a100_goal51_1b_feasibility_probe.ipynb
-!/notebooks/colab_h100_goal52_2b_readiness.ipynb
+!/notebooks/colab_l4_verified_code_repair_100m.ipynb
+!/notebooks/colab_a100_1b_feasibility_probe.ipynb
+!/notebooks/colab_h100_2b_readiness.ipynb
 
 # Local registries and generated data
 /data/*.jsonl

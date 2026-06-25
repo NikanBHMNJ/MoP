@@ -1,0 +1,262 @@
+{
+  "allowed_wording": [
+    "MoP-Forge measures narrow verified 100M code-repair efficiency on the fixed L4 report split."
+  ],
+  "blocked_wording": [
+    "Qwen-class, frontier-class, or generally useful code-model quality without external benchmark evidence.",
+    "Production-grade managed training service without reliability, security, monitoring, recovery, and support evidence.",
+    "Guaranteed 1B/2B training on unseen hardware.",
+    "Same-quality sparse superiority without same-split quality gates and repeated evidence.",
+    "Customer-proven cost savings without external pilot results."
+  ],
+  "claim_id": "verified_code_repair_100m_l4",
+  "claim_statement": "MoP-Forge measures narrow verified 100M code-repair efficiency on the fixed L4 report split.",
+  "decision_recommendation": "publish-narrowly",
+  "evidence_status": "measured",
+  "failed_required_gates": [],
+  "gates": [
+    {
+      "detail": "",
+      "name": "claim_card_required_fields",
+      "observed": [],
+      "passed": true,
+      "required": true,
+      "threshold": "all required fields present"
+    },
+    {
+      "detail": "",
+      "name": "claim_card_enum_values",
+      "observed": [],
+      "passed": true,
+      "required": true,
+      "threshold": "known claim/evidence/decision levels"
+    },
+    {
+      "detail": "",
+      "name": "report_dir_under_reports",
+      "observed": "reports/verified_code_repair_100m_l4",
+      "passed": true,
+      "required": true,
+      "threshold": "reports/<claim-id>"
+    },
+    {
+      "detail": "",
+      "name": "report_dir_exists",
+      "observed": "C:\\Users\\GC121\\Documents\\mop\\reports\\verified_code_repair_100m_l4",
+      "passed": true,
+      "required": true,
+      "threshold": true
+    },
+    {
+      "detail": "",
+      "name": "lightweight_artifact_audit",
+      "observed": [],
+      "passed": true,
+      "required": true,
+      "threshold": "no model weights, checkpoints, caches, arrays, or token shards in report"
+    },
+    {
+      "detail": "",
+      "name": "evidence_files_present",
+      "observed": 49,
+      "passed": true,
+      "required": true,
+      "threshold": "at least one report artifact"
+    },
+    {
+      "detail": "",
+      "name": "a0_implemented_mechanism",
+      "observed": {
+        "commit": "e9b96e4c3422d028614dcd2a04b78d1351c79582",
+        "version": "0.46.0"
+      },
+      "passed": true,
+      "required": true,
+      "threshold": "version and commit recorded"
+    },
+    {
+      "detail": "",
+      "name": "a1_single_run_evidence",
+      "observed": {
+        "has_acceptance_gates_json": true,
+        "has_comparison_json": true,
+        "has_report_schema_json": false
+      },
+      "passed": true,
+      "required": true,
+      "threshold": "report schema, comparison, or acceptance gate artifact"
+    },
+    {
+      "detail": "",
+      "name": "a2_controlled_comparison",
+      "observed": {
+        "baselines": 2,
+        "dataset_name": "verified_code_repair_100m_l4@20260621T195340Z-coding-bugfix-efficiency-191c4bc8",
+        "run_count": 5,
+        "split_id": "split-seed42-train80-eval10-test10-by-bug-type",
+        "split_seed": 42
+      },
+      "passed": true,
+      "required": true,
+      "threshold": "same-split comparison with at least two runs and a baseline"
+    },
+    {
+      "detail": "",
+      "name": "a3_repeated_comparison",
+      "observed": {
+        "evidence_status": "measured",
+        "repeated_count": 0
+      },
+      "passed": false,
+      "required": false,
+      "threshold": "at least three seeds/repeats or repeated evidence status"
+    },
+    {
+      "detail": "",
+      "name": "a4_external_benchmark_and_contamination",
+      "observed": {
+        "contamination_audit_passed": null,
+        "evidence_status": "measured",
+        "external_benchmark_count": null,
+        "pass_at_1": null
+      },
+      "passed": false,
+      "required": false,
+      "threshold": "external benchmark plus contamination evidence"
+    },
+    {
+      "detail": "",
+      "name": "a5_paper_ready_bundle",
+      "observed": {
+        "limitations": 3,
+        "report_exists": true
+      },
+      "passed": false,
+      "required": false,
+      "threshold": "A4 evidence, limitations, and reproducible report bundle"
+    },
+    {
+      "detail": "",
+      "name": "p0_research_prototype",
+      "observed": {
+        "claim_statement": true,
+        "version": "0.46.0"
+      },
+      "passed": true,
+      "required": true,
+      "threshold": "versioned claim statement"
+    },
+    {
+      "detail": "",
+      "name": "p1_reproducible_workflow",
+      "observed": {
+        "allowed_wording": 1,
+        "blocked_wording": 5,
+        "evidence_files": 49
+      },
+      "passed": true,
+      "required": true,
+      "threshold": "report artifacts plus allowed/blocked wording"
+    },
+    {
+      "detail": "",
+      "name": "p2_pilot_ready_workflow",
+      "observed": {
+        "hardware": {
+          "device": "google_colab_l4",
+          "memory_gb": "unknown",
+          "precision": "bf16"
+        },
+        "limitations": 3,
+        "metrics": {
+          "acceptance_gate_passed": true,
+          "checkpoint_reduction": 127.5288,
+          "peak_reserved_reduction": 31.7025,
+          "throughput_ratio": 8.3451,
+          "tokens_per_sec": null
+        }
+      },
+      "passed": true,
+      "required": true,
+      "threshold": "hardware target, cost/quality/efficiency metrics, and limitations"
+    },
+    {
+      "detail": "",
+      "name": "p3_product_beta_reliability",
+      "observed": {
+        "monitoring_ready": null,
+        "resume_passed": null,
+        "support_process_ready": null
+      },
+      "passed": false,
+      "required": false,
+      "threshold": "resume, monitoring, and support evidence"
+    },
+    {
+      "detail": "",
+      "name": "p4_customer_proven_value",
+      "observed": {
+        "customer_count": null,
+        "external_pilot_count": null
+      },
+      "passed": false,
+      "required": false,
+      "threshold": "at least one external pilot/customer result"
+    },
+    {
+      "detail": "",
+      "name": "high_model_quality_wording_supported",
+      "observed": {
+        "academic_rank": 2,
+        "product_rank": 2,
+        "terms_present": false
+      },
+      "passed": false,
+      "required": false,
+      "threshold": "A4/P3 plus external benchmark evidence"
+    },
+    {
+      "detail": "",
+      "name": "production_service_wording_supported",
+      "observed": {
+        "product_rank": 2,
+        "terms_present": false
+      },
+      "passed": false,
+      "required": false,
+      "threshold": "P3 product beta evidence"
+    },
+    {
+      "detail": "",
+      "name": "same_quality_wording_supported",
+      "observed": {
+        "academic_rank": 2,
+        "acceptance_gate_passed": true,
+        "same_quality_gate_passed": null,
+        "terms_present": false
+      },
+      "passed": true,
+      "required": false,
+      "threshold": "A2 controlled comparison plus quality gate"
+    },
+    {
+      "detail": "",
+      "name": "efficiency_multiplier_wording_supported",
+      "observed": {
+        "checkpoint_reduction": 127.5288,
+        "peak_reserved_reduction": 31.7025,
+        "terms_present": false,
+        "throughput_ratio": 8.3451
+      },
+      "passed": true,
+      "required": false,
+      "threshold": "named measured multiplier at or above 3x"
+    }
+  ],
+  "kind": "mopforge_claim_readiness_report_v1",
+  "overall_passed": true,
+  "report_dir": "reports/verified_code_repair_100m_l4",
+  "requested_academic_level": "A2",
+  "requested_product_level": "P2",
+  "unknown_required_gates": []
+}

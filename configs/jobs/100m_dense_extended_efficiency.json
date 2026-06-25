@@ -23,7 +23,7 @@
     "max_steps": 2000,
     "max_train_examples": 10000,
     "metadata": {
-      "description": "Dense 100M extended baseline for the fixed Goal 47 comparison.",
+      "description": "Dense 100M extended baseline for the fixed efficiency comparison.",
       "fixed_eval_seed": 42,
       "parameter_count": 100000000,
       "profile": "100m_dense_extended_efficiency",

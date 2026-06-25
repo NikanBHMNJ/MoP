@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MoP-Forge Claim Readiness Card",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "claim_id",
+    "claim_statement",
+    "claim_type",
+    "academic_level",
+    "product_level",
+    "evidence_status",
+    "version",
+    "commit",
+    "report_dir",
+    "dataset",
+    "hardware",
+    "baselines",
+    "metrics",
+    "limitations",
+    "allowed_wording",
+    "blocked_wording",
+    "decision"
+  ],
+  "properties": {
+    "claim_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "claim_statement": {
+      "type": "string",
+      "minLength": 1
+    },
+    "claim_type": {
+      "type": "string",
+      "enum": ["academic", "product", "release", "benchmark"]
+    },
+    "academic_level": {
+      "type": "string",
+      "enum": ["A0", "A1", "A2", "A3", "A4", "A5"]
+    },
+    "product_level": {
+      "type": "string",
+      "enum": ["P0", "P1", "P2", "P3", "P4", "not_applicable"]
+    },
+    "evidence_status": {
+      "type": "string",
+      "enum": ["implemented", "measured", "repeated", "external", "blocked"]
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "commit": {
+      "type": "string",
+      "minLength": 7
+    },
+    "report_dir": {
+      "type": "string",
+      "pattern": "^reports/"
+    },
+    "dataset": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["name", "split_id", "split_seed"],
+      "properties": {
+        "name": {"type": "string"},
+        "split_id": {"type": "string"},
+        "split_seed": {"type": ["integer", "string"]},
+        "hashes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "hardware": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["device", "memory_gb"],
+      "properties": {
+        "device": {"type": "string"},
+        "memory_gb": {"type": ["number", "string"]},
+        "driver": {"type": "string"},
+        "cuda": {"type": "string"},
+        "pytorch": {"type": "string"}
+      }
+    },
+    "baselines": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string"}
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": {"type": ["number", "string", "boolean", "null"]}
+    },
+    "limitations": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "allowed_wording": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string"}
+    },
+    "blocked_wording": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["publish", "publish-narrowly", "rerun", "block"]
+    },
+    "evidence_files": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "artifact_audit": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "created_utc": {
+      "type": "string"
+    },
+    "claim_card_format": {
+      "type": "string"
+    }
+  }
+}

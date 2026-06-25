@@ -1,8 +1,0 @@
-{
-  "evidence_status": "awaiting_a100_hardware_run",
-  "goal": 51,
-  "measured_results_committed": false,
-  "notebook": "notebooks/colab_a100_goal51_1b_feasibility_probe.ipynb",
-  "report_format": "mopforge_gpu_feasibility_probe_v1",
-  "weights_included": false
-}

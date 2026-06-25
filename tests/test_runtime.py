@@ -1,4 +1,4 @@
-"""Tests for Goal 36 runtime/device foundation."""
+"""Tests for runtime/device foundation."""
 
 from __future__ import annotations
 

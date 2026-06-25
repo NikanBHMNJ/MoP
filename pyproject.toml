@@ -33,7 +33,7 @@ include = ["mopforge*"]
 addopts = "--basetemp=.pytest_basetemp -p no:cacheprovider"
 norecursedirs = [
     ".pytest_basetemp",
-    ".pytest_goal*",
+    ".pytest_*",
     "pytest_tmp",
     "runs",
     "gpu_runs",

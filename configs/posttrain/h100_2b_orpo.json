@@ -1,0 +1,18 @@
+{
+  "checkpoint_path": "outputs/2b-sft-consolidated.pt",
+  "preference_path": "data/h100_2b_preferences.jsonl",
+  "output_dir": "posttrain_runs/h100_2b_orpo",
+  "objective": "orpo",
+  "orpo_lambda": 0.1,
+  "learning_rate": 5e-7,
+  "weight_decay": 0.0,
+  "micro_batch_size": 1,
+  "gradient_accumulation_steps": 16,
+  "max_optimizer_steps": 100,
+  "max_seq_len": 1024,
+  "seed": 42,
+  "device": "cuda",
+  "precision": "bf16",
+  "max_grad_norm": 1.0,
+  "save_optimizer_state": false
+}

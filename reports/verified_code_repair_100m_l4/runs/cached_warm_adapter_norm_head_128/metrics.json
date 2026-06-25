@@ -1,0 +1,741 @@
+{
+  "best_eval_loss": 0.003662723351328168,
+  "data": {
+    "cache_format": "mopforge_activation_cache_v1",
+    "cache_metadata": {
+      "config_sha256": "14d784447b62a0c8f27e290bb4f9b66113dd2801b5bf70604448dfa02a3ff185",
+      "distillation_ready": true,
+      "dtype": "bf16",
+      "eval_records": 1000,
+      "manifest_path": "outputs/verified_code_repair_100m_l4_teacher_topk_cache_manifest.json",
+      "manifest_sha256": "fef93987535bdc01e2854ed5fe5d2b215154c43d6826d9b66b450aadbd5f749c",
+      "records_per_shard": 256,
+      "run_id": "20260621T214054Z-verified-code-repair-100m-l4-teacher-cache-source-8d72309e",
+      "shard_count": 36,
+      "shard_dir": "verified_code_repair_100m_l4_teacher_topk_cache_manifest_shards",
+      "sharded": true,
+      "source_checkpoint": "gpu_runs/20260621T204500Z-verified-code-repair-100m-l4-mop-full-f663b186/checkpoints/checkpoint-best-eval.pt",
+      "source_checkpoint_sha256": "916ce4599b9489024863efaded2d4335febeae06750ff3cab3d7f9d712fd23d6",
+      "source_config": "configs/jobs/colab_l4_verified_code_repair_100m/teacher_cache_source.json",
+      "teacher_loss_ready": true,
+      "teacher_top_k": 16,
+      "train_records": 8000
+    },
+    "eval_examples": 1000,
+    "hard_example_replay": {
+      "enabled": true,
+      "hard_example_count": 0,
+      "loss_threshold": 1.5,
+      "multiplier": 2,
+      "replayed_example_count": 0
+    },
+    "kind": "activation_cache",
+    "original_train_examples": 8000,
+    "record_count": 9000,
+    "sharded": true,
+    "shuffle_seed": 42,
+    "shuffle_train": true,
+    "source_path": "outputs/verified_code_repair_100m_l4_teacher_topk_cache_manifest.json",
+    "train_examples": 8000
+  },
+  "effective_batch_size": 8,
+  "efficiency": {
+    "activation_cache_enabled": true,
+    "active_adapter_density": 0.6666666666666666,
+    "active_expert_count": null,
+    "active_module_density": 0.6666666666666666,
+    "active_param_estimate": 91563648,
+    "active_param_ratio": 0.9748,
+    "active_trainable_param_estimate": 797568,
+    "active_trainable_param_ratio": 0.0085,
+    "cached_backbone_offloaded_param_count": 93129216,
+    "cached_hidden_steps_per_sec": 99.1506,
+    "checkpoint_size_mb": 7.7412,
+    "distillation_enabled": true,
+    "distillation_temperature": 2.0,
+    "distillation_top_k": 16,
+    "distillation_weight": 0.2,
+    "estimated_active_flop_ratio": 0.9748406588689335,
+    "estimated_backward_flop_ratio": 0.00849137983900311,
+    "expert_compute_ratio": null,
+    "expert_count": null,
+    "final_allocated_gb": 0.0255,
+    "final_reserved_gb": 0.0508,
+    "frozen_params": 93129216,
+    "frozen_prefix": {
+      "internal_lora_enabled": false,
+      "lora_delta_enabled": false,
+      "lora_tail_only": false,
+      "tail_from_hidden": true
+    },
+    "generated_condition_density": 2.0,
+    "hard_example_count": 0,
+    "hard_example_replay_enabled": true,
+    "hard_example_replay_multiplier": 2,
+    "hard_replayed_example_count": 0,
+    "original_token_equivalent_tokens_per_sec": 69671.2921,
+    "peak_allocated_gb": 0.045,
+    "peak_reserved_gb": 0.0605,
+    "routed_module_params": 4726272,
+    "samples_per_sec": 99.1506,
+    "samples_to_target_loss": 800,
+    "shared_compute_ratio": null,
+    "shared_frozen_params": 86039808,
+    "step_time_sec": 3.2818,
+    "target_eval_loss": 0.85,
+    "target_eval_loss_reached": true,
+    "target_eval_loss_value": 0.005118070973199792,
+    "target_final_allocated_gb": 0.0253,
+    "target_final_reserved_gb": 0.0605,
+    "target_peak_allocated_gb": 0.045,
+    "target_peak_reserved_gb": 0.0605,
+    "time_to_target_loss_sec": 8.347,
+    "tokens_per_sec": 69671.2921,
+    "tokens_to_target_loss": 562076,
+    "total_params": 93926784,
+    "total_train_time_sec": 161.3707,
+    "trainable_param_ratio": 0.00849137983900311,
+    "trainable_params": 797568
+  },
+  "eval_full_dataset": true,
+  "evals_without_improvement": 1,
+  "finite": true,
+  "generation_eval": {
+    "artifact_path": "gpu_runs/20260621T214425Z-verified-code-repair-100m-l4-cached-warm-adapter-norm-head-128-65c0e025/generation_eval.json",
+    "checkpoint_global_step": 15200,
+    "checkpoint_path": "gpu_runs/20260621T214425Z-verified-code-repair-100m-l4-cached-warm-adapter-norm-head-128-65c0e025/checkpoints/checkpoint-best-eval.pt",
+    "checkpoint_source": "best_eval",
+    "enabled": true,
+    "examples": 250,
+    "gen_compile_pass_count": 226,
+    "gen_compile_pass_rate": 0.904,
+    "gen_eval_examples": 250,
+    "gen_exact_match_count": 220,
+    "gen_exact_match_rate": 0.88,
+    "gen_failures_by_type": {
+      "passed": 220,
+      "runtime_error": 6,
+      "syntax_error": 24
+    },
+    "gen_fixed_code_complete_count": 227,
+    "gen_fixed_code_complete_rate": 0.908,
+    "gen_pass_count": 220,
+    "gen_pass_rate": 0.88,
+    "gen_syntax_pass_count": 226,
+    "gen_syntax_pass_rate": 0.904,
+    "gen_verifier_pass_count": 220,
+    "gen_verifier_pass_rate": 0.88,
+    "ground_truth_controls_examples": 1000,
+    "ground_truth_controls_passed": true,
+    "ground_truth_controls_path": "gpu_runs/20260621T214425Z-verified-code-repair-100m-l4-cached-warm-adapter-norm-head-128-65c0e025/ground_truth_controls.json",
+    "measurement_scope": "post_training_full_model_quality_eval",
+    "per_category": {
+      "incorrect base case in recursion": {
+        "gen_compile_pass_count": 42,
+        "gen_compile_pass_rate": 0.84,
+        "gen_eval_examples": 50,
+        "gen_exact_match_count": 38,
+        "gen_exact_match_rate": 0.76,
+        "gen_failures_by_type": {
+          "passed": 38,
+          "runtime_error": 4,
+          "syntax_error": 8
+        },
+        "gen_fixed_code_complete_count": 42,
+        "gen_fixed_code_complete_rate": 0.84,
+        "gen_pass_count": 38,
+        "gen_pass_rate": 0.76,
+        "gen_syntax_pass_count": 42,
+        "gen_syntax_pass_rate": 0.84,
+        "gen_verifier_pass_count": 38,
+        "gen_verifier_pass_rate": 0.76
+      },
+      "missing return": {
+        "gen_compile_pass_count": 49,
+        "gen_compile_pass_rate": 0.98,
+        "gen_eval_examples": 50,
+        "gen_exact_match_count": 49,
+        "gen_exact_match_rate": 0.98,
+        "gen_failures_by_type": {
+          "passed": 49,
+          "syntax_error": 1
+        },
+        "gen_fixed_code_complete_count": 49,
+        "gen_fixed_code_complete_rate": 0.98,
+        "gen_pass_count": 49,
+        "gen_pass_rate": 0.98,
+        "gen_syntax_pass_count": 49,
+        "gen_syntax_pass_rate": 0.98,
+        "gen_verifier_pass_count": 49,
+        "gen_verifier_pass_rate": 0.98
+      },
+      "off-by-one loop/index bug": {
+        "gen_compile_pass_count": 49,
+        "gen_compile_pass_rate": 0.98,
+        "gen_eval_examples": 50,
+        "gen_exact_match_count": 47,
+        "gen_exact_match_rate": 0.94,
+        "gen_failures_by_type": {
+          "passed": 47,
+          "runtime_error": 2,
+          "syntax_error": 1
+        },
+        "gen_fixed_code_complete_count": 50,
+        "gen_fixed_code_complete_rate": 1.0,
+        "gen_pass_count": 47,
+        "gen_pass_rate": 0.94,
+        "gen_syntax_pass_count": 49,
+        "gen_syntax_pass_rate": 0.98,
+        "gen_verifier_pass_count": 47,
+        "gen_verifier_pass_rate": 0.94
+      },
+      "wrong accumulator initialization": {
+        "gen_compile_pass_count": 36,
+        "gen_compile_pass_rate": 0.72,
+        "gen_eval_examples": 50,
+        "gen_exact_match_count": 36,
+        "gen_exact_match_rate": 0.72,
+        "gen_failures_by_type": {
+          "passed": 36,
+          "syntax_error": 14
+        },
+        "gen_fixed_code_complete_count": 36,
+        "gen_fixed_code_complete_rate": 0.72,
+        "gen_pass_count": 36,
+        "gen_pass_rate": 0.72,
+        "gen_syntax_pass_count": 36,
+        "gen_syntax_pass_rate": 0.72,
+        "gen_verifier_pass_count": 36,
+        "gen_verifier_pass_rate": 0.72
+      },
+      "wrong comparison operator": {
+        "gen_compile_pass_count": 50,
+        "gen_compile_pass_rate": 1.0,
+        "gen_eval_examples": 50,
+        "gen_exact_match_count": 50,
+        "gen_exact_match_rate": 1.0,
+        "gen_failures_by_type": {
+          "passed": 50
+        },
+        "gen_fixed_code_complete_count": 50,
+        "gen_fixed_code_complete_rate": 1.0,
+        "gen_pass_count": 50,
+        "gen_pass_rate": 1.0,
+        "gen_syntax_pass_count": 50,
+        "gen_syntax_pass_rate": 1.0,
+        "gen_verifier_pass_count": 50,
+        "gen_verifier_pass_rate": 1.0
+      }
+    },
+    "split_summaries": {
+      "eval": {
+        "gen_compile_pass_count": 226,
+        "gen_compile_pass_rate": 0.904,
+        "gen_eval_examples": 250,
+        "gen_exact_match_count": 220,
+        "gen_exact_match_rate": 0.88,
+        "gen_failures_by_type": {
+          "passed": 220,
+          "runtime_error": 6,
+          "syntax_error": 24
+        },
+        "gen_fixed_code_complete_count": 227,
+        "gen_fixed_code_complete_rate": 0.908,
+        "gen_pass_count": 220,
+        "gen_pass_rate": 0.88,
+        "gen_syntax_pass_count": 226,
+        "gen_syntax_pass_rate": 0.904,
+        "gen_verifier_pass_count": 220,
+        "gen_verifier_pass_rate": 0.88,
+        "per_category": {
+          "incorrect base case in recursion": {
+            "gen_compile_pass_count": 42,
+            "gen_compile_pass_rate": 0.84,
+            "gen_eval_examples": 50,
+            "gen_exact_match_count": 38,
+            "gen_exact_match_rate": 0.76,
+            "gen_failures_by_type": {
+              "passed": 38,
+              "runtime_error": 4,
+              "syntax_error": 8
+            },
+            "gen_fixed_code_complete_count": 42,
+            "gen_fixed_code_complete_rate": 0.84,
+            "gen_pass_count": 38,
+            "gen_pass_rate": 0.76,
+            "gen_syntax_pass_count": 42,
+            "gen_syntax_pass_rate": 0.84,
+            "gen_verifier_pass_count": 38,
+            "gen_verifier_pass_rate": 0.76
+          },
+          "missing return": {
+            "gen_compile_pass_count": 49,
+            "gen_compile_pass_rate": 0.98,
+            "gen_eval_examples": 50,
+            "gen_exact_match_count": 49,
+            "gen_exact_match_rate": 0.98,
+            "gen_failures_by_type": {
+              "passed": 49,
+              "syntax_error": 1
+            },
+            "gen_fixed_code_complete_count": 49,
+            "gen_fixed_code_complete_rate": 0.98,
+            "gen_pass_count": 49,
+            "gen_pass_rate": 0.98,
+            "gen_syntax_pass_count": 49,
+            "gen_syntax_pass_rate": 0.98,
+            "gen_verifier_pass_count": 49,
+            "gen_verifier_pass_rate": 0.98
+          },
+          "off-by-one loop/index bug": {
+            "gen_compile_pass_count": 49,
+            "gen_compile_pass_rate": 0.98,
+            "gen_eval_examples": 50,
+            "gen_exact_match_count": 47,
+            "gen_exact_match_rate": 0.94,
+            "gen_failures_by_type": {
+              "passed": 47,
+              "runtime_error": 2,
+              "syntax_error": 1
+            },
+            "gen_fixed_code_complete_count": 50,
+            "gen_fixed_code_complete_rate": 1.0,
+            "gen_pass_count": 47,
+            "gen_pass_rate": 0.94,
+            "gen_syntax_pass_count": 49,
+            "gen_syntax_pass_rate": 0.98,
+            "gen_verifier_pass_count": 47,
+            "gen_verifier_pass_rate": 0.94
+          },
+          "wrong accumulator initialization": {
+            "gen_compile_pass_count": 36,
+            "gen_compile_pass_rate": 0.72,
+            "gen_eval_examples": 50,
+            "gen_exact_match_count": 36,
+            "gen_exact_match_rate": 0.72,
+            "gen_failures_by_type": {
+              "passed": 36,
+              "syntax_error": 14
+            },
+            "gen_fixed_code_complete_count": 36,
+            "gen_fixed_code_complete_rate": 0.72,
+            "gen_pass_count": 36,
+            "gen_pass_rate": 0.72,
+            "gen_syntax_pass_count": 36,
+            "gen_syntax_pass_rate": 0.72,
+            "gen_verifier_pass_count": 36,
+            "gen_verifier_pass_rate": 0.72
+          },
+          "wrong comparison operator": {
+            "gen_compile_pass_count": 50,
+            "gen_compile_pass_rate": 1.0,
+            "gen_eval_examples": 50,
+            "gen_exact_match_count": 50,
+            "gen_exact_match_rate": 1.0,
+            "gen_failures_by_type": {
+              "passed": 50
+            },
+            "gen_fixed_code_complete_count": 50,
+            "gen_fixed_code_complete_rate": 1.0,
+            "gen_pass_count": 50,
+            "gen_pass_rate": 1.0,
+            "gen_syntax_pass_count": 50,
+            "gen_syntax_pass_rate": 1.0,
+            "gen_verifier_pass_count": 50,
+            "gen_verifier_pass_rate": 1.0
+          }
+        }
+      }
+    },
+    "stratify_by": "bug_type"
+  },
+  "global_steps": 16000,
+  "gradient_accumulation_steps": 8,
+  "latest_eval_batches": 1000,
+  "latest_eval_examples": 1000,
+  "latest_eval_loss": 0.004090624690346886,
+  "latest_train_loss": 0.0016037017339840531,
+  "memory_snapshots": [
+    {
+      "allocated_gb": 0.0253,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.045,
+      "peak_reserved_gb": 0.0605,
+      "reserved_gb": 0.0605,
+      "selected_device": "cuda:0",
+      "step": 800
+    },
+    {
+      "allocated_gb": 0.0253,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.045,
+      "peak_reserved_gb": 0.0605,
+      "reserved_gb": 0.0605,
+      "selected_device": "cuda:0",
+      "step": 800
+    },
+    {
+      "allocated_gb": 0.0253,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.045,
+      "peak_reserved_gb": 0.0605,
+      "reserved_gb": 0.0605,
+      "selected_device": "cuda:0",
+      "step": 1600
+    },
+    {
+      "allocated_gb": 0.0255,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.045,
+      "peak_reserved_gb": 0.0605,
+      "reserved_gb": 0.0605,
+      "selected_device": "cuda:0",
+      "step": 2400
+    },
+    {
+      "allocated_gb": 0.0255,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.045,
+      "peak_reserved_gb": 0.0605,
+      "reserved_gb": 0.0605,
+      "selected_device": "cuda:0",
+      "step": 3200
+    },
+    {
+      "allocated_gb": 0.0253,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.045,
+      "peak_reserved_gb": 0.0605,
+      "reserved_gb": 0.0605,
+      "selected_device": "cuda:0",
+      "step": 4000
+    },
+    {
+      "allocated_gb": 0.0253,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.045,
+      "peak_reserved_gb": 0.0605,
+      "reserved_gb": 0.0605,
+      "selected_device": "cuda:0",
+      "step": 8000
+    },
+    {
+      "allocated_gb": 0.0254,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.045,
+      "peak_reserved_gb": 0.0605,
+      "reserved_gb": 0.0605,
+      "selected_device": "cuda:0",
+      "step": 9600
+    },
+    {
+      "allocated_gb": 0.0253,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.045,
+      "peak_reserved_gb": 0.0605,
+      "reserved_gb": 0.0605,
+      "selected_device": "cuda:0",
+      "step": 12000
+    },
+    {
+      "allocated_gb": 0.0254,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.045,
+      "peak_reserved_gb": 0.0605,
+      "reserved_gb": 0.0605,
+      "selected_device": "cuda:0",
+      "step": 13600
+    },
+    {
+      "allocated_gb": 0.0253,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.045,
+      "peak_reserved_gb": 0.0605,
+      "reserved_gb": 0.0605,
+      "selected_device": "cuda:0",
+      "step": 15200
+    },
+    {
+      "allocated_gb": 0.0255,
+      "cuda_available": true,
+      "peak_allocated_gb": 0.045,
+      "peak_reserved_gb": 0.0605,
+      "reserved_gb": 0.0605,
+      "selected_device": "cuda:0",
+      "step": 16000
+    }
+  ],
+  "micro_batch_size": 1,
+  "model": {
+    "activation_checkpointing": {
+      "applied_block_count": 12,
+      "candidate_block_count": 12,
+      "enabled": true,
+      "policy": "auto",
+      "warnings": []
+    },
+    "active_adapter_density": 0.6666666666666666,
+    "active_expert_count": null,
+    "active_module_density": 0.6666666666666666,
+    "active_param_estimate": 91563648,
+    "active_trainable_param_estimate": 797568,
+    "architecture": {
+      "active_experts": 1,
+      "always_include_core": false,
+      "d_model": 768,
+      "dataset_ref": null,
+      "expert_count": null,
+      "fast_adapter_bottleneck_dim": 128,
+      "fast_adapter_names": [
+        "coding",
+        "debugging",
+        "repair"
+      ],
+      "generated_condition_dim": 16,
+      "generated_condition_names": null,
+      "generated_rank": 4,
+      "generated_type": "low_rank_adapter",
+      "intended_scale": "small_gpu",
+      "lora_rank": 0,
+      "lora_tail_only": false,
+      "lora_target_modules": null,
+      "max_seq_len": 1024,
+      "metadata": {},
+      "model_type": "mop_oracle",
+      "module_names": [
+        "coding",
+        "debugging",
+        "repair"
+      ],
+      "mop_block_type": "post_core_mlp",
+      "n_heads": 12,
+      "n_layers": 12,
+      "name": "verified_code_repair_100m_l4_cached_warm_adapter_norm_head_128",
+      "router_enabled": false,
+      "router_type": null,
+      "routing_granularity": "example",
+      "shared_depth_ratio": 1.0,
+      "tokenizer_ref": null,
+      "use_fast_adapters": true,
+      "use_generated_params": false,
+      "use_lora_deltas": false,
+      "vocab_size": null
+    },
+    "cached_training_backbone_offload": {
+      "cuda_empty_cache_after_offload": true,
+      "enabled": true,
+      "note": "Only modules unused by forward_from_hidden are offloaded.",
+      "offloaded_modules": [
+        {
+          "name": "token_embedding",
+          "param_count": 198912
+        },
+        {
+          "name": "position_embedding",
+          "param_count": 786432
+        },
+        {
+          "name": "shared_blocks",
+          "param_count": 85054464
+        },
+        {
+          "name": "routed_blocks",
+          "param_count": 0
+        },
+        {
+          "name": "module_bank",
+          "param_count": 7089408
+        }
+      ],
+      "offloaded_param_count": 93129216,
+      "selected_device": "cuda:0",
+      "skipped_modules": [],
+      "skipped_param_count": 0
+    },
+    "distillation": {
+      "batch_has_teacher_topk": true,
+      "cache_distillation_ready": true,
+      "cache_teacher_top_k": 16,
+      "configured_top_k": 16,
+      "enabled": true,
+      "temperature": 2.0,
+      "weight": 0.2
+    },
+    "efficient_attention": {
+      "requested": "auto",
+      "selected": "torch_sdpa",
+      "warnings": []
+    },
+    "estimated_active_flop_ratio": 0.9748406588689335,
+    "estimated_backward_flop_ratio": 0.00849137983900311,
+    "expert_compute_ratio": null,
+    "expert_count": null,
+    "frozen_prefix": {
+      "internal_lora_enabled": false,
+      "lora_delta_enabled": false,
+      "lora_tail_only": false,
+      "tail_from_hidden": true
+    },
+    "generated_condition_density": 2.0,
+    "hard_example_replay": {
+      "enabled": true,
+      "hard_example_count": 0,
+      "loss_threshold": 1.5,
+      "multiplier": 2,
+      "replayed_example_count": 0
+    },
+    "parameter_counts": {
+      "frozen": 93129216,
+      "total": 93926784,
+      "trainable": 797568
+    },
+    "parameter_group_summaries": [
+      {
+        "frozen_params": 0,
+        "name": "adapter:coding",
+        "total_params": 199040,
+        "trainable_params": 199040
+      },
+      {
+        "frozen_params": 0,
+        "name": "adapter:debugging",
+        "total_params": 199040,
+        "trainable_params": 199040
+      },
+      {
+        "frozen_params": 0,
+        "name": "adapter:repair",
+        "total_params": 199040,
+        "trainable_params": 199040
+      },
+      {
+        "frozen_params": 985344,
+        "name": "embeddings",
+        "total_params": 985344,
+        "trainable_params": 0
+      },
+      {
+        "frozen_params": 0,
+        "name": "lm_head",
+        "total_params": 198912,
+        "trainable_params": 198912
+      },
+      {
+        "frozen_params": 2363136,
+        "name": "module:coding",
+        "total_params": 2363136,
+        "trainable_params": 0
+      },
+      {
+        "frozen_params": 2363136,
+        "name": "module:debugging",
+        "total_params": 2363136,
+        "trainable_params": 0
+      },
+      {
+        "frozen_params": 2363136,
+        "name": "module:repair",
+        "total_params": 2363136,
+        "trainable_params": 0
+      },
+      {
+        "frozen_params": 0,
+        "name": "norm",
+        "total_params": 1536,
+        "trainable_params": 1536
+      },
+      {
+        "frozen_params": 85054464,
+        "name": "shared_core",
+        "total_params": 85054464,
+        "trainable_params": 0
+      }
+    ],
+    "resume": {
+      "base_checkpoint": {
+        "metadata": {
+          "model_load_strict": false,
+          "model_loaded_key_count": 185,
+          "model_missing_key_count": 0,
+          "model_skipped_key_count": 0,
+          "model_skipped_keys": [],
+          "model_unexpected_key_count": 0,
+          "restored": [
+            "model"
+          ],
+          "skipped": [],
+          "warm_start_adaptation": {
+            "adapted": false
+          }
+        },
+        "path": "gpu_runs/20260621T204500Z-verified-code-repair-100m-l4-mop-full-f663b186/checkpoints/checkpoint-best-eval.pt"
+      },
+      "checkpoint_path": "gpu_runs/20260621T212138Z-verified-code-repair-100m-l4-warm-adapter-norm-head-128-63018e84/checkpoints/checkpoint-best-eval.pt",
+      "model_load_strict": false,
+      "model_loaded_key_count": 21,
+      "model_missing_key_count": 164,
+      "model_skipped_key_count": 0,
+      "model_skipped_keys": [],
+      "model_unexpected_key_count": 0,
+      "restored": [
+        "trainable_model_state"
+      ],
+      "resume_model_only": true,
+      "skipped": [],
+      "warm_start_adaptation": {
+        "adapted": false
+      }
+    },
+    "routed_module_params": 4726272,
+    "routing_mode": "oracle",
+    "shared_compute_ratio": null,
+    "shared_frozen_params": 86039808,
+    "trainable_param_ratio": 0.00849137983900311
+  },
+  "optimizer_steps": 2000,
+  "runtime": {
+    "allow_tf32": true,
+    "amp_enabled": true,
+    "compile_model": false,
+    "cuda_available": true,
+    "cuda_device_count": 1,
+    "deterministic": false,
+    "device_available": true,
+    "device_type": "cuda",
+    "gpu_name": "NVIDIA L4",
+    "requested_device": "cuda:0",
+    "requested_precision": "bf16",
+    "selected_device": "cuda:0",
+    "selected_precision": "bf16",
+    "torch_available": true,
+    "torch_dtype_name": "torch.bfloat16",
+    "torch_version": "2.11.0+cu128",
+    "warnings": [
+      "CUDA device is available.",
+      "Enabled torch.backends.cuda.matmul.allow_tf32.",
+      "Enabled torch.backends.cudnn.allow_tf32."
+    ]
+  },
+  "samples_seen": 16000,
+  "scaler": {
+    "device_type": "cuda",
+    "enabled": false,
+    "selected_precision": "bf16",
+    "state": {}
+  },
+  "shuffle_train": true,
+  "status": "completed",
+  "stop_reason": null,
+  "stopped_early": false,
+  "target_eval_loss": 0.85,
+  "target_eval_loss_reached": true,
+  "target_eval_loss_samples_seen": 800,
+  "target_eval_loss_step": 800,
+  "target_eval_loss_time_sec": 8.347,
+  "target_eval_loss_tokens_seen": 562076,
+  "target_eval_loss_value": 0.005118070973199792,
+  "tokens_seen": 11242908,
+  "train_batches_in_epoch": 8000,
+  "train_epoch": 2,
+  "train_shuffle_seed": 42
+}

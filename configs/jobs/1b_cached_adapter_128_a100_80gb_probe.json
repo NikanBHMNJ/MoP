@@ -2,7 +2,7 @@
   "kind": "gpu_train",
   "version": "1",
   "payload": {
-    "name": "goal51_1b_cached_adapter_128_a100_80gb_probe",
+    "name": "a100_1b_cached_adapter_128_80gb_probe",
     "model_type": "mop_oracle",
     "lesson_path": "data/coding_bugfix_lessons.jsonl",
     "output_root": "gpu_runs",
@@ -32,9 +32,9 @@
     "fast_adapter_names": ["coding", "debugging", "tests", "repair"],
     "fast_adapter_bottleneck_dim": 128,
     "trainable_policy_mode": "adapters_norm_head",
-    "activation_cache_path": "data/goal51_1b_activation_cache/manifest.json",
-    "base_checkpoint_path": "artifacts/goal51_1b_warm_base.pt",
-    "resume_from_checkpoint": "artifacts/goal51_1b_warm_base.pt",
+    "activation_cache_path": "data/a100_1b_activation_cache/manifest.json",
+    "base_checkpoint_path": "artifacts/a100_1b_warm_base.pt",
+    "resume_from_checkpoint": "artifacts/a100_1b_warm_base.pt",
     "resume_model_only": true,
     "offload_frozen_backbone_for_cache": true,
     "save_trainable_only_checkpoints": true,
@@ -60,11 +60,11 @@
       "probe_peak_reserved_limit_gb": 68,
       "probe_optimizer_steps": 20,
       "required_gpu_name_contains": "A100",
-      "goal": 51,
+      "readiness_track": "a100_1b",
       "profile_role": "cached_adapter_128"
     }
   },
   "metadata": {
-    "description": "Goal 51 executable 1B-class cached Adapter/Norm/Head 128 admission probe for A100 80GB."
+    "description": "A100 1B admission executable 1B-class cached Adapter/Norm/Head 128 admission probe for A100 80GB."
   }
 }
